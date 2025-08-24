@@ -1,0 +1,525 @@
+/* =========================================================
+   AETHERA STUDIO — LIGHT MODE POLISH (Theme B: Charcoal & Teal)
+   File: app.theme-b.css
+   Purpose: Premium, rounded, consistent look for LIGHT MODE ONLY.
+   Load AFTER app.css. Doesn't touch JS or dark mode.
+   ========================================================= */
+
+/* ---------- 1) Theme tokens (light mode only) ---------- */
+.light-mode {
+  --bg:               #f7faf9;
+  --surface:          #ffffff;
+  --surface-2:        #edf4f3;   /* soft blocks */
+  --text:             #0e1b1c;   /* charcoal */
+  --text-secondary:   #506063;   /* cool grey */
+  --muted:            #6b7a7d;
+
+  --border:           #e1ecea;   /* soft hairline */
+  --stroke:           var(--border);
+  --stroke-strong:    #d7e6e4;
+
+  --accent:           #0ea5a8;   /* teal */
+  --accent-600:       #0b8082;
+  --accent-700:       #096a6c;
+  --accent-contrast:  #ffffff;
+  --accent-soft:      #e6fbfb;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --shadow-sm: 0 1px 2px rgba(16,24,40,.06);
+  --shadow-md: 0 6px 18px rgba(16,24,40,.10);
+  --shadow-lg: 0 12px 28px rgba(16,24,40,.12);
+}
+
+/* ---------- 2) Global rounding & surface mapping ---------- */
+.light-mode body,
+.light-mode .app-shell { background: var(--bg); color: var(--text); }
+
+/* Frames / sections / cards */
+.light-mode .form-group,
+.light-mode .section-box,
+.light-mode .panel,
+.light-mode .box,
+.light-mode .card,
+.light-mode .result-card,
+.light-mode .history-entry,
+.light-mode .swiper.carousel-swiper-container,
+.light-mode .additional-assets-container,
+.light-mode .modal .modal-content {
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Slightly more elevation for result cards */
+.light-mode .result-card {
+  border-color: var(--stroke-strong);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-xl);
+}
+
+/* Soft blocks */
+.light-mode .soft-block,
+.light-mode .bg-gray-900\/50,
+.light-mode .bg-gray-800\/50,
+.light-mode .bg-gray-700\/50 {
+  background: var(--surface-2) !important;
+  border: 1px dashed var(--stroke) !important;
+  color: var(--text-secondary) !important;
+  border-radius: var(--radius-lg) !important;
+}
+
+/* Inputs & controls */
+.light-mode input[type="text"],
+.light-mode input[type="email"],
+.light-mode input[type="password"],
+.light-mode input[type="number"],
+.light-mode select,
+.light-mode textarea,
+.light-mode button {
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--stroke);
+  box-shadow: none;
+}
+.light-mode input:focus,
+.light-mode select:focus,
+.light-mode textarea:focus,
+.light-mode button:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+/* Tailwind-ish helpers mapping */
+.light-mode .rounded,
+.light-mode .rounded-md { border-radius: var(--radius-md); }
+.light-mode .rounded-lg { border-radius: var(--radius-lg); }
+.light-mode .rounded-xl { border-radius: var(--radius-xl); }
+
+.light-mode .border { border-width:1px; border-style:solid; border-color: var(--stroke); }
+.light-mode .border-gray-700,
+.light-mode .border-gray-700\/50,
+.light-mode .border-gray-700\/60,
+.light-mode .border-gray-600 { border-color: var(--stroke) !important; }
+
+.light-mode .text-gray-300,
+.light-mode .text-gray-400,
+.light-mode .text-gray-500 { color: var(--text-secondary) !important; }
+
+/* Normalize hard-coded Tailwind hex */
+.light-mode .text-\[\#333\] { color: var(--text) !important; }
+
+/* ---------- 3) Buttons ---------- */
+.light-mode .btn,
+.light-mode .btn-primary,
+.light-mode .btn-accent {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: 1px solid var(--accent-600);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.light-mode .btn:hover,
+.light-mode .btn-primary:hover,
+.light-mode .btn-accent:hover { background: var(--accent-600); }
+.light-mode .btn:active { background: var(--accent-700); box-shadow: none; }
+
+.light-mode .btn-secondary,
+.light-mode .btn-ghost {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+}
+.light-mode .btn-secondary:hover,
+.light-mode .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+/* File input button "Pilih Gambar..." */
+.light-mode label[for="product-image"] {
+  background: var(--surface-2) !important;
+  border: 1px dashed var(--stroke) !important;
+  color: var(--text-secondary) !important;
+  border-radius: var(--radius-lg) !important;
+}
+
+/* Selling-points / code blocks */
+.light-mode .result-card code,
+.light-mode .result-card pre,
+.light-mode .code-block {
+  background: #f8fcfb;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+}
+
+/* ---------- 4) Spacing polish: section titles so they don't "mepet" ---------- */
+.light-mode .form-group { padding: 16px; }
+.light-mode .form-group > label,
+.light-mode .form-group > h4,
+.light-mode .form-group > .group-title {
+  display:block;
+  margin: 4px 0 10px;
+  letter-spacing: .01em;
+  color: var(--text-secondary);
+}
+.light-mode .result-card h4.result-title {
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 12px;
+  border: 1px solid var(--stroke);
+  background: linear-gradient(#fff, #fff) padding-box,
+              linear-gradient(145deg, rgba(14,165,168,.25), rgba(14,165,168,.05)) border-box;
+  color: var(--text) !important;
+}
+
+/* Header subtle divider */
+.light-mode header { box-shadow: 0 1px 0 var(--stroke); }
+
+/* ==== Fix 1: Post / Carousel toggle di Light Mode ==== */
+.light-mode .bg-blue-600 {                    /* aktif */
+  background-color: var(--accent) !important; /* teal */
+  color: var(--accent-contrast) !important;
+}
+.light-mode .text-gray-400 {                  /* idle label */
+  color: var(--muted) !important;
+}
+.light-mode .hover\:bg-gray-700:hover {       /* hover idle */
+  background-color: var(--accent-soft) !important;
+}
+
+/* Opsional: berikan frame lembut pada pembungkus segmented */
+.light-mode .toggle-group,
+.light-mode .segmented,
+.light-mode .mode-toggle,
+.light-mode #mode-toggle {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+/* Light mode: perbaiki kartu template persona default */
+.light-mode #default-persona-container .bg-gray-800\/70 {
+  background: var(--surface) !important;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(2,14,15,.04);
+}
+
+/* Judul & teks yang sebelumnya pakai .text-white / .text-gray-400 */
+.light-mode #default-persona-container .text-white {
+  color: var(--text) !important;
+}
+.light-mode #default-persona-container .text-gray-400 {
+  color: var(--muted) !important;
+}
+
+/* Tombol “+ Tambahkan ke Daftar Saya” biar match aksen */
+.light-mode #default-persona-container .add-default-persona-btn {
+  background: var(--accent-soft) !important;
+  color: var(--accent) !important;
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+}
+.light-mode #default-persona-container .add-default-persona-btn:hover {
+  filter: brightness(0.96);
+}
+
+/* Theme B — Segmented toggle color tuning (Light only) */
+.light-mode .mode-toggle-track,
+.light-mode .ratio-toggle-track {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+.light-mode .track-btn:hover:not(.is-active) {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.light-mode .track-btn.is-active {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+/* ===== Dark Mode Polish: samakan “rasa” dengan light mode ===== */
+
+/* 1) Heading kontras tinggi */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode .section-title,
+.dark-mode .page-title {
+  color: #EAF2F7;
+  text-shadow: 0 1px 0 rgba(0,0,0,.25);
+}
+
+/* 2) Semua frame/section di dark: radius, padding, border & elevasi - SERAGAM DENGAN LIGHT MODE */
+.dark-mode .form-group,
+.dark-mode .section-box,
+.dark-mode .history-entry,
+.dark-mode .swiper.carousel-swiper-container,
+.dark-mode .additional-assets-container {
+  background: #0f1324;                       /* panel gelap solid (bukan overlay) */
+  border: 1px solid rgba(255,255,255,.06);   /* hairline lembut—mirip light */
+  border-radius: var(--radius-lg);           /* KONSISTEN DENGAN LIGHT MODE */
+  padding: 16px;                             /* SAMA DENGAN LIGHT MODE */
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.03),
+    0 8px 24px rgba(0,0,0,.35);
+}
+
+/* Result card khusus menggunakan radius yang sama dengan light mode */
+.dark-mode .result-card {
+  background: #0f1324;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius-xl);           /* SAMA DENGAN LIGHT MODE: 20px */
+  padding: 16px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.03),
+    0 8px 24px rgba(0,0,0,.35);
+}
+
+/* 3) Header/judul tiap section: beri ruang supaya tak “mepet” - SERAGAM DENGAN LIGHT MODE */
+.dark-mode .form-group > h4,
+.dark-mode .section-box > h4,
+.dark-mode .group-title,
+.dark-mode .section-header {
+  margin: 4px 0 10px;                        /* SAMA DENGAN LIGHT MODE */
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+/* 4) Segmented toggles (Post/Carousel, Visual Strategy, Aspect Ratio) */
+.dark-mode .form-group .flex.bg-gray-800 {
+  background: #121733;                        /* sedikit lebih terang dari frame */
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius-md);           /* KONSISTEN DENGAN LIGHT MODE */
+  padding: 4px;
+}
+.dark-mode .form-group .text-gray-400 { color: #9aa3b2; } /* idle label */
+.dark-mode .form-group .hover\:bg-gray-700:hover { background:#1a2144; }
+.dark-mode .form-group .bg-blue-600 {               /* tab aktif */
+  background: #D4AF37;  /* gold */
+  color: #0b0b0e;       /* teks gelap agar kebaca */
+}
+
+/* 5) Input/textarea/select: samakan “rasa” dengan frame */
+.dark-mode input[type="text"],
+.dark-mode input[type="email"],
+.dark-mode input[type="password"],
+.dark-mode input[type="number"],
+.dark-mode select,
+.dark-mode textarea {
+  background: #191A23;
+  border: 1px solid #333441;
+  color: #E0E0E0;
+  border-radius: var(--radius-md);  /* KONSISTEN DENGAN LIGHT MODE */
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+}
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder { color:#8A8A9E; }
+
+/* 6) Isi dalam result card sedikit dinaikkan kontrasnya - SERAGAM DENGAN LIGHT MODE */
+.dark-mode .result-card .card-content {
+  background: #121733;
+  border: 1px solid rgba(255,255,255,.06);
+  /* Tidak ada border-radius - SAMA DENGAN LIGHT MODE */
+}
+
+/* 7) Tombol utama tetap gold, tapi hover lebih halus */
+.dark-mode .btn-primary {
+  background:#D4AF37;
+  color:#0b0b0e;
+}
+.dark-mode .btn-primary:hover { filter:brightness(1.05); }
+
+/* ========== DARK MODE – FINISHING TOUCHES ========== */
+
+/* A) Code/pre block di result & modal perbandingan - SERAGAM DENGAN LIGHT MODE */
+.dark-mode pre,
+.dark-mode .original-script-display,
+.dark-mode .new-script-display,
+.dark-mode .editable-input {
+  background: #0c1021 !important;
+  color: #e7e9f0 !important;
+  border: 1px solid #2a2e44 !important;
+  border-radius: var(--radius-md) !important; /* KONSISTEN DENGAN LIGHT MODE */
+  line-height: 1.55;
+}
+
+/* B) Scrollbar yang halus (WebKit + Firefox) - SERAGAM DENGAN LIGHT MODE */
+.dark-mode *::-webkit-scrollbar { height: 10px; width: 10px; }
+.dark-mode *::-webkit-scrollbar-track { background: transparent; }
+.dark-mode *::-webkit-scrollbar-thumb {
+  background: #2a2e44; border-radius: var(--radius-md); border: 2px solid transparent;  /* KONSISTEN DENGAN LIGHT MODE */
+  background-clip: padding-box;
+}
+.dark-mode *::-webkit-scrollbar-thumb:hover { background: #3a3f56; }
+@supports (scrollbar-color: auto) {
+  .dark-mode { scrollbar-color: #2a2e44 transparent; scrollbar-width: thin; }
+}
+
+/* C) Tombol “Pilih Gambar…” (ghost/terang tapi nyatu) */
+.dark-mode .file-select-btn,
+.dark-mode button[id="product-image"],
+.dark-mode #product-image + label,
+.dark-mode button:has(.camera-icon) {
+  background: #1a2144 !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  color: #dfe4ee !important;
+  border-radius: var(--radius-md) !important; /* KONSISTEN DENGAN LIGHT MODE */
+}
+.dark-mode .file-select-btn:hover,
+.dark-mode #product-image + label:hover { background: #222a54 !important; }
+
+/* D) Modal polish (regenerasi / perbandingan) - SERAGAM DENGAN LIGHT MODE */
+.dark-mode .modal,
+.dark-mode .modal-content {
+  background: #111528 !important;
+  border: 1px solid #2a2e44 !important;
+  border-radius: 16px !important;            /* SAMA DENGAN LIGHT MODE */
+}
+.dark-mode .modal h3,
+.dark-mode .modal h2 { color: #EAF2F7 !important; }
+.dark-mode .modal-backdrop { background: rgba(5,8,15,.6) !important; }
+
+/* E) Chips/label header kecil (Selling Points, Data Gambar Sheet) */
+.dark-mode .chip,
+.dark-mode .badge,
+.dark-mode .small-header,
+.dark-mode .content-subtitle {
+  background: #121733 !important;
+  color: #cfd7e6 !important;
+  border: 1px solid rgba(255,255,255,.06) !important;
+  border-radius: 10px !important;
+}
+
+/* F) Kotak Hook / Body / CTA di dalam card – bikin kontrasnya pas */
+.dark-mode [data-part="hook"] {
+  background: linear-gradient(0deg,#0e1731,#0e1731) !important;
+  border: 1px solid #1c2a52 !important;
+}
+.dark-mode [data-part="body"] {
+  background: linear-gradient(0deg,#121a38,#121a38) !important;
+  border: 1px solid #223060 !important;
+}
+.dark-mode [data-part="cta"] {
+  background: linear-gradient(0deg,#14183a,#14183a) !important;
+  border: 1px solid #2b2f66 !important;
+}
+.dark-mode [data-part] h5 { color: #cfe2ff !important; }
+.dark-mode [data-part] p  { color: #e8ebf4 !important; }
+
+/* G) Kartu riwayat – heading lebih terang */
+.dark-mode .history-entry h3,
+.dark-mode .result-card h4 { color: #F0F5FF; }
+
+/* H) Tombol sekunder (outline) agar tidak “tenggelam” */
+.dark-mode .btn-secondary {
+  background: #141a33;
+  border: 1px solid rgba(255,255,255,.10);
+  color: #dfe4ee;
+}
+.dark-mode .btn-secondary:hover { background:#1b2346; }
+
+/* I) Tooltip / helper text */
+.dark-mode .helper,
+.dark-mode .form-hint { color:#b8c2d6; }
+
+/* ========== DARK MODE · SEGMENTED TOGGLE POLISH ========== */
+
+/* Wrapper bar (kelihatan "track" lembut) */
+.dark-mode .segment-track,
+.dark-mode .mode-toggle-track,
+.dark-mode .ratio-toggle-track {
+  background: #0f1426;
+  border: 1px solid #222a41;
+  padding: 4px;                     /* KONSISTEN DENGAN LIGHT MODE */
+  border-radius: var(--radius-lg);  /* KONSISTEN DENGAN LIGHT MODE */
+}
+
+/* Post / Carousel */
+.dark-mode .mode-toggle-track .track-btn {
+  appearance: none;
+  background: transparent;
+  color: #d9e3f7;
+  border: 0;
+  border-radius: var(--radius-md);  /* KONSISTEN DENGAN LIGHT MODE */
+  padding: 8px 12px;                /* KONSISTEN DENGAN LIGHT MODE */
+  line-height: 1;
+  font-weight: 600;
+  transition: background .15s ease, color .15s ease, transform .12s ease;
+}
+
+/* State aktif (emas), + sedikit “lift” */
+.dark-mode .mode-toggle-track .track-btn.is-active {
+  background: #b88900; /* gold 600 */
+  color: #10131f;
+  box-shadow: 0 2px 12px rgba(184,137,0,.35), inset 0 -2px 0 rgba(0,0,0,.12);
+  transform: translateY(-1px);
+}
+
+/* State hover untuk tombol yang tidak aktif */
+.dark-mode .mode-toggle-track .track-btn:not(.is-active):hover {
+  background: #141b33;
+}
+
+/* Hover halus untuk yang non-aktif */
+.dark-mode #mode-single:not(.is-active):hover,
+.dark-mode #mode-carousel:not(.is-active):hover {
+  background: #141b33;
+}
+
+/* Aspect ratio buttons */
+.dark-mode .aspect-ratio-btn {
+  background: transparent;
+  color: #cdd7ef;
+  border: 0;
+  border-radius: var(--radius-md);  /* KONSISTEN DENGAN LIGHT MODE */
+  padding: 8px 14px;
+  transition: background .15s ease, color .15s ease, transform .12s ease;
+}
+.dark-mode .aspect-ratio-btn.active {
+  background: #b88900;
+  color: #10131f;
+  box-shadow: 0 2px 10px rgba(184,137,0,.3), inset 0 -2px 0 rgba(0,0,0,.12);
+  transform: translateY(-1px);
+}
+.dark-mode .aspect-ratio-btn:not(.active):hover {
+  background: #141b33;
+}
+
+.dark-mode .ratio-toggle-track .track-btn {
+  background: transparent;
+  color: #cdd7ef;
+  border: 0;
+  border-radius: var(--radius-md);  /* KONSISTEN DENGAN LIGHT MODE */
+  padding: 8px 14px;
+  font-weight: 600;
+  transition: background .15s ease, color .15s ease, transform .12s ease;
+}
+
+.dark-mode .ratio-toggle-track .track-btn.is-active {
+  background: #b88900;
+  color: #10131f;
+  box-shadow: 0 2px 10px rgba(184,137,0,.3), inset 0 -2px 0 rgba(0,0,0,.12);
+  transform: translateY(-1px);
+}
+
+.dark-mode .ratio-toggle-track .track-btn:not(.is-active):hover {
+  background: #141b33;
+}
+
+/* Jika tombol utama masih pakai teal, ini mengembalikan ke gold */
+.dark-mode .btn-primary {
+  background: #b88900;
+  color: #10131f;
+  border: 1px solid rgba(255,255,255,.06);
+}
+.dark-mode .btn-primary:hover { background: #c79a10; }
+.dark-mode .btn-primary:active { background: #a87e00; }

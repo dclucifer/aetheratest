@@ -1,0 +1,343 @@
+/* Luxury Spacing Enhancement - Premium Feel for Aethera Studio */
+
+/* ========== ENHANCED SPACING SYSTEM ========== */
+
+/* Premium spacing variables */
+:root {
+  --spacing-luxury-xs: 8px;
+  --spacing-luxury-sm: 16px;
+  --spacing-luxury-md: 24px;
+  --spacing-luxury-lg: 32px;
+  --spacing-luxury-xl: 48px;
+  --spacing-luxury-2xl: 64px;
+  --spacing-luxury-3xl: 96px;
+}
+
+/* ========== CONTAINER ENHANCEMENTS ========== */
+
+/* Enhanced main container spacing */
+.main-container {
+  padding: var(--spacing-luxury-lg) var(--spacing-luxury-md);
+}
+
+@media (min-width: 768px) {
+  .main-container {
+    padding: var(--spacing-luxury-xl) var(--spacing-luxury-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-container {
+    padding: var(--spacing-luxury-2xl) var(--spacing-luxury-xl);
+  }
+}
+
+/* ========== FORM GROUP LUXURY SPACING ========== */
+
+/* Enhanced form group spacing */
+.form-group {
+  padding: var(--spacing-luxury-lg) !important;
+  margin-bottom: var(--spacing-luxury-md) !important;
+  border-radius: var(--radius-xl) !important;
+}
+
+.form-group:last-child {
+  margin-bottom: var(--spacing-luxury-xl) !important;
+}
+
+/* Form labels with luxury spacing */
+.form-group label {
+  margin-bottom: var(--spacing-luxury-sm) !important;
+  padding-left: var(--spacing-luxury-xs);
+}
+
+/* Form inputs with enhanced padding */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: var(--spacing-luxury-sm) var(--spacing-luxury-md) !important;
+  margin-bottom: var(--spacing-luxury-sm);
+}
+
+/* ========== BUTTON LUXURY SPACING ========== */
+
+/* Enhanced button padding */
+.btn-primary,
+.btn-secondary {
+  padding: var(--spacing-luxury-sm) var(--spacing-luxury-xl) !important;
+  margin: var(--spacing-luxury-xs) var(--spacing-luxury-xs);
+}
+
+/* Button groups with luxury spacing */
+.btn-group {
+  gap: var(--spacing-luxury-md);
+  margin: var(--spacing-luxury-lg) 0;
+}
+
+/* Icon buttons with enhanced spacing */
+.icon-btn {
+  padding: var(--spacing-luxury-sm) !important;
+  margin: var(--spacing-luxury-xs);
+}
+
+/* ========== CARD LUXURY SPACING ========== */
+
+/* Enhanced result card spacing */
+.result-card {
+  padding: var(--spacing-luxury-lg) !important;
+  margin: 0 !important;
+  border-radius: var(--radius-xl) !important;
+}
+
+/* Card title spacing */
+.result-card .result-title {
+  margin-bottom: var(--spacing-luxury-md) !important;
+  padding: var(--spacing-luxury-sm) var(--spacing-luxury-md) !important;
+  display: inline-flex;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 4px;
+}
+
+/* Card content spacing */
+.result-card .card-content {
+  padding: var(--spacing-luxury-md) 0;
+  line-height: 1.8;
+}
+
+/* Card actions spacing */
+.result-card .card-actions {
+  margin-top: var(--spacing-luxury-lg);
+  padding-top: var(--spacing-luxury-md);
+  gap: var(--spacing-luxury-sm);
+}
+
+/* ========== NAVIGATION LUXURY SPACING ========== */
+
+/* Enhanced header spacing */
+header {
+  padding: var(--spacing-luxury-md) var(--spacing-luxury-lg) !important;
+}
+
+/* Navigation links with luxury spacing */
+.nav-link {
+  padding: var(--spacing-luxury-sm) var(--spacing-luxury-md) !important;
+  margin: 0 var(--spacing-luxury-xs);
+}
+
+/* Mobile menu enhanced spacing */
+#mobile-menu {
+  padding: var(--spacing-luxury-md) !important;
+}
+
+#mobile-menu .nav-link {
+  padding: var(--spacing-luxury-md) var(--spacing-luxury-lg) !important;
+  margin-bottom: var(--spacing-luxury-xs);
+}
+
+/* ========== SECTION LUXURY SPACING ========== */
+
+/* Enhanced section spacing */
+section {
+  margin-bottom: var(--spacing-luxury-2xl);
+  padding: var(--spacing-luxury-xl) 0;
+}
+
+/* Title sections with luxury spacing */
+h1, h2, h3 {
+  margin-bottom: var(--spacing-luxury-lg) !important;
+  padding-bottom: var(--spacing-luxury-sm);
+}
+
+h4, h5, h6 {
+  margin-bottom: var(--spacing-luxury-md) !important;
+}
+
+/* Paragraph spacing */
+p {
+  margin-bottom: var(--spacing-luxury-md);
+  line-height: 1.7;
+}
+
+/* ========== GRID LUXURY SPACING ========== */
+
+/* Enhanced grid gaps */
+.grid {
+  gap: var(--spacing-luxury-lg) !important;
+}
+
+.grid-cols-1,
+.grid-cols-2,
+.grid-cols-3 {
+  gap: var(--spacing-luxury-md) !important;
+}
+
+/* Flex containers with luxury spacing */
+.flex {
+  gap: var(--spacing-luxury-sm);
+}
+
+.space-y-5 > * + * {
+  margin-top: var(--spacing-luxury-lg) !important;
+}
+
+.space-y-4 > * + * {
+  margin-top: var(--spacing-luxury-md) !important;
+}
+
+.space-y-3 > * + * {
+  margin-top: var(--spacing-luxury-sm) !important;
+}
+
+/* ========== MODAL LUXURY SPACING ========== */
+
+/* Enhanced modal spacing */
+.modal {
+  padding: var(--spacing-luxury-2xl) !important;
+}
+
+.modal-content {
+  padding: var(--spacing-luxury-xl) !important;
+  margin: var(--spacing-luxury-lg);
+}
+
+.modal-header {
+  padding-bottom: var(--spacing-luxury-lg);
+  margin-bottom: var(--spacing-luxury-lg);
+}
+
+.modal-footer {
+  padding-top: var(--spacing-luxury-lg);
+  margin-top: var(--spacing-luxury-lg);
+}
+
+/* ========== NOTIFICATION LUXURY SPACING ========== */
+
+/* Enhanced notification spacing */
+.notification {
+  padding: var(--spacing-luxury-lg) var(--spacing-luxury-xl) !important;
+  margin: var(--spacing-luxury-md) !important;
+}
+
+/* ========== QUICK TEMPLATE LUXURY SPACING ========== */
+
+/* Enhanced quick template spacing */
+.quick-template-btn {
+  padding: var(--spacing-luxury-lg) !important;
+  margin-bottom: var(--spacing-luxury-sm);
+}
+
+.quick-template-btn .template-icon {
+  margin-right: var(--spacing-luxury-md);
+}
+
+.quick-template-btn .template-title {
+  margin-bottom: var(--spacing-luxury-xs);
+}
+
+/* ========== RESPONSIVE LUXURY SPACING ========== */
+
+/* Mobile luxury spacing adjustments */
+@media (max-width: 768px) {
+  .main-container {
+    padding: var(--spacing-luxury-md) var(--spacing-luxury-sm);
+  }
+  
+  .form-group {
+    padding: var(--spacing-luxury-md) !important;
+    margin-bottom: var(--spacing-luxury-sm) !important;
+  }
+  
+  .result-card {
+    padding: var(--spacing-luxury-lg) !important;
+    margin-bottom: var(--spacing-luxury-md) !important;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    padding: var(--spacing-luxury-sm) var(--spacing-luxury-lg) !important;
+  }
+}
+
+/* Tablet luxury spacing adjustments */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .main-container {
+    padding: var(--spacing-luxury-lg) var(--spacing-luxury-md);
+  }
+  
+  .form-group {
+    padding: var(--spacing-luxury-lg) !important;
+  }
+  
+  .result-card {
+    padding: var(--spacing-luxury-xl) !important;
+  }
+}
+
+/* ========== BREATHING ROOM ENHANCEMENTS ========== */
+
+/* Add breathing room to dense areas */
+.dense-content {
+  padding: var(--spacing-luxury-xl) var(--spacing-luxury-lg);
+  margin: var(--spacing-luxury-lg) 0;
+}
+
+/* Enhanced list spacing */
+ul, ol {
+  padding-left: var(--spacing-luxury-lg);
+}
+
+li {
+  margin-bottom: var(--spacing-luxury-xs);
+  line-height: 1.6;
+}
+
+/* Enhanced table spacing */
+table {
+  border-spacing: 0 var(--spacing-luxury-xs);
+}
+
+td, th {
+  padding: var(--spacing-luxury-sm) var(--spacing-luxury-md);
+}
+
+/* ========== VISUAL HIERARCHY SPACING ========== */
+
+/* Create clear visual hierarchy with spacing */
+.content-hierarchy > *:first-child {
+  margin-top: 0;
+}
+
+.content-hierarchy > *:last-child {
+  margin-bottom: 0;
+}
+
+.content-hierarchy h1 + * {
+  margin-top: var(--spacing-luxury-xl);
+}
+
+.content-hierarchy h2 + * {
+  margin-top: var(--spacing-luxury-lg);
+}
+
+.content-hierarchy h3 + * {
+  margin-top: var(--spacing-luxury-md);
+}
+
+/* ========== LUXURY WHITESPACE ========== */
+
+/* Strategic whitespace for premium feel */
+.luxury-whitespace {
+  padding: var(--spacing-luxury-3xl) var(--spacing-luxury-2xl);
+}
+
+.luxury-section {
+  margin: var(--spacing-luxury-3xl) 0;
+  padding: var(--spacing-luxury-2xl) 0;
+}
+
+.luxury-divider {
+  margin: var(--spacing-luxury-2xl) 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+}

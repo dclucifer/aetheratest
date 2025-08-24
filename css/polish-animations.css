@@ -1,0 +1,344 @@
+/* Polish Animations - Premium Enhancement for Aethera Studio */
+
+/* ========== ENHANCED BUTTON TRANSITIONS ========== */
+
+/* Base button enhancements */
+.btn {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+/* Enhanced Primary Button */
+.btn-primary {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.btn-primary:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(255, 215, 0, 0.4),
+    0 16px 64px rgba(var(--accent-main-rgb), 0.3);
+  filter: brightness(1.1);
+}
+
+.btn-primary:active {
+  transform: translateY(-2px) scale(0.98);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced Secondary Button */
+.btn-secondary {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+}
+
+.btn-secondary:active {
+  transform: translateY(-1px) scale(0.98);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced Shine Effect */
+.btn-primary::before,
+.btn-secondary::before {
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover::before {
+  animation: shine-sweep 0.8s ease-out;
+}
+
+.btn-secondary:hover::before {
+  animation: shine-sweep-secondary 0.8s ease-out;
+}
+
+@keyframes shine-sweep {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes shine-sweep-secondary {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}
+
+/* ========== CARD ENTRANCE ANIMATIONS ========== */
+
+/* Enhanced card animations */
+.result-card {
+  animation: cardEntranceSlide 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center bottom;
+}
+
+.result-card:nth-child(1) { animation-delay: 0.1s; }
+.result-card:nth-child(2) { animation-delay: 0.2s; }
+.result-card:nth-child(3) { animation-delay: 0.3s; }
+.result-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes cardEntranceSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 0.8;
+    transform: translateY(-5px) scale(1.02);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* Enhanced card hover effects */
+.result-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.result-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.2),
+    0 0 40px rgba(255, 215, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+/* ========== FORM ELEMENT ANIMATIONS ========== */
+
+/* Enhanced form field focus */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    0 0 20px rgba(255, 215, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-main);
+}
+
+/* Form group entrance animation */
+.form-group {
+  animation: formGroupSlide 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.15s; }
+.form-group:nth-child(3) { animation-delay: 0.2s; }
+.form-group:nth-child(4) { animation-delay: 0.25s; }
+.form-group:nth-child(5) { animation-delay: 0.3s; }
+
+@keyframes formGroupSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ========== LOADING ANIMATIONS ========== */
+
+/* Enhanced loading spinner */
+.spinner {
+  animation: spinEnhanced 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes spinEnhanced {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+/* Button loading state enhancement */
+.btn-loading {
+  transform: scale(0.98);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========== MICRO-INTERACTIONS ========== */
+
+/* Enhanced icon button interactions */
+.icon-btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.icon-btn:hover {
+  transform: scale(1.15) rotate(5deg);
+  filter: brightness(1.2);
+}
+
+.icon-btn:active {
+  transform: scale(0.9) rotate(-2deg);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Copy button success animation */
+.copy-success {
+  animation: copySuccessPulse 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes copySuccessPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* ========== NAVIGATION ENHANCEMENTS ========== */
+
+/* Enhanced navigation links */
+.nav-link {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--accent-gradient);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+  color: var(--accent-main);
+}
+
+/* ========== RESPONSIVE ANIMATIONS ========== */
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .btn:hover {
+    transform: translateY(-2px) scale(1.01);
+  }
+  
+  .result-card:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+  
+  .icon-btn:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* ========== PAGE TRANSITION EFFECTS ========== */
+
+/* Page entrance animation */
+.main-container {
+  animation: pageEntrance 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pageEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+/* Staggered content reveal */
+.stagger-animation > * {
+  animation: staggerReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.stagger-animation > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-animation > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-animation > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-animation > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-animation > *:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes staggerReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

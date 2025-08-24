@@ -1,0 +1,749 @@
+/* Visual Fixes for Button Consistency and Typography */
+/* Fixes for specific button styling issues identified in UI review */
+
+/* === BUTTON CONSISTENCY FIXES === */
+
+/* Fix for 'Simpan Karakter Saat Ini' button */
+#save-character-preset-btn {
+  /* Enhanced styling for consistency */
+  background: var(--bg-glass) !important;
+  border: 1px solid var(--border-accent) !important;
+  color: var(--text-primary) !important;
+  padding: 0.75rem 1.25rem !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  border-radius: var(--radius-md) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  backdrop-filter: blur(10px) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  letter-spacing: 0.025em !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+#save-character-preset-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+  transition: left 0.6s ease;
+  z-index: 0;
+}
+
+#save-character-preset-btn:hover::before {
+  left: 100%;
+}
+
+#save-character-preset-btn:hover {
+  background: var(--bg-glass-hover) !important;
+  border-color: var(--accent-main) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  color: var(--accent-light) !important;
+}
+
+#save-character-preset-btn:active {
+  transform: translateY(-1px) !important;
+  transition: transform 0.1s ease !important;
+}
+
+/* Fix for 'Simpan Pengaturan Saat Ini sebagai Preset' button */
+#save-preset-btn {
+  /* Enhanced styling for consistency */
+  background: var(--bg-glass) !important;
+  border: 1px solid var(--border-accent) !important;
+  color: var(--text-primary) !important;
+  padding: 0.75rem 1.25rem !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  border-radius: var(--radius-md) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  backdrop-filter: blur(10px) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  letter-spacing: 0.025em !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+#save-preset-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+  transition: left 0.6s ease;
+  z-index: 0;
+}
+
+#save-preset-btn:hover::before {
+  left: 100%;
+}
+
+#save-preset-btn:hover {
+  background: var(--bg-glass-hover) !important;
+  border-color: var(--accent-main) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  color: var(--accent-light) !important;
+}
+
+#save-preset-btn:active {
+  transform: translateY(-1px) !important;
+  transition: transform 0.1s ease !important;
+}
+
+/* Enhanced styling for 'Buat Skrip Sekarang' button */
+#generate-btn {
+  /* Optimized spacing and typography */
+  padding: 1rem 1.75rem !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  letter-spacing: 0.05em !important;
+  line-height: 1.2 !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-premium), var(--accent-glow), 0 8px 32px rgba(255, 215, 0, 0.3) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+#generate-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+  z-index: 1;
+}
+
+#generate-btn:hover::before {
+  left: 100%;
+}
+
+#generate-btn:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: var(--shadow-premium), var(--shadow-glow), 0 16px 48px rgba(255, 215, 0, 0.4) !important;
+}
+
+#generate-btn:active {
+  transform: translateY(-2px) scale(0.98) !important;
+}
+
+/* === TYPOGRAPHY IMPROVEMENTS === */
+
+/* Enhanced font rendering and spacing */
+body {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  font-feature-settings: "kern" 1, "liga" 1 !important;
+}
+
+/* Improved line-height for better readability */
+.form-group label {
+  line-height: 1.5 !important;
+  letter-spacing: 0.025em !important;
+  font-weight: 500 !important;
+}
+
+/* Enhanced spacing for form elements */
+.form-group {
+  margin-bottom: 1.5rem !important;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  line-height: 1.6 !important;
+  letter-spacing: 0.01em !important;
+  padding: 0.875rem 1rem !important;
+}
+
+/* Improved button text spacing */
+button, .btn {
+  line-height: 1.4 !important;
+  letter-spacing: 0.025em !important;
+}
+
+/* Enhanced heading typography */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.3 !important;
+  letter-spacing: 0.02em !important;
+  font-weight: 600 !important;
+}
+
+/* Improved paragraph spacing */
+p {
+  line-height: 1.7 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* === GENERAL BUTTON STANDARDIZATION === */
+
+/* Ensure all secondary buttons follow luxury design system */
+.btn-secondary {
+  font-weight: 600 !important;
+  letter-spacing: 0.025em !important;
+  border-radius: var(--radius-md) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  backdrop-filter: blur(10px) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.btn-secondary:not(#save-character-preset-btn):not(#save-preset-btn)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.15), transparent);
+  transition: left 0.6s ease;
+  z-index: 0;
+}
+
+.btn-secondary:not(#save-character-preset-btn):not(#save-preset-btn):hover::before {
+  left: 100%;
+}
+
+/* Enhanced focus states for accessibility */
+button:focus,
+.btn:focus {
+  outline: 2px solid var(--accent-main) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.2) !important;
+}
+
+/* Improved disabled state styling */
+button:disabled,
+.btn:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* === RESPONSIVE IMPROVEMENTS === */
+
+@media (max-width: 768px) {
+  #save-character-preset-btn,
+  #save-preset-btn {
+    padding: 0.625rem 1rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  #generate-btn {
+    padding: 0.875rem 1.5rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .form-group {
+    margin-bottom: 1.25rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #save-character-preset-btn,
+  #save-preset-btn {
+    padding: 0.5rem 0.875rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  #generate-btn {
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+/* === SPACING AND ALIGNMENT FIXES === */
+
+/* Fix gap between "Create New Script" and Quick Start Templates */
+h2[data-lang-key="new_script_title"] {
+  margin-bottom: 1rem !important;
+}
+
+.space-y-5 {
+  gap: 1rem !important;
+}
+
+.space-y-5 > * + * {
+  margin-top: 1rem !important;
+}
+
+/* Fix Quick Start Templates icon and text alignment */
+.form-group .flex.items-center {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.form-group .flex.items-center span {
+  line-height: 1 !important;
+  vertical-align: middle !important;
+}
+
+.form-group .flex.items-center h3 {
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+
+/* Fix Quick Start Templates spacing */
+.quick-template-btn {
+  padding: 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+  min-height: 80px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+}
+
+.quick-template-btn .flex {
+  margin-bottom: 0.375rem !important;
+}
+
+.quick-template-btn p {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+/* Fix button text alignment */
+.btn-secondary,
+.btn-primary {
+  text-align: center !important;
+  margin-bottom: 0.375rem !important;
+}
+
+.btn-secondary:last-child {
+  margin: 0 !important;
+}
+
+/* Reduce excessive gap in Quick Start Templates grid */
+.form-group .grid.grid-cols-1.md\:grid-cols-2 {
+  gap: 0.75rem !important;
+}
+
+.grid {
+  gap: 0.75rem !important;
+}
+
+/* Fix preset section icon alignment with select fields */
+.form-group .flex.space-x-2 {
+  align-items: stretch !important;
+  gap: 0.5rem !important;
+  display: flex !important;
+}
+
+.form-group .flex.space-x-2 select {
+  flex: 1 !important;
+  height: 44px !important;
+  min-width: 0 !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+.form-group .flex.space-x-2 button {
+  flex-shrink: 0 !important;
+  height: 44px !important;
+  width: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.5rem !important;
+}
+
+/* Specific fix for manage presets button */
+#manage-presets-btn {
+  height: 44px !important;
+  width: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.5rem !important;
+  flex-shrink: 0 !important;
+}
+
+/* Fix for settings preset selector */
+#settings-preset-selector {
+  height: 44px !important;
+  min-width: 0 !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+  flex: 1 !important;
+}
+
+/* Fix character preset section alignment */
+#character-preset-controls {
+  margin-bottom: 1.5rem !important;
+}
+
+#character-preset-controls .flex {
+  align-items: stretch !important;
+  gap: 0.5rem !important;
+  display: flex !important;
+}
+
+#character-preset-controls select {
+  flex: 1 !important;
+  height: 44px !important;
+  min-width: 0 !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+#manage-character-presets-btn {
+  flex-shrink: 0 !important;
+  height: 44px !important;
+  width: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.5rem !important;
+}
+
+/* Fix for character preset selector */
+#character-preset-selector {
+  height: 44px !important;
+  min-width: 0 !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+  flex: 1 !important;
+}
+
+/* Fix "Simpan Karakter Saat Ini" button spacing and alignment */
+#save-character-preset-btn {
+  margin-top: 1.5rem !important;
+  margin-bottom: 1rem !important;
+  padding: 0.75rem 1rem !important;
+  min-height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+/* Horizontal layout with perfect alignment */
+.flex.items-start {
+  flex-direction: row !important;
+  align-items: center !important;
+  display: flex !important;
+}
+
+.flex.items-start .ml-3 {
+  margin-left: 0.75rem !important;
+  margin-top: 0 !important;
+}
+
+/* Restrict typography overrides to form layout only to avoid enlarging badges in result cards */
+.form-group .flex.items-start span {
+  margin-top: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  line-height: 1 !important;
+}
+
+/* Perfect alignment for header title */
+#app-title {
+  line-height: 1.75 !important;
+  margin: 0 !important;
+  font-size: 1.75rem !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Simple brand credit styling */
+.brand-credit {
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+.brand-credit .by,
+.brand-credit .dims,
+.brand-credit .credit-text {
+  font-size: 12px !important;
+  vertical-align: baseline !important;
+}
+
+/* Fix spacing between character sheet and aspect ratio */
+#aspect-ratio-group {
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Fix button alignment and spacing precision */
+#save-preset-btn {
+  margin-top: 0 !important;
+  margin-bottom: 1rem !important;
+  padding: 0.5rem 1rem !important;
+  min-height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure consistent button container spacing and alignment */
+.mt-6.pt-6.border-t {
+  margin-top: 1.5rem !important;
+  padding-top: 1.5rem !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem !important;
+}
+
+/* Cards layout tweaks */
+#output-panel {
+  align-content: start;
+}
+
+.mt-6.pt-6.border-t.space-y-4 button {
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix form group spacing in Quick Start Templates */
+.form-group.p-4 {
+  padding: 1rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.form-group.p-4 .mb-3 {
+  margin-bottom: 0.75rem !important;
+}
+
+.form-group.p-4 .mb-4 {
+  margin-bottom: 1rem !important;
+}
+
+/* === MODAL HEADER OVERLAP FIX === */
+
+/* Fix edit modal being covered by sticky header */
+#edit-modal .modal-content {
+  margin-top: 120px !important;
+  max-height: calc(95vh - 120px) !important;
+  overflow-y: auto !important;
+}
+
+/* Fix other modals that might have similar issues */
+#persona-modal .modal-content,
+#api-key-modal .modal-content,
+#confirm-modal .modal-content,
+#input-modal .modal-content,
+#manage-presets-modal .modal-content,
+#manage-character-presets-modal .modal-content,
+#about-modal .modal-content,
+#manual-modal .modal-content {
+  margin-top: 120px !important;
+  max-height: calc(95vh - 120px) !important;
+  overflow-y: auto !important;
+}
+
+/* Mobile specific fixes for modal header overlap */
+@media (max-width: 768px) {
+  #edit-modal .modal-content {
+    margin-top: 100px !important;
+    max-height: calc(92vh - 100px) !important;
+    margin-left: 8px !important;
+    margin-right: 8px !important;
+  }
+  
+  #persona-modal .modal-content,
+  #api-key-modal .modal-content,
+  #confirm-modal .modal-content,
+  #input-modal .modal-content,
+  #manage-presets-modal .modal-content,
+  #manage-character-presets-modal .modal-content,
+  #about-modal .modal-content,
+  #manual-modal .modal-content {
+    margin-top: 100px !important;
+    max-height: calc(92vh - 100px) !important;
+    margin-left: 8px !important;
+    margin-right: 8px !important;
+  }
+}
+
+/* Ensure modal content is scrollable if needed */
+.modal-content {
+  overflow-y: auto !important;
+}
+
+/* === ACCESSIBILITY ENHANCEMENTS === */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  #save-character-preset-btn,
+  #save-preset-btn,
+  #generate-btn,
+  .btn-secondary {
+    transition: none !important;
+  }
+  
+  #save-character-preset-btn::before,
+  #save-preset-btn::before,
+  #generate-btn::before,
+  .btn-secondary::before {
+    display: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  #save-character-preset-btn,
+  #save-preset-btn {
+    border-width: 2px !important;
+    border-color: var(--accent-main) !important;
+  }
+  
+  #generate-btn {
+    border: 2px solid #000 !important;
+  }
+}
+
+/* Overlay light mode adjustments for better contrast */
+body.light-mode #script-viewer-modal .p-3.rounded.bg-gray-900\/40 { background-color: rgba(255,255,255,0.75); border-color: rgba(0,0,0,0.08); }
+
+body.light-mode #script-viewer-modal .text-gray-300 { color: #1f2937; }
+body.light-mode #script-viewer-modal .text-gray-400 { color: #374151; }
+body.light-mode #script-viewer-modal .icon-copy { color: #6b7280; }
+body.light-mode #script-viewer-modal .icon-copy:hover { color: #111827; }
+
+/* Export dropdown in overlay */
+#script-viewer-modal .overlay-export-menu { backdrop-filter: blur(6px); }
+body.light-mode #script-viewer-modal .overlay-export-menu { background-color: rgba(255,255,255,0.9); border-color: rgba(0,0,0,0.08); }
+
+/* Overlay container background for light mode */
+body.light-mode #script-viewer-modal > div {
+  background-color: #ffffff;
+  color: #0f172a;
+  border-color: #e5e7eb;
+  box-shadow: 0 12px 30px rgba(16,24,40,0.12);
+}
+body.light-mode #script-viewer-modal h3 { color: #0f172a; letter-spacing: .2px; }
+body.light-mode #script-viewer-modal h4 { color: #111827; }
+body.light-mode #script-viewer-modal p { color: #334155; line-height: 1.6; }
+
+/* Section spacing + soft divider between Hook/Body/CTA */
+body.light-mode #script-viewer-content > div.mb-4 + div.mb-4 {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+}
+
+/* Shot cards: light background, subtle border & shadow */
+body.light-mode #script-viewer-modal .p-3.rounded.bg-gray-900\/40 {
+  background-color: rgba(255,255,255,0.85);
+  border-color: rgba(0,0,0,0.08);
+  box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 4px 12px rgba(16,24,40,.04);
+}
+
+/* A/B Variants wrapper and items */
+body.light-mode #script-viewer-modal .ab-variants { background-color: #f8fafc; border-color: #e5e7eb; }
+body.light-mode #script-viewer-modal .ab-variants .variant-item { box-shadow: 0 1px 1px rgba(16,24,40,.04); }
+
+/* Overlay action buttons */
+body.light-mode #script-viewer-modal .overlay-copy-btn {
+  background-color: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #e5e7eb;
+}
+body.light-mode #script-viewer-modal .overlay-copy-btn:hover { background-color: #eef2f7; }
+body.light-mode #script-viewer-modal .overlay-export-btn { box-shadow: 0 1px 2px rgba(16,24,40,.08); }
+body.light-mode #script-viewer-modal .overlay-edit-btn {
+  background-color: #fbbf24;
+  color: #1f2937;
+  border: 1px solid #f59e0b;
+}
+body.light-mode #script-viewer-modal .overlay-edit-btn:hover { background-color: #f59e0b; }
+
+/* Edit Modal - Light mode polish */
+body.light-mode #edit-modal .modal-content { background-color:#ffffff; color:#0f172a; border-color:#e5e7eb; }
+body.light-mode #edit-modal h3, body.light-mode #edit-modal h4 { color:#0f172a; }
+body.light-mode #edit-modal p, body.light-mode #edit-modal label { color:#334155; }
+
+/* Stage 1: original script panel and section checkboxes */
+body.light-mode #original-script-display-stage1 { background:#f8fafc; color:#334155; border-color:#e5e7eb; }
+body.light-mode #section-checkboxes { background:#f1f5f9; border:1px solid #e5e7eb; }
+body.light-mode #edit-modal .section-checkbox { accent-color:#111827; outline: 1px solid #cbd5e1; outline-offset: 1px; }
+
+/* Inputs */
+body.light-mode #edit-modal input[type="text"],
+body.light-mode #edit-modal textarea { background:#f8fafc; color:#0f172a; border-color:#e5e7eb; }
+
+/* Footer buttons */
+body.light-mode #edit-modal .bg-gray-800\/50 { background-color:#f8fafc; border-top:1px solid #e5e7eb; }
+body.light-mode #edit-modal #close-modal-btn,
+body.light-mode #edit-modal #cancel-revision-btn { background:#eef2f7; color:#334155; border:1px solid #e5e7eb; }
+
+/* Stage 2: before/after columns */
+body.light-mode #before-script-display,
+body.light-mode #after-script-display { background:#ffffff; color:#0f172a; border-color:#e5e7eb; box-shadow:0 1px 2px rgba(16,24,40,.05); }
+body.light-mode #after-script-display { border-color:#86efac; }
+
+/* Edit Modal - Light mode checkbox with black checkmark */
+body.light-mode #edit-modal .section-checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  border: 2px solid #111827;
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+}
+body.light-mode #edit-modal .section-checkbox:checked::after {
+  content: '✓';
+  color: #111827;
+  font-weight: 800;
+  font-size: 12px;
+  line-height: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+}
+
+/* Accessibility: focus-visible outlines */
+#script-viewer-modal button:focus-visible, #script-viewer-modal a:focus-visible,
+#edit-modal button:focus-visible, #edit-modal a:focus-visible {
+  outline: 3px solid #60a5fa; /* blue-400 */
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Tooltip base (will be toggled via data-attr) */
+.tooltip-hint {
+  position: absolute;
+  z-index: 50;
+  background: rgba(17,24,39,.95);
+  color: #fff;
+  font-size: 11px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  transform: translateY(8px);
+  display: none;
+}
+body.light-mode .tooltip-hint { background: rgba(15,23,42,.95); }
+[data-tooltip]:hover .tooltip-hint, [data-tooltip]:focus-within .tooltip-hint { display: block; }

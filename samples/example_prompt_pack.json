@@ -1,0 +1,24 @@
+{
+  "format": "prompt_pack",
+  "title": "Sample Script",
+  "rows": [
+    {
+      "scene": "hook",
+      "text": "3 alasan kenapa produk ini beda...",
+      "t2i": "portrait, studio light",
+      "i2v": "camera-pan-in, 2s"
+    },
+    {
+      "scene": "body1",
+      "text": "Detail 1...",
+      "t2i": "macro product",
+      "i2v": "cut to hand-held"
+    },
+    {
+      "scene": "cta",
+      "text": "Klik keranjang sekarang",
+      "t2i": "bold typography",
+      "i2v": "zoom out 1s"
+    }
+  ]
+}

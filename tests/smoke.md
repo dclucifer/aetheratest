@@ -1,0 +1,5 @@
+- Generate 3 opsi → toolbar muncul
+- Rank All → label Best of All muncul
+- Export All (ZIP) → JSON/SRT/CSV/platform_pack (+PNG jika dicentang)
+- Persona/Character quick picks → pin ★ & prioritas usage
+- Edit autosave → peringatan saat pindah tab

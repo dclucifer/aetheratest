@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="x-build" content="1755081200">
+<title>Aethera Studio - AI Virtual Director</title>
+<link rel="icon" type="image/png" href="assets/images/favicon.png">
+
+<script>
+  window.tailwind = window.tailwind || {};
+  window.tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: { DEFAULT:'#0284c7', fg:'#0c4a6e', soft:'#e0f2fe' }
+        },
+        boxShadow: {
+          soft: '0 1px 2px rgba(16,24,40,.06), 0 4px 12px rgba(16,24,40,.06)'
+        },
+        borderRadius: { '2xl':'20px' }
+      }
+    }
+  };
+</script>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="app.css?v=1755081200">
+<link rel="stylesheet" href="app.theme-b.css?v=1755081200">
+<link rel="stylesheet" href="css/icons.css">
+<link rel="stylesheet" href="css/polish-animations.css">
+<link rel="stylesheet" href="css/luxury-spacing.css">
+<link rel="stylesheet" href="css/luxury-shadows.css">
+<link rel="stylesheet" href="css/loading-animations.css">
+<link rel="stylesheet" href="css/parallax-effects.css">
+<link rel="stylesheet" href="css/visual-fixes.css">
+
+</head>
+<body class="light-mode antialiased">
+
+<!-- Premium Onboarding Tutorial Overlay -->
+<div id="onboarding-overlay" class="fixed inset-0 z-[200] bg-black/60 backdrop-blur-md hidden">
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="bg-glass border border-accent rounded-2xl p-8 max-w-2xl w-full backdrop-blur-20 shadow-premium">
+      <div class="text-center mb-6">
+        <div class="text-6xl mb-4">🎬</div>
+        <h2 class="text-3xl font-bold text-primary mb-2" data-lang-key="onboarding_welcome">Selamat Datang di Aethera Studio!</h2>
+        <p class="text-secondary" data-lang-key="onboarding_subtitle">Mari kita pelajari cara membuat konten viral dengan AI</p>
+      </div>
+      
+      <div id="onboarding-content" class="space-y-6">
+        <!-- Step 1: Introduction -->
+        <div class="onboarding-step" data-step="1">
+          <h3 class="text-xl font-semibold mb-4 text-accent" data-lang-key="onboarding_step1_title">🚀 Langkah 1: Pengenalan</h3>
+          <p class="text-secondary mb-4" data-lang-key="onboarding_step1_desc">Aethera Studio adalah AI Virtual Director yang membantu Anda membuat skrip konten viral untuk berbagai platform seperti TikTok, Instagram, YouTube, dan Shopee.</p>
+          <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
+            <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_key_features">✨ Fitur Utama:</h4>
+            <ul class="text-sm text-secondary space-y-1">
+              <li data-lang-key="onboarding_feature1">• Hook viral terbaru dari berbagai platform</li>
+              <li data-lang-key="onboarding_feature2">• CTA yang terbukti meningkatkan konversi</li>
+              <li data-lang-key="onboarding_feature3">• Character sheet untuk konsistensi karakter</li>
+              <li data-lang-key="onboarding_feature4">• Template siap pakai untuk pemula</li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Step 2: Basic Setup -->
+        <div class="onboarding-step hidden" data-step="2">
+          <h3 class="text-xl font-semibold mb-4 text-accent" data-lang-key="onboarding_step2_title">⚙️ Langkah 2: Pengaturan Dasar</h3>
+          <p class="text-secondary mb-4" data-lang-key="onboarding_step2_desc">Sebelum mulai, mari atur beberapa hal dasar:</p>
+          <div class="space-y-3">
+            <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
+              <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_platform_title">1. Pilih Platform Target</h4>
+              <p class="text-sm text-secondary" data-lang-key="onboarding_platform_desc">Setiap platform memiliki karakteristik unik. Pilih platform utama Anda untuk mendapatkan rekomendasi yang tepat.</p>
+            </div>
+            <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
+              <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_audience_title">2. Tentukan Target Audiens</h4>
+              <p class="text-sm text-secondary" data-lang-key="onboarding_audience_desc">Semakin spesifik target audiens, semakin efektif konten yang dihasilkan.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Step 3: Hook & CTA -->
+        <div class="onboarding-step hidden" data-step="3">
+          <h3 class="text-xl font-semibold mb-4 text-accent" data-lang-key="onboarding_step3_title">🎯 Langkah 3: Hook & CTA Viral</h3>
+          <p class="text-secondary mb-4" data-lang-key="onboarding_step3_desc">Ini adalah kunci sukses konten viral:</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
+              <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_hook_title">🪝 Hook (Pembuka)</h4>
+              <p class="text-sm text-secondary mb-2" data-lang-key="onboarding_hook_desc">Menarik perhatian dalam 3 detik pertama</p>
+              <div class="text-xs text-muted">
+                <strong data-lang-key="onboarding_example_label">Contoh:</strong> <span data-lang-key="onboarding_hook_example">"Rahasia yang tidak diberitahu influencer..."</span>
+              </div>
+            </div>
+            <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
+              <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_cta_title">📢 CTA (Call to Action)</h4>
+              <p class="text-sm text-secondary mb-2" data-lang-key="onboarding_cta_desc">Mengarahkan audiens untuk bertindak</p>
+              <div class="text-xs text-muted">
+                <strong data-lang-key="onboarding_example_label">Contoh:</strong> <span data-lang-key="onboarding_cta_example">"Klik link di bio untuk diskon 50%!"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Step 4: Character Sheet -->
+        <div class="onboarding-step hidden" data-step="4">
+          <h3 class="text-xl font-semibold mb-4 text-accent" data-lang-key="onboarding_step4_title">👤 Langkah 4: Character Sheet</h3>
+          <p class="text-secondary mb-4" data-lang-key="onboarding_step4_desc">Untuk konsistensi karakter di semua konten Anda:</p>
+          <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
+            <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_why_important">Mengapa Penting?</h4>
+            <ul class="text-sm text-secondary space-y-1">
+              <li data-lang-key="onboarding_benefit1">• Membangun personal branding yang kuat</li>
+              <li data-lang-key="onboarding_benefit2">• Audiens mudah mengenali gaya Anda</li>
+              <li data-lang-key="onboarding_benefit3">• AI menghasilkan konten yang konsisten</li>
+              <li data-lang-key="onboarding_benefit4">• Meningkatkan engagement dan loyalitas</li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Step 5: Ready to Start -->
+        <div class="onboarding-step hidden" data-step="5">
+          <h3 class="text-xl font-semibold mb-4 text-accent" data-lang-key="onboarding_step5_title">🎉 Siap Memulai!</h3>
+          <p class="text-secondary mb-4" data-lang-key="onboarding_step5_desc">Anda sudah siap membuat konten viral pertama Anda!</p>
+          <div class="bg-gradient-gold rounded-lg p-4 text-center">
+            <h4 class="font-bold text-secondary mb-2" data-lang-key="onboarding_pro_tips">💡 Tips Pro:</h4>
+            <p class="text-sm text-secondary/80" data-lang-key="onboarding_pro_tips_desc">Mulai dengan template "Quick Start" untuk hasil instan, lalu eksperimen dengan pengaturan advanced.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex justify-between items-center mt-8">
+        <button id="onboarding-prev" class="btn-secondary px-6 py-2 hidden" data-lang-key="onboarding_prev_button">← Sebelumnya</button>
+        <div class="flex space-x-2">
+          <div class="onboarding-dot w-2 h-2 rounded-full bg-accent" data-step="1"></div>
+          <div class="onboarding-dot w-2 h-2 rounded-full bg-muted" data-step="2"></div>
+          <div class="onboarding-dot w-2 h-2 rounded-full bg-muted" data-step="3"></div>
+          <div class="onboarding-dot w-2 h-2 rounded-full bg-muted" data-step="4"></div>
+          <div class="onboarding-dot w-2 h-2 rounded-full bg-muted" data-step="5"></div>
+        </div>
+        <button id="onboarding-next" class="btn-primary px-6 py-2" data-lang-key="onboarding_next_button">Selanjutnya →</button>
+      </div>
+      
+      <div class="text-center mt-4">
+        <button id="onboarding-skip" class="text-sm text-muted hover:text-secondary transition-colors" data-lang-key="onboarding_skip_button">Lewati tutorial</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="login-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/80 backdrop-blur-sm hidden">
+  <div class="w-full max-w-sm bg-gray-800 rounded-xl shadow-2xl border border-gray-700 p-8">
+    <div class="text-center mb-4">
+      <img src="assets/images/logo-full.png" alt="Aethera Studio" class="w-24 h-24 mx-auto mb-2">
+      <h3 class="text-2xl font-bold text-white" data-lang-key="welcome_title">Selamat Datang</h3>
+    </div>
+    <p class="text-gray-400 mb-6 text-sm" data-lang-key="login_message">Silakan masuk untuk menggunakan Aethera Studio</p>
+    <div class="space-y-4">
+      <div>
+        <label for="login-email" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="email_label">Email</label>
+        <input type="email" id="login-email" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-white">
+        </div>
+        <div>
+          <label for="login-password" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="password_label">Password</label>
+          <input type="password" id="login-password" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-white">
+          </div>
+        </div>
+        <div class="mt-8">
+          <button id="login-btn" class="w-full btn-primary text-black font-bold py-3 px-4 rounded-lg" data-lang-key="login_button">Masuk</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="app-container" class="hidden">
+      <header class="bg-gray-900/70 backdrop-blur-sm border-b border-gray-700/50 sticky top-0 z-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16">
+            <div class="flex items-start">
+              <img src="assets/images/logo-icon.png" alt="AS" class="w-8 h-8 mt-0.5">
+            <div class="ml-3 leading-tight">
+              <h1 id="app-title" class="text-xl font-bold">Aethera Studio</h1>
+            <div class="brand-credit">
+              built by <a href="https://www.threads.com/@dimslabs" target="_blank" rel="noopener" class="dims">DIMSLABS</a>
+            </div>
+          </div>
+        </div>
+            <nav class="hidden md:flex items-center space-x-2">
+              <button id="theme-toggle-btn" class="icon-btn">
+                <div id="theme-icon-sun" class="icon icon-md icon-sun hidden"></div>
+                <div id="theme-icon-moon" class="icon icon-md icon-moon hidden"></div>
+              </button>
+              <div class="mode-toggle-track">
+                  <button id="lang-id" class="track-btn">ID</button>
+                  <button id="lang-en" class="track-btn">EN</button>
+              </div>
+              <a href="#" id="nav-about"  class="nav-link" data-lang-key="nav_about">Tentang</a>
+              <a href="#" id="nav-generator" class="nav-link" data-lang-key="nav_generator">Generator</a>
+              <a href="#" id="nav-history" class="nav-link" data-lang-key="nav_history">Riwayat</a>
+              <a href="#" id="nav-settings" class="nav-link" data-lang-key="nav_settings">Pengaturan</a>
+              <a href="#" id="nav-manual" class="nav-link" data-lang-key="nav_manual">Manual</a>
+              <button id="logout-btn" class="text-sm" data-lang-key="logout_button">Keluar</button>
+            </nav>
+            <div class="md:hidden">
+              <button id="mobile-menu-button" class="icon-btn">
+                <div id="menu-open-icon" class="icon icon-lg icon-menu"></div>
+                <div id="menu-close-icon" class="icon icon-lg icon-close hidden"></div>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden pb-3">
+          <a href="#" id="mobile-nav-about"  class="block nav-link px-4 py-2 rounded-md mx-2" data-lang-key="nav_about">Tentang</a>
+          <a href="#" id="mobile-nav-generator" class="block nav-link text-base font-medium px-4 py-2 rounded-md mx-2 active" data-lang-key="nav_generator">Generator</a>
+          <a href="#" id="mobile-nav-history" class="block nav-link text-base font-medium text-gray-400 hover:text-white px-4 py-2 rounded-md mx-2" data-lang-key="nav_history">Riwayat</a>
+          <a href="#" id="mobile-nav-settings" class="block nav-link text-base font-medium text-gray-400 hover:text-white px-4 py-2 rounded-md mx-2" data-lang-key="nav_settings">Pengaturan</a>
+          <a href="#" id="mobile-nav-manual" class="block nav-link px-4 py-2 rounded-md mx-2" data-lang-key="nav_manual">Manual</a>
+          
+          <!-- Mobile Theme Toggle -->
+          <div class="px-4 py-2 mx-2">
+            <button id="mobile-theme-toggle-btn" class="flex items-center w-full p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 transition-colors">
+              <div id="mobile-theme-icon-sun" class="icon icon-md icon-sun mr-3 hidden"></div>
+              <div id="mobile-theme-icon-moon" class="icon icon-md icon-moon mr-3 hidden"></div>
+              <span id="mobile-theme-text" data-lang-key="theme_dark">Mode Gelap</span>
+            </button>
+          </div>
+          
+          <!-- Mobile Language Toggle -->
+          <div class="px-4 py-2 mx-2">
+            <div class="flex items-center">
+              <span class="text-sm text-gray-400 mr-3" data-lang-key="language_label">Bahasa:</span>
+              <div class="mode-toggle-track">
+                <button id="mobile-lang-id" class="track-btn">ID</button>
+                <button id="mobile-lang-en" class="track-btn">EN</button>
+              </div>
+            </div>
+          </div>
+          
+          <button id="mobile-logout-btn" class="block w-full text-left nav-link text-base font-medium text-gray-400 hover:text-white px-4 py-2 rounded-md mx-2" data-lang-key="logout_button">Keluar</button>
+        </div>
+      </header>
+      <div id="main-content" class="main-container">
+        <main id="generator-page">
+          <div class="lg:grid lg:grid-cols-10 lg:h-[calc(100vh-64px)]">
+            <div class="lg:col-span-4 bg-gray-900/50 lg:border-r lg:border-gray-800/50 p-6 lg:overflow-y-auto">
+              <div class="flex flex-col h-full">
+                <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white" data-lang-key="new_script_title">Create New Script</h2>
+                
+                <div class="space-y-5 flex-grow stagger-animation">
+                  <!-- Quick Start Templates -->
+                  <div class="form-group p-4 bg-gradient-to-r from-accent/10 to-accent-light/10 rounded-xl border border-accent/30">
+                    <div class="flex items-center justify-start mb-3">
+                      <span class="text-2xl mr-2 flex items-center">🚀</span>
+                      <h3 class="text-lg font-semibold text-primary flex items-center" data-lang-key="quick_start_templates">Quick Start Templates</h3>
+                    </div>
+                    <p class="text-sm text-secondary mb-4" data-lang-key="quick_start_description">Pilih template siap pakai untuk hasil instan!</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <button class="quick-template-btn p-3 bg-glass border border-accent/20 rounded-lg hover:border-accent/50 transition-all text-left" data-template="tiktok-viral">
+                        <div class="flex items-center mb-2">
+                          <span class="text-lg mr-2">🎵</span>
+                          <span class="font-semibold text-primary" data-lang-key="template_tiktok_title">TikTok Viral</span>
+                        </div>
+                        <p class="text-xs text-secondary" data-lang-key="template_tiktok_desc">Hook kuat + trending sound + CTA engaging</p>
+                      </button>
+                      <button class="quick-template-btn p-3 bg-glass border border-accent/20 rounded-lg hover:border-accent/50 transition-all text-left" data-template="shopee-sales">
+                        <div class="flex items-center mb-2">
+                          <span class="text-lg mr-2">🛒</span>
+                          <span class="font-semibold text-primary" data-lang-key="template_shopee_title">Shopee Sales</span>
+                        </div>
+                        <p class="text-xs text-secondary" data-lang-key="template_shopee_desc">Fokus produk + urgency + direct purchase</p>
+                      </button>
+                      <button class="quick-template-btn card-parallax p-3 bg-glass border border-accent/20 rounded-lg hover:border-accent/50 transition-all text-left" data-template="ig-story">
+                        <div class="flex items-center mb-2">
+                          <span class="text-lg mr-2">📸</span>
+                          <span class="font-semibold text-primary" data-lang-key="template_ig_title">IG Story</span>
+                        </div>
+                        <p class="text-xs text-secondary" data-lang-key="template_ig_desc">Visual menarik + swipe up + engagement</p>
+                      </button>
+                      <button class="quick-template-btn card-parallax p-3 bg-glass border border-accent/20 rounded-lg hover:border-accent/50 transition-all text-left" data-template="youtube-review">
+                        <div class="flex items-center mb-2">
+                          <span class="text-lg mr-2">📺</span>
+                          <span class="font-semibold text-primary" data-lang-key="template_youtube_title">YouTube Review</span>
+                        </div>
+                        <p class="text-xs text-secondary" data-lang-key="template_youtube_desc">Review mendalam + pros/cons + recommendation</p>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group parallax-trigger p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
+                    <label for="settings-preset-selector" class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="preset_settings_label">Preset Pengaturan</label>
+                    <div class="flex space-x-2">
+                      <select id="settings-preset-selector" class="w-full">
+                        <option value="" data-lang-key="load_preset_option">-- Muat Preset --</option>
+                      </select>
+                      <button id="manage-presets-btn" class="p-2 btn-secondary rounded-md" title="Kelola Preset">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" /></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="content_mode_label">Mode Konten</label><div class="mode-toggle-track"><button id="mode-single" class="track-btn is-active" data-lang-key="mode_post">Post</button><button id="mode-carousel" class="track-btn" data-lang-key="mode_carousel">Carousel</button></div>
+                    <div id="script-count-group" class="form-group">
+                      <label for="script-count" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="script_options_label">Jumlah Opsi Skrip</label>
+                      <select id="script-count" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                        <option>1</option>
+                        <option selected>2</option>
+                        <option>3</option>
+                      </select>
+                    </div>
+
+                    <div id="duration-group" class="form-group">
+                      <label for="script-duration" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="video_duration_label">Durasi Video (Detik)</label>
+                      <select id="script-duration" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                        <option value="15" data-lang-key="duration_15_seconds">~15 Detik (Reels/Shorts Cepat)</option>
+                        <option value="30" selected data-lang-key="duration_30_seconds">~30 Detik (Standar)</option>
+                        <option value="60" data-lang-key="duration_60_seconds">~60 Detik (Panjang)</option>
+                      </select>
+                    </div>
+
+                    <div id="slide-count-group" class="form-group hidden">
+                      <label for="slide-count" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="slide_count_label">Jumlah Slide</label>
+                      <select id="slide-count" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                        <option>3</option>
+                        <option>4</option>
+                        <option selected>5</option>
+                      </select>
+                    </div>
+                    <div id="carousel-template-group" class="form-group hidden">
+                      <label for="carousel-template" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="carousel_template_label">Template Struktur Carousel</label>
+                      <select id="carousel-template" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                        <option value="auto" data-lang-key="template_auto">Otomatis (Default)</option>
+                        <option value="pas" data-lang-key="template_pas">Problem-Agitate-Solution (PAS)</option>
+                        <option value="feature_benefit" data-lang-key="template_feature_benefit">Fitur & Manfaat</option>
+                        <option value="listicle" data-lang-key="template_listicle">Daftar / Listicle</option>
+                      </select>
+                      <p class="text-xs text-gray-500 mt-1" data-lang-key="carousel_template_helper">Pilih alur cerita untuk carousel Anda.</p>
+                    </div>
+                    <div class="form-group"><label for="product-name" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="product_name_label">Nama Produk</label><input type="text" id="product-name" required class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white placeholder-gray-500 transition" data-lang-key="product_name_placeholder" placeholder="Contoh: Headphone Gaming Rexus F1"></div>
+                    <div class="form-group"><label for="product-desc" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="product_desc_label">Detailed Product Description</label><textarea id="product-desc" rows="3" required class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white placeholder-gray-500 transition" data-lang-key="product_desc_placeholder" placeholder="Paste details, key features, and specs here..."></textarea></div>
+                    <div class="form-group">
+                      <label for="product-image" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="product_image_label">Product Image (Optional)</label>
+                      <div class="flex items-center space-x-2">
+                        <input type="file" id="product-image" class="hidden" accept="image/png, image/jpeg, image/webp">
+                          <label for="product-image" class="w-full cursor-pointer text-center bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-400 hover:bg-gray-700 hover:text-white transition" data-lang-key="choose_image_button">Pilih Gambar...</label>
+                          <div id="image-loader" class="hidden"><div class="icon icon-md icon-spinner text-blue-400"></div></div>
+                        </div>
+                        <div id="image-preview-container" class="hidden mt-2 relative">
+                          <img id="image-preview" class="max-w-full h-auto rounded-md" src="" alt="Preview Gambar Produk">
+                            <button id="remove-image-btn" class="absolute top-2 right-2 bg-gray-900/50 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors">
+                              <div class="icon icon-sm icon-close"></div>
+                            </button>
+                          </div>
+                          <p id="image-helper" class="text-xs text-gray-500 mt-1" data-lang-key="image_helper_text">Upload gambar untuk analisis visual AI yang akurat.</p>
+                        </div>
+                        <div class="form-group">
+                          <label for="product-category" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="product_category_label">Kategori Produk</label>
+                          <select id="product-category" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                            <option value="fashion" data-lang-key="category_fashion">Fashion & Pakaian</option>
+                            <option value="accessories" data-lang-key="category_accessories">Aksesori & Perhiasan</option>
+                            <option value="beauty" data-lang-key="category_beauty">Kecantikan & Skincare</option>
+                            <option value="electronics" data-lang-key="category_electronics">Elektronik & Gadget</option>
+                            <option value="food" data-lang-key="category_food">Makanan & Minuman</option>
+                            <option value="household" data-lang-key="category_household">Peralatan Rumah Tangga</option>
+                            <option value="other" data-lang-key="category_other">Lainnya (Umum)</option>
+                          </select>
+                        </div>
+
+                        <div id="visual-strategy-group" class="form-group"><label class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="visual_strategy_label">Strategi Visual Model<span class="tooltip" data-tooltip="Standar: Visual umum. Faceless: Tanpa wajah. Karakter: Menggunakan model spesifik.">(?)</span></label><div class="ratio-toggle-track"> <button id="strategy-default" class="track-btn" data-lang-key="strategy_default">Standar</button><button id="strategy-faceless" class="track-btn" data-lang-key="strategy_faceless">Faceless</button><button id="strategy-character" class="track-btn" data-lang-key="strategy_character">Karakter</button></div></div>
+                        <div id="character-preset-controls" class="hidden form-group p-3 bg-yellow-900/40 rounded-lg border border-yellow-800/70">
+                          <label for="character-preset-selector" class="block text-sm font-medium text-yellow-300 mb-2" data-lang-key="character_preset_label">Preset Karakter</label>
+                          <div id="character-quick-picks" class="flex flex-wrap gap-2 mb-2"></div>
+                          <div class="flex space-x-2">
+                            <select id="character-preset-selector" class="w-full">
+                              <option value="" data-lang-key="load_character_option">-- Muat Karakter --</option>
+                            </select>
+                            <button id="manage-character-presets-btn" class="p-2 btn-secondary rounded-md" title="Kelola Preset Karakter">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" /></svg>
+                            </button>
+                          </div>
+                        </div>
+                        <div id="character-mode-group" class="form-group hidden">
+                          <label for="character-mode" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="character_mode_label">Mode Karakter</label>
+                          <select id="character-mode" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                            <option value="single" data-lang-key="mode_single">Model Tunggal</option>
+                            <option value="couple" data-lang-key="mode_couple">Couple (2 Model)</option>
+                            <option value="group" data-lang-key="mode_group">Keluarga/Grup (2+ Model)</option>
+                          </select>
+                        </div>
+                        <div id="dynamic-character-sheet-area" class="space-y-6"></div>
+                        <!-- Editing banner (character presets) injected before dynamic area -->
+                        <!-- <div id="character-edit-banner" class="hidden p-2 rounded-md bg-amber-900/30 border border-amber-700/50 text-xs text-amber-200 flex items-center justify-between">
+                          <span id="character-edit-label" data-lang-key="editing_character_preset_banner">Editing character preset:</span>
+                          <div class="flex gap-2">
+                            <button id="char-preset-save-changes-btn" class="px-2 py-1 rounded bg-amber-600 hover:bg-amber-700 text-white text-xs" data-lang-key="save_changes_button">Save Changes</button>
+                            <button id="char-preset-save-as-new-btn" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 text-white text-xs" data-lang-key="save_as_new_button">Save As New</button>
+                            <button id="char-preset-cancel-edit-btn" class="px-2 py-1 rounded bg-zinc-600 hover:bg-zinc-500 text-white text-xs" data-lang-key="cancel_edit_button">Cancel</button>
+                          </div>
+                        </div> -->
+
+                        <div id="interaction-description-container" class="form-group hidden mt-4">
+                          <label for="interaction-description" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="interaction_description_label">Deskripsi Interaksi Kunci (Opsional)</label>
+                          <textarea id="interaction-description" rows="3" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white placeholder-gray-500 transition" placeholder="Contoh: A young couple, Kenji and Luna, standing close together, smiling affectionately at each other..."></textarea>
+                        </div>
+                        <div id="aspect-ratio-group" class="form-group"><label class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="aspect_ratio_label">Aspek Rasio</label><div class="ratio-toggle-track"><button id="ratio-916" class="track-btn is-active">📱 9:16</button><button id="ratio-11"  class="track-btn">🖼️ 1:1</button><button id="ratio-169" class="track-btn">🎬 16:9</button></div><p class="text-xs text-gray-500 mt-1" data-lang-key="aspect_ratio_helper">Pilih rasio yang sesuai dengan platform target Anda.</p></div>
+                        <div class="form-group"><label for="writing-style" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="writing_style_label">Gaya Penulisan</label><select id="writing-style" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                          <option value="persuasive" data-lang-key="style_persuasive">Persuasif & Menjual</option>
+                          <option value="storytelling" data-lang-key="style_storytelling">Storytelling (Bercerita)</option>
+                          <option value="informative" data-lang-key="style_informative">Edukatif & Informatif</option>
+                        </select></div>
+                        <div class="form-group"><label for="tone-vibe" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="tone_vibe_label">Tone & Vibe</label><select id="tone-vibe" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                          <option value="professional" data-lang-key="tone_professional">Profesional & Informatif</option>
+                          <option value="funny" data-lang-key="tone_funny">Lucu & Jenaka</option>
+                          <option value="luxury" data-lang-key="tone_luxury">Mewah & Elegan</option>
+                          <option value="urgent" data-lang-key="tone_urgent">Mendesak & FOMO</option>
+                          <option value="inspiring" data-lang-key="tone_inspiring">Inspiratif & Motivasi</option>
+                          <option value="calm" data-lang-key="tone_calm">Tenang & ASMR</option>
+                        </select></div>
+                        <div class="form-group">
+                          <div class="flex justify-between items-center mb-1"><label for="creative-freedom" class="block text-sm font-medium text-gray-300" data-lang-key="creativity_level_label">Tingkat Kreativitas AI</label><span id="freedom-value" class="text-xs font-mono text-gray-400">0.7 (Seimbang)</span></div><input type="range" id="creative-freedom" min="0.1" max="1.0" step="0.1" value="0.7" class="w-full h-2 rounded-lg appearance-none cursor-pointer range-slider">
+                        </div>
+                        <div class="form-group">
+                          <label for="persona-selector" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="ai_persona_label">Persona AI (Opsional)</label>
+                          <div id="persona-quick-picks" class="flex flex-wrap gap-2 mb-2"></div>
+            <select id="persona-selector" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                            <option value="" data-lang-key="persona_default">Default (Tanpa Persona)</option>
+                          </select>
+                          <p id="persona-description-display" class="hidden mt-2 text-xs text-gray-500 bg-gray-800 p-2 rounded-md"></p>
+                          <p class="text-xs text-gray-500 mt-1" data-lang-key="persona_helper">Pilih persona yang tersimpan di Pengaturan.</p>
+                        </div>
+                          <!-- Editing preset banner (settings) -->
+                          <!-- <div id="preset-edit-banner" class="hidden p-2 rounded-md bg-blue-900/30 border border-blue-700/50 text-xs text-blue-200 flex items-center justify-between">
+                            <span id="preset-edit-label" data-lang-key="editing_preset_banner">Editing preset:</span>
+                            <div class="flex gap-2">
+                              <button id="preset-save-changes-btn" class="px-2 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-xs" data-lang-key="save_changes_button">Save Changes</button>
+                              <button id="preset-save-as-new-btn" class="px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 text-white text-xs" data-lang-key="save_as_new_button">Save As New</button>
+                              <button id="preset-cancel-edit-btn" class="px-2 py-1 rounded bg-zinc-600 hover:bg-zinc-500 text-white text-xs" data-lang-key="cancel_edit_button">Cancel</button>
+                            </div>
+                          </div> -->
+                          <div class="form-group"><label for="target-audience" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="target_audience_label">Target Audience</label><select id="target-audience" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                            <option value="general" data-lang-key="audience_general">Umum</option>
+                            <option value="young_pro" data-lang-key="audience_young_pro">Profesional Muda</option>
+                            <option value="students" data-lang-key="audience_students">Mahasiswa & Pelajar</option>
+                            <option value="parents" data-lang-key="audience_parents">Orang Tua & Keluarga</option>
+                            <option value="gamers" data-lang-key="audience_gamers">Gamers</option>
+                            <option value="fitness" data-lang-key="audience_fitness">Penggiat Olahraga / Fitness</option>
+                            <option value="foodies" data-lang-key="audience_foodies">Pecinta Kuliner</option>
+                            <option value="travelers" data-lang-key="audience_travelers">Traveler</option>
+                            <option value="fashion" data-lang-key="audience_fashion">Pecinta Fashion & Kecantikan</option>
+                            <option value="automotive" data-lang-key="audience_automotive">Pecinta Otomotif</option>
+                            <option value="pets" data-lang-key="audience_pets">Pecinta Hewan Peliharaan</option>
+                        </select></div>
+                        <div class="form-group"><label for="hook-type" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="hook_type_label">Jenis Kail (Hook)</label><select id="hook-type" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                          <optgroup label="🔥 Hook Klasik">
+                            <option value="hook_problem" data-lang-key="hook_problem">Pancingan Masalah (Problem Hook)</option>
+                            <option value="hook_target_call" data-lang-key="hook_target_call">Panggilan Target (Target Call Out)</option>
+                            <option value="hook_bold_claim" data-lang-key="hook_bold_claim">Klaim Berani (Bold Claim)</option>
+                            <option value="hook_curiosity" data-lang-key="hook_curiosity">Rasa Penasaran (Curiosity)</option>
+                            <option value="hook_social_proof" data-lang-key="hook_social_proof">Bukti Sosial (Social Proof)</option>
+                            <option value="hook_negativity_bias" data-lang-key="hook_negativity_bias">Negativity Bias</option>
+                          </optgroup>
+                          <optgroup label="⚡ Hook Viral 2025">
+                            <option value="hook_future_pacing" data-lang-key="hook_future_pacing">Future Pacing (Bayangkan Masa Depan)</option>
+                            <option value="hook_question" data-lang-key="hook_question">Pertanyaan Menggelitik</option>
+                            <option value="hook_solution" data-lang-key="hook_solution">Solusi Instan</option>
+                            <option value="hook_statistic" data-lang-key="hook_statistic">Statistik Mengejutkan</option>
+                            <option value="hook_experimental" data-lang-key="hook_experimental">Eksperimen/Challenge</option>
+                            <option value="hook_tension" data-lang-key="hook_tension">Berbasis Ketegangan</option>
+                            <option value="hook_surprise" data-lang-key="hook_surprise">Kejutan/Plot Twist</option>
+                            <option value="hook_list" data-lang-key="hook_list">Daftar/Listicle</option>
+                          </optgroup>
+                          <optgroup label="💎 Hook Premium">
+                            <option value="hook_story" data-lang-key="hook_story">Cerita Personal</option>
+                            <option value="hook_comparison" data-lang-key="hook_comparison">Perbandingan Dramatis</option>
+                            <option value="hook_mistake" data-lang-key="hook_mistake">Kesalahan Fatal</option>
+                            <option value="hook_secret" data-lang-key="hook_secret">Rahasia Terungkap</option>
+                            <option value="hook_transformation" data-lang-key="hook_transformation">Transformasi Luar Biasa</option>
+                          </optgroup>
+                        </select></div>
+                        <div class="form-group"><label for="cta-type" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="cta_type_label">Jenis CTA (Call-to-Action)</label><select id="cta-type" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
+                          <optgroup label="📱 Platform Spesifik">
+                            <option value="cta_general" data-lang-key="cta_general">Umum</option>
+                            <option value="cta_tiktok" data-lang-key="cta_tiktok">TikTok (Keranjang Kuning)</option>
+                            <option value="cta_shopee" data-lang-key="cta_shopee">Shopee (Keranjang Oren)</option>
+                            <option value="cta_instagram" data-lang-key="cta_instagram">Instagram/Threads (Link di Bio)</option>
+                            <option value="cta_youtube" data-lang-key="cta_youtube">YouTube (Subscribe & Tonton Video Lain)</option>
+                            <option value="cta_comment" data-lang-key="cta_comment">Mengarahkan ke Komentar</option>
+                          </optgroup>
+                          <optgroup label="🚀 CTA High-Converting">
+                            <option value="cta_urgency" data-lang-key="cta_urgency">Urgensi & FOMO</option>
+                            <option value="cta_scarcity" data-lang-key="cta_scarcity">Kelangkaan Terbatas</option>
+                            <option value="cta_social_proof_cta" data-lang-key="cta_social_proof_cta">Bukti Sosial dalam CTA</option>
+                            <option value="cta_benefit_focused" data-lang-key="cta_benefit_focused">Fokus Manfaat</option>
+                            <option value="cta_risk_reversal" data-lang-key="cta_risk_reversal">Jaminan Tanpa Risiko</option>
+                          </optgroup>
+                          <optgroup label="💡 CTA Kreatif">
+                            <option value="cta_curiosity_gap" data-lang-key="cta_curiosity_gap">Celah Rasa Penasaran</option>
+                            <option value="cta_exclusive" data-lang-key="cta_exclusive">Akses Eksklusif</option>
+                            <option value="cta_interactive" data-lang-key="cta_interactive">Interaktif & Engaging</option>
+                            <option value="cta_storytelling" data-lang-key="cta_storytelling">Berbasis Cerita</option>
+                            <option value="cta_challenge" data-lang-key="cta_challenge">Tantangan/Challenge</option>
+                          </optgroup>
+                        </select></div>
+                      </div>
+                      <div class="mt-6 pt-6 border-t border-gray-800 space-y-4">
+                        <button id="save-preset-btn" class="w-full btn-secondary text-sm font-semibold py-2 rounded-md" data-lang-key="save_preset_button">💾 Save Current Settings as Preset</button>
+                        <button id="generate-btn" class="w-full flex items-center justify-center btn-primary">
+                          <span id="btn-text" data-lang-key="generate_script_button">⚡ Buat Skrip Sekarang!</span>
+                          <div id="btn-loader" class="icon icon-md icon-spinner text-white hidden -ml-1 mr-3"></div>
+                        </button>
+                        <div id="download-all-container" class="hidden"><label class="block text-xs font-medium text-gray-400 mb-2 text-center" data-lang-key="download_all_label">Download Semua Hasil</label><div class="flex space-x-2"><button data-format="pdf" class="download-all-btn btn-secondary w-full py-2 text-sm rounded-md">PDF</button><button data-format="docx" class="download-all-btn btn-secondary w-full py-2 text-sm rounded-md">DOCX</button><button data-format="xlsx" class="download-all-btn btn-secondary w-full py-2 text-sm rounded-md">XLSX</button></div></div>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                  <div class="lg:col-span-6 p-6 md:p-8 lg:overflow-y-auto">
+<div id="results-toolbar" class="hidden items-center justify-between bg-gray-900/50 border border-gray-800 rounded-xl p-3 mb-2">
+  <div class="flex items-center gap-3">
+    <button id="rank-all-btn" class="px-3 py-1.5 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white text-sm" data-lang-key="rank_button_default">Rank All</button>
+  </div>
+  </div>
+                    <div id="output-panel" class="grid grid-cols-1 gap-4">
+                      <div id="initial-state" class="flex flex-col items-center justify-center text-center text-gray-500 py-16">
+                        <div class="text-6xl mb-4">🚀</div>
+                        <h3 class="text-xl font-semibold text-gray-300" data-lang-key="initial_state_title">Your Smart Script Will Appear Here</h3>
+                        <p class="max-w-sm mt-2" data-lang-key="initial_state_message">Fill out the form on the side (or above on mobile) and let our AI craft a viral 2025-ready script for you!</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </main>
+              <main id="history-page" class="hidden p-6 md:p-10 max-w-4xl mx-auto w-full">
+                <div class="flex justify-between items-center mb-4">
+                  <h2 class="text-3xl font-bold text-white" data-lang-key="history_title">Riwayat Skrip</h2>
+                  <div class="flex space-x-2">
+                    <button id="delete-selected-btn" class="btn-secondary text-sm font-semibold px-3 py-1.5 rounded-md hidden" data-lang-key="delete_selected_button">Hapus Pilihan</button>
+                    <button id="delete-all-btn" class="btn-secondary text-sm font-semibold px-3 py-1.5 rounded-md" data-lang-key="delete_all_button">Hapus Semua</button>
+                  </div>
+                </div>
+                
+                <!-- Post Type Tabs -->
+                <div class="mb-6">
+                  <div class="flex space-x-1 bg-gray-900/50 p-1 rounded-lg border border-gray-700/50">
+                    <button id="tab-all" class="post-type-tab active flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200" data-filter="all">
+                      <span class="flex items-center justify-center space-x-2">
+                        <span>📋</span>
+                        <span>Semua Post</span>
+                        <span id="count-all" class="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+                      </span>
+                    </button>
+                    <button id="tab-single" class="post-type-tab flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200" data-filter="single">
+                      <span class="flex items-center justify-center space-x-2">
+                        <span>📄</span>
+                        <span data-lang-key="single_post_tab">Single Post</span>
+                        <span id="count-single" class="bg-gray-600 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+                      </span>
+                    </button>
+                    <button id="tab-carousel" class="post-type-tab flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200" data-filter="carousel">
+                      <span class="flex items-center justify-center space-x-2">
+                        <span>🎠</span>
+                        <span data-lang-key="carousel_post_tab">Carousel Post</span>
+                        <span id="count-carousel" class="bg-gray-600 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Search and Filter Controls -->
+                <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700/50 mb-6">
+                  <div class="flex flex-col md:flex-row gap-4 items-center">
+                    <div class="flex-1">
+                      <input type="text" id="history-search" data-lang-key-placeholder="search_history_placeholder" placeholder="Cari berdasarkan nama produk..." class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white placeholder-gray-500 transition focus:border-blue-500">
+                    </div>
+                    <div class="flex items-center space-x-4">
+                      <label class="flex items-center space-x-2 text-sm text-gray-300">
+                        <input type="checkbox" id="select-all-history" class="h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-600">
+                        <span data-lang-key="select_all_label">Pilih Semua</span>
+                      </label>
+                      <select id="history-sort" class="bg-gray-800 border border-gray-700 rounded-md p-2 text-white text-sm">
+                        <option value="newest" data-lang-key="sort_newest">Terbaru</option>
+                        <option value="oldest" data-lang-key="sort_oldest">Terlama</option>
+                        <option value="name" data-lang-key="sort_name">Nama A-Z</option>
+                      </select>
+                      <label class="flex items-center space-x-2 text-sm text-gray-300">
+                        <input type="checkbox" id="group-by-product" class="h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-600">
+                        <span data-lang-key="group_by_product_label">📁 Kelompokkan</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                
+                <div id="history-panel" class="space-y-6"></div>
+                
+                <!-- Empty State for History -->
+                <div id="history-empty-state" class="hidden text-center py-16">
+                  <div class="empty-state-icon mb-6">
+                    <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" viewBox="0 0 120 120">
+                      <!-- Clock/History illustration -->
+                      <g transform="translate(60,60)">
+                        <!-- Clock face -->
+                        <circle cx="0" cy="0" r="30" stroke="currentColor" stroke-width="2" fill="none" opacity="0.3"/>
+                        <!-- Clock numbers -->
+                        <circle cx="0" cy="-25" r="1.5" fill="currentColor" opacity="0.4"/>
+                        <circle cx="25" cy="0" r="1.5" fill="currentColor" opacity="0.4"/>
+                        <circle cx="0" cy="25" r="1.5" fill="currentColor" opacity="0.4"/>
+                        <circle cx="-25" cy="0" r="1.5" fill="currentColor" opacity="0.4"/>
+                        <!-- Clock hands -->
+                        <line x1="0" y1="0" x2="0" y2="-15" stroke="currentColor" stroke-width="2" opacity="0.5">
+                          <animateTransform attributeName="transform" type="rotate" values="0;360" dur="8s" repeatCount="indefinite"/>
+                        </line>
+                        <line x1="0" y1="0" x2="12" y2="0" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+                          <animateTransform attributeName="transform" type="rotate" values="0;360" dur="60s" repeatCount="indefinite"/>
+                        </line>
+                        <!-- Center dot -->
+                        <circle cx="0" cy="0" r="2" fill="currentColor" opacity="0.6"/>
+                        <!-- Floating documents -->
+                        <g opacity="0.3">
+                          <rect x="-45" y="-15" width="8" height="10" rx="1" fill="currentColor">
+                            <animate attributeName="y" values="-15;-20;-15" dur="3s" repeatCount="indefinite"/>
+                          </rect>
+                          <rect x="35" y="5" width="8" height="10" rx="1" fill="currentColor">
+                            <animate attributeName="y" values="5;0;5" dur="4s" repeatCount="indefinite"/>
+                          </rect>
+                          <rect x="-10" y="-45" width="8" height="10" rx="1" fill="currentColor">
+                            <animate attributeName="y" values="-45;-50;-45" dur="3.5s" repeatCount="indefinite"/>
+                          </rect>
+                        </g>
+                      </g>
+                    </svg>
+                  </div>
+                  <h3 class="empty-state-title text-xl font-semibold text-gray-300 mb-3" data-lang-key="history_empty_title">Belum Ada Riwayat</h3>
+                  <p class="empty-state-description text-gray-500 mb-8 max-w-sm mx-auto leading-relaxed" data-lang-key="history_empty_description">Skrip yang Anda generate akan tersimpan di sini untuk referensi di masa mendatang.</p>
+                  <button class="empty-state-action btn-primary px-6 py-3 text-sm font-semibold" onclick="switchToGenerator()" data-lang-key="history_empty_action">📝 Buat Skrip Pertama</button>
+                </div>
+                
+                <!-- Pagination Controls -->
+                <div id="history-pagination" class="flex justify-center items-center space-x-4 mt-8 hidden">
+                  <button id="prev-page" class="btn-secondary px-3 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <span data-lang-key="previous_page">← Sebelumnya</span>
+                  </button>
+                  <div id="page-info" class="text-gray-300 text-sm">
+                    <span data-lang-key="page_info">Halaman</span> <span id="current-page">1</span> <span data-lang-key="page_of">dari</span> <span id="total-pages">1</span>
+                  </div>
+                  <button id="next-page" class="btn-secondary px-3 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span data-lang-key="next_page">Selanjutnya →</span>
+                  </button>
+                </div>
+                
+                <!-- Back to Top Button -->
+                <button id="back-to-top" class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 opacity-0 pointer-events-none z-50">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                  </svg>
+                </button>
+              </main>
+              <main id="settings-page" class="hidden p-6 md:p-10 max-w-4xl mx-auto w-full">
+                <h2 class="text-3xl font-bold mb-8 text-white" data-lang-key="settings_title">Pengaturan</h2>
+                <div class="space-y-10">
+                  <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-700/50">
+                    <h3 class="text-xl font-semibold mb-4" data-lang-key="api_settings_title">Pengaturan API</h3>
+                    <div class="space-y-2">
+                      <label for="custom-api-key-settings" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="gemini_api_key_label">Kunci API Google Gemini Anda</label>
+                      <input type="password" id="custom-api-key-settings" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white placeholder-gray-500 transition" data-lang-key="gemini_api_key_placeholder" placeholder="Masukkan kunci API Anda di sini">
+                        <p class="text-xs text-gray-500 pt-1" data-lang-key="gemini_api_key_helper">Kosongkan untuk menggunakan kunci API bawaan. Dapatkan kunci API gratis di <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">Google AI Studio</a>.</p>
+                        <p id="api-status" class="text-xs font-semibold"></p>
+                      </div>
+                    </div>
+
+                    <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-700/50">
+
+                    <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-700/50">
+                      <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold" data-lang-key="persona_management_title">Manajemen Persona AI Anda</h3>
+                        <button id="add-persona-btn" class="btn-secondary text-sm font-semibold px-3 py-1.5 rounded-md" data-lang-key="add_new_persona_button">
+                          + Tambah Persona Baru
+                        </button>
+                      </div>
+                      <div id="persona-list-container" class="space-y-3">
+                      </div>
+                      <div class="mt-8 pt-6 border-t border-gray-700/50">
+                        <h4 class="text-lg font-semibold mb-3 text-gray-300" data-lang-key="choose_from_template">Pilih dari Template Persona</h4>
+                        <div id="default-persona-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-700/50">
+                      <h3 class="text-xl font-semibold mb-4" data-lang-key="system_prompt_title">Prompt Instruksi Sistem</h3>
+                      <p class="text-sm text-gray-400 mb-4" data-lang-key="system_prompt_helper">Ubah instruksi dasar yang diberikan kepada AI. Ini akan mengubah kepribadian dan gaya respons AI secara keseluruhan. Harap berhati-hati saat mengubah ini.</p>
+                      <textarea id="system-prompt" rows="12" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white placeholder-gray-500 transition"></textarea>
+                    </div>
+                    <button id="save-settings-btn" class="w-full flex items-center justify-center btn-primary text-black font-bold py-3 px-4 rounded-lg" data-lang-key="save_settings_button">Simpan Pengaturan</button>
+                  </div>
+                </main>
+              </div>
+              <div id="notification" class="fixed bottom-5 right-5 text-black text-sm font-bold py-2 px-4 rounded-lg shadow-lg opacity-0 transform translate-y-10 transition-all duration-500"></div>
+
+              <div id="edit-modal" class="fixed inset-0 z-30 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+                <div class="modal-content w-full max-w-4xl bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95 max-h-[90vh] flex flex-col">
+
+                  <div id="edit-modal-stage-1">
+                    <div class="p-6">
+                      <h3 id="edit-modal-title" class="text-xl font-bold text-white mb-4" data-lang-key="refine_script_title">Sempurnakan Skrip</h3>
+                      <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-400 mb-1" data-lang-key="original_version_label">Versi Asli (untuk Referensi)</label>
+                        <div id="original-script-display-stage1" class="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-gray-300 text-xs h-48 overflow-y-auto whitespace-pre-wrap">
+                        </div>
+                      </div>
+                      <p class="text-sm text-gray-400 mb-4" data-lang-key="regeneration_important_note">Pilih bagian mana yang ingin Anda regenerasi, lalu berikan instruksi revisi Anda di bawah.</p>
+
+                      <div id="section-checkboxes" class="flex items-center space-x-4 mb-4 p-3 bg-gray-900/50 rounded-md">
+                        <label class="flex items-center space-x-2 text-sm text-gray-300"><input type="checkbox" data-section="hook" class="section-checkbox h-4 w-4 rounded"><span data-lang-key="hook_title">HOOK</span></label>
+                        <label class="flex items-center space-x-2 text-sm text-gray-300"><input type="checkbox" data-section="body" class="section-checkbox h-4 w-4 rounded"><span data-lang-key="body_title">ISI KONTEN</span></label>
+                        <label class="flex items-center space-x-2 text-sm text-gray-300"><input type="checkbox" data-section="cta" class="section-checkbox h-4 w-4 rounded"><span data-lang-key="cta_title">CTA</span></label>
+                      </div>
+                      <div>
+                        <label for="revision-instruction" class="block text-sm font-medium text-gray-400 mb-1" data-lang-key="revision_instruction_label">Instruksi Revisi Anda</label>
+                        <input type="text" id="revision-instruction" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-white placeholder-gray-400" data-lang-key="revision_instruction_placeholder" placeholder="Contoh: Buat CTA lebih mendesak, tambahkan emoji">
+                        </div>
+                      </div>
+                      <div class="bg-gray-800/50 px-6 py-4 flex justify-end items-center space-x-3 rounded-b-xl">
+                        <button id="close-modal-btn" class="px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors" data-lang-key="cancel_button">Batal</button>
+                        <button id="regenerate-btn" class="px-4 py-2 text-sm font-semibold text-black btn-primary rounded-md transition-colors" data-lang-key="regenerate_button">✨ Regenerasi</button>
+                      </div>
+                    </div>
+
+                    <div id="edit-modal-stage-2" class="hidden flex-grow flex flex-col">
+                      <div class="p-6 flex-grow overflow-y-auto">
+                        <h3 class="text-xl font-bold text-white mb-4" data-lang-key="revision_compare_title">Perbandingan Revisi</h3>
+                        <div class="grid grid-cols-2 gap-6">
+                          <div>
+                            <h4 class="text-sm font-semibold text-gray-400 mb-2" data-lang-key="original_version_title">VERSI ASLI</h4>
+                            <div id="before-script-display" class="w-full bg-gray-900 border border-gray-700 rounded-md p-3 text-gray-300 text-xs h-64 overflow-y-auto whitespace-pre-wrap"></div>
+                          </div>
+                          <div>
+                            <h4 class="text-sm font-semibold text-green-400 mb-2" data-lang-key="new_version_title">VERSI BARU (HASIL REGENERASI)</h4>
+                            <div id="after-script-display" class="w-full bg-gray-900 border border-green-700/50 rounded-md p-3 text-gray-300 text-xs h-64 overflow-y-auto whitespace-pre-wrap"></div>
+                          </div>
+                        </div>
+                        <div class="mt-4">
+                          <label for="revision-instruction-stage2" class="block text-sm font-medium text-gray-400 mb-1" data-lang-key="revision_fix_instruction_label">Perbaiki Instruksi (Jika Perlu)</label>
+                          <input type="text" id="revision-instruction-stage2" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-white">
+                          </div>
+                        </div>
+                        <div class="bg-gray-800/50 px-6 py-4 flex justify-between items-center rounded-b-xl">
+                          <button id="cancel-revision-btn" class="px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors" data-lang-key="cancel_button">Batal</button>
+                          <div class="flex space-x-3">
+                            <button id="regenerate-again-btn" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors" data-lang-key="regenerate_again_button">Regenerasi Ulang</button>
+                            <button id="apply-changes-btn" class="px-4 py-2 text-sm font-semibold text-black btn-primary rounded-md transition-colors" data-lang-key="apply_changes_button">Terapkan Perubahan</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="persona-modal" class="fixed inset-0 z-30 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
+                    <div class="modal-content w-full max-w-lg bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95">
+                      <div class="p-6">
+                        <h3 id="persona-modal-title" class="text-xl font-bold text-white mb-4" data-lang-key="add_new_persona_modal_title">Tambah Persona Baru</h3>
+                        <div class="space-y-4">
+                          <div>
+                            <label for="persona-name" class="block text-sm font-medium text-gray-400 mb-1" data-lang-key="persona_name_label">Nama Persona</label>
+                            <input type="text" id="persona-name" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-white" data-lang-key="persona_name_placeholder" placeholder="Contoh: Profesional & Berwibawa">
+                            </div>
+                            <div>
+                              <label for="persona-desc" class="block text-sm font-medium text-gray-400 mb-1" data-lang-key="persona_desc_label">Deskripsi Detail Persona (Instruksi untuk AI)</label>
+                              <textarea id="persona-desc" rows="5" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-white" data-lang-key="persona_desc_placeholder" placeholder="Contoh: Selalu gunakan bahasa Indonesia yang baku dan formal. Sapa audiens dengan 'Anda'. Hindari penggunaan emoji dan slang. Fokus pada data dan manfaat logis."></textarea>
+                            </div>
+                            <input type="hidden" id="persona-id">
+                            </div>
+                          </div>
+                          <div class="bg-gray-800/50 px-6 py-4 flex justify-end items-center space-x-3 rounded-b-xl">
+                            <button id="close-persona-modal-btn" class="px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors" data-lang-key="cancel_button">Batal</button>
+                            <button id="save-persona-btn" class="px-4 py-2 text-sm font-semibold text-black btn-primary rounded-md transition-colors" data-lang-key="save_persona_button">Simpan Persona</button>
+                          </div>
+                        </div>
+                      </div>
+                      <div id="api-key-modal" class="fixed inset-0 z-40 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-80 backdrop-blur-sm hidden">
+                        <div class="modal-content w-full max-w-lg bg-gray-800 rounded-xl shadow-2xl border border-gray-700">
+                          <div class="p-6 md:p-8">
+                            <div class="flex items-center space-x-3 mb-4">
+                              <span class="text-3xl text-yellow-400">🔑</span>
+                              <h3 class="text-2xl font-bold text-white" data-lang-key="enter_api_key_title">Masukkan Kunci API</h3>
+                            </div>
+                            <p class="text-gray-300 mb-5" data-lang-key="api_key_intro">Untuk melanjutkan, masukkan kunci API Google Gemini Anda. Aplikasi ini berjalan sepenuhnya di browser Anda dan kunci API Anda disimpan dengan aman di perangkat Anda sendiri.</p>
+                            <div class="bg-gray-900/70 p-4 rounded-lg border border-gray-700 mb-5">
+                              <h4 class="font-semibold text-white mb-2" data-lang-key="how_to_get_api_key_title">Cara Mendapatkan Kunci API (Gratis):</h4>
+                              <ol class="list-decimal list-inside text-sm text-gray-400 space-y-1">
+                                <li data-lang-key="api_step_1">Buka <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline font-semibold">Google AI Studio</a>.</li>
+                                <li data-lang-key="api_step_2">Klik tombol <strong>"Create API key"</strong>.</li>
+                                <li data-lang-key="api_step_3">Salin (copy) kunci yang muncul.</li>
+                                <li data-lang-key="api_step_4">Tempel (paste) kunci tersebut di bawah ini.</li>
+                              </ol>
+                            </div>
+                            <div class="space-y-2">
+                              <label for="modal-api-key-input" class="block text-sm font-medium text-gray-300" data-lang-key="gemini_api_key_label">Kunci API Google Gemini Anda</label>
+                              <input type="password" id="modal-api-key-input" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-white placeholder-gray-500" placeholder="AIzaSy...">
+                              </div>
+                            </div>
+                            <div class="bg-gray-800/50 px-6 py-4 flex justify-end items-center rounded-b-xl">
+                              <button id="save-api-key-from-modal-btn" class="w-full btn-primary text-black font-bold py-3 px-4 rounded-lg" data-lang-key="save_and_continue_button">Simpan & Lanjutkan</button>
+                            </div>
+                          </div>
+                        </div>
+                        <div id="confirm-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
+                          <div class="modal-content w-full max-w-md bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95">
+                            <div class="p-6 text-center">
+                              <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50 mb-4">
+                                <svg class="h-6 w-6 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                </svg>
+                              </div>
+                              <h3 id="confirm-modal-title" class="text-lg font-bold text-white mb-2" data-lang-key="confirm_action_title">Confirm Action</h3>
+                              <p id="confirm-modal-message" class="text-sm text-gray-400"></p>
+                            </div>
+                            <div class="bg-gray-800/50 px-6 py-4 flex justify-end items-center space-x-3 rounded-b-xl">
+                              <button id="confirm-modal-cancel-btn" class="w-full px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors" data-lang-key="cancel_button">Batal</button>
+                              <button id="confirm-modal-confirm-btn" class="w-full px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors" data-lang-key="yes_delete_button">Ya, Hapus</button>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Input Modal for Character Preset Name -->
+                        <div id="input-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
+                          <div class="modal-content w-full max-w-md bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95">
+                            <div class="p-6">
+                              <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-900/50 mb-4">
+                                <svg class="h-6 w-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                </svg>
+                              </div>
+                              <h3 id="input-modal-title" class="text-lg font-bold text-white mb-2 text-center">Input Required</h3>
+                              <p id="input-modal-message" class="text-sm text-gray-400 mb-4 text-center"></p>
+                              <input id="input-modal-input" type="text" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-white placeholder-gray-500" placeholder="Enter value...">
+                            </div>
+                            <div class="bg-gray-800/50 px-6 py-4 flex justify-end items-center space-x-3 rounded-b-xl">
+                              <button id="input-modal-cancel-btn" class="px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">Batal</button>
+                              <button id="input-modal-confirm-btn" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors">OK</button>
+                            </div>
+                          </div>
+                        </div>
+                        <div id="manage-presets-modal" class="fixed inset-0 z-40 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
+                          <div class="modal-content w-full max-w-lg bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95">
+                            <div class="p-6">
+                              <h3 id="manage-presets-title" class="text-xl font-bold text-white mb-4" data-lang-key="manage_presets_title">Kelola Preset Pengaturan</h3>
+                              <div id="preset-list-container" class="space-y-2 max-h-80 overflow-y-auto">
+                              </div>
+                            </div>
+                            <div class="bg-gray-800/50 px-6 py-4 flex justify-end items-center space-x-3 rounded-b-xl">
+                              <button id="close-manage-presets-modal-btn" class="px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors" data-lang-key="close_button">Tutup</button>
+                            </div>
+                          </div>
+                        </div>
+                        <div id="manage-character-presets-modal" class="fixed inset-0 z-40 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
+                          <div class="modal-content w-full max-w-lg bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95">
+                            <div class="p-6">
+                              <h3 class="text-xl font-bold text-white mb-4" data-lang-key="manage_character_presets_title">Kelola Preset Karakter</h3>
+                              <div id="character-preset-list-container" class="space-y-2 max-h-80 overflow-y-auto">
+                              </div>
+                            </div>
+                            <div class="bg-gray-800/50 px-6 py-4 flex justify-end items-center space-x-3 rounded-b-xl">
+                              <button id="close-manage-character-presets-modal-btn" class="px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors" data-lang-key="close_button">Tutup</button>
+                            </div>
+                          </div>
+                        </div>
+                        <div id="visual-dna-storage" style="display: none;"></div>
+                      </div>
+
+                      <!-- Modal: Tentang Aethera Studio -->
+<div id="about-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
+  <div class="modal-content w-full max-w-xl bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95 max-h-[90vh] flex flex-col">
+    <div class="p-6 md:p-8 overflow-y-auto">
+      <h3 class="text-xl font-bold text-[#eee] mb-3" data-lang-key="about_title">Tentang Aethera Studio</h3>
+      <p class="text-sm text-gray-300 leading-relaxed mb-3" data-lang-key="about_p1">
+        Aethera Studio adalah asisten kreatif untuk membuat naskah <b>Hook–Body–CTA</b> lengkap dengan ide visual sinematik dan
+        <b>prompt T2I/I2V</b> — dirancang untuk konten pendek, iklan, dan kampanye afiliasi.
+      </p>
+      <p class="text-sm text-gray-300 leading-relaxed mb-3" data-lang-key="about_p2">
+        Fitur utama: <b>Generator skrip multi-opsi</b>, <b>Visual DNA (Analyze Image)</b> berbasis Gemini,
+        <b>Persona</b> & preset, <b>Riwayat</b>, serta ekspor <b>PDF/XLSX/DOCX</b>. Tersedia <b>mode terang/gelap</b> dan <b>bahasa ID/EN</b>.
+      </p>
+      <p class="text-sm text-gray-300 leading-relaxed" data-lang-key="about_p3">
+        Cara kerja: data disusun di browser, lalu permintaan AI dikirim aman ke endpoint <b>/api</b> milik Anda di Vercel.
+        Jika memasukkan <b>Gemini API key</b>, kunci disimpan lokal (Local Storage) dan hanya dipakai saat memanggil endpoint Anda melalui HTTPS.
+      </p>
+    </div>
+    <div class="bg-gray-900/60 px-6 py-4 flex justify-end items-center rounded-b-xl">
+      <button class="about-close px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Baca Ini -->
+<!-- Modal: Manual (iframe) -->
+<div id="manual-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
+  <div class="modal-content w-full max-w-5xl h-[85vh] bg-gray-900 rounded-xl shadow-2xl border border-gray-700 transform scale-95 flex flex-col overflow-hidden">
+    <div class="px-6 py-4 bg-gray-900/60 border-b border-gray-700 flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-[#eee]">Aethera Studio — Manual</h3>
+      <div class="flex items-center gap-2">
+        <a href="manual.html" target="_blank" class="px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 rounded-md">Buka di Tab Baru</a>
+        <button class="manual-close px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 rounded-md">Tutup</button>
+      </div>
+    </div>
+    <iframe src="manual.html" class="w-full flex-1 bg-gray-800"></iframe>
+  </div>
+</div>
+
+                      <template id="result-card-template">
+                      <div class="result-card rounded-2xl p-4 md:p-6 shadow-[0_1px_2px_rgba(16,24,40,.06),0_4px_12px_rgba(16,24,40,.06)] cursor-pointer hover:shadow-lg transition" data-script="">
+                        <div class="flex justify-between items-start mb-4">
+                          <h4 class="result-title text-xl font-semibold tracking-tight flex-1 pr-4"></h4>
+                          <div class="flex space-x-2">
+                            <div class="relative export-dropdown">
+                              <button class="export-btn p-2 text-zinc-500 hover:text-zinc-700 rounded-full transition" title="Export Siap Eksekusi">
+                                <div class="icon icon-md icon-download"></div>
+                              </button>
+                              <div class="export-menu absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48 hidden">
+                                <button class="export-prompt-json w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg">📦 Prompt Pack (JSON)</button>
+                                <button class="export-prompt-csv w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">📊 Prompt Pack (CSV)</button>
+                                <button class="export-capcut-srt w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">🎬 CapCut (SRT)</button>
+                                <button class="export-capcut-csv w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">⏱️ CapCut (CSV)</button>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <button class="export-all-zip-item w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg">🗜️ Export This (ZIP)</button>
+                              </div>
+                            </div>
+                            <button class="edit-btn p-2 text-zinc-500 hover:text-zinc-700 rounded-full transition" title="Edit & Regenerate">
+                              <div class="icon icon-md icon-edit"></div>
+                            </button>
+                            <button class="copy-btn p-2 text-zinc-500 hover:text-zinc-700 rounded-full transition" title="Salin Skrip Lengkap">
+                              <div class="icon icon-md icon-copy"></div>
+                            </button>
+                            <button class="view-btn p-2 text-zinc-500 hover:text-zinc-700 rounded-full transition" title="Lihat Detail Skrip">
+                              <div class="icon icon-md icon-eye"></div>
+                            </button>
+                          </div>
+                        </div>
+                        <div class="card-content space-y-4 text-zinc-700 max-w-3xl">
+                        </div>
+                      </div>
+                      </template>
+                      <!-- Modal: Script Viewer -->
+                      <div id="script-viewer-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none" role="dialog" aria-modal="true" aria-labelledby="script-viewer-title">
+                        <div class="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 text-gray-100 rounded-xl border border-gray-700 p-6">
+                          <div class="flex items-center justify-between mb-4">
+                            <h3 id="script-viewer-title" class="text-lg font-bold">Script Viewer</h3>
+                            <button id="script-viewer-close" class="p-2 rounded hover:bg-gray-800" aria-label="Close overlay"><div class="icon icon-md icon-close"></div></button>
+                          </div>
+                          <div id="script-viewer-content" class="space-y-4"></div>
+                        </div>
+                      </div>
+
+                      <template id="micro-shot-template">
+                      <div class="p-3 rounded bg-gray-900/50 border border-gray-700/50 space-y-2">
+                        <p class="text-xs text-gray-400">
+                          <strong class="text-gray-300" data-lang-key="visual_idea_label"></strong>
+                          <span class="visual-idea-text"></span>
+                        </p>
+                        <div class="flex items-start space-x-2">
+                          <p class="text-xs text-gray-400 flex-1">
+                            <strong class="text-gray-300" data-lang-key="t2i_prompt_label"></strong>
+                            <span class="prompt-t2i-display"></span>
+                          </p>
+                          <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
+                            <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
+                          </button>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                          <p class="text-xs text-gray-400 flex-1">
+                            <strong class="text-gray-300" data-lang-key="i2v_prompt_label"></strong>
+                            <span class="prompt-i2v-display"></span>
+                          </p>
+                          <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
+                            <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
+                          </button>
+                        </div>
+                      </div>
+                      </template>
+
+                      <template id="carousel-slide-template">
+                      <div class="swiper-slide !h-auto bg-gray-800 p-5 rounded-lg flex flex-col">
+                        <h6 class="slide-title text-sm font-bold text-gray-300 mb-2"></h6>
+                        <div class="flex-grow min-h-[80px]">
+                          <p class="slide-text text-gray-200 text-sm mb-4"></p>
+                        </div>
+                        <div class="flex-shrink-0 space-y-2">
+                          <div class="flex items-start space-x-2">
+                            <p class="text-xs text-gray-400 flex-1">
+                              <strong class="text-gray-300" data-lang-key="t2i_prompt_label"></strong>
+                              <span class="prompt-t2i-display"></span>
+                            </p>
+                            <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
+                              <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
+                            </button>
+                          </div>
+                          <div class="suggestions-container mt-4 pt-3 border-t border-gray-600/50 space-y-2 text-xs" style="display: none;">
+                            <p class="layout-suggestion-p" style="display: none;">
+                              <strong class="font-semibold" data-lang-key="slide_layout_suggestion"></strong>
+                              <span class="layout-suggestion-text"></span>
+                            </p>
+                            <p class="engagement-idea-p" style="display: none;">
+                              <strong class="font-semibold" data-lang-key="slide_engagement_idea"></strong>
+                              <span class="engagement-idea-text"></span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      </template>
+
+                      <template id="character-sheet-template">
+                      <div class="character-sheet-instance animate-fade-in space-y-4 mt-4 p-4 rounded-md bg-yellow-900/40 border border-yellow-800/70">
+                        <div class="flex justify-between items-center">
+                          <h4 class="text-sm font-bold text-yellow-300 character-title" data-lang-key="character_title">Character 1</h4>
+                          <button type="button" class="remove-character-btn hidden p-1 text-2xl font-bold leading-none text-gray-400 hover:text-red-400" title="Hapus Karakter Ini" data-lang-key="remove_character_btn">&times;</button>
+                        </div>
+
+                        <div class="border-t border-yellow-800/50 pt-3">
+                          <h5 class="text-xs font-semibold text-yellow-300 mb-2"><div style="margin-top:24px; border-top:1px solid #EEE; padding-top:12px; font-weight:500;" data-lang-key="basic_identity_section">🧾 Identitas Dasar</div></h5>
+                          <div class="space-y-2">
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="name_label">Name</label><input type="text" data-field="name" class="editable-input col-span-2" placeholder="e.g., Eleanor"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="gender_label">Gender</label><select data-field="gender" class="editable-input col-span-2"><option value="woman" data-lang-key="gender_female">Female</option><option value="man" data-lang-key="gender_male">Male</option><option value="person" data-lang-key="gender_nonbinary">Non-binary</option></select></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="age_label">Age (Specific)</label><input type="text" data-field="age" class="editable-input col-span-2" placeholder="e.g., 28"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="ethnicity_label">Ethnicity</label><input type="text" data-field="ethnicity" class="editable-input col-span-2" placeholder="e.g., Southeast Asian"></div>
+                          </div>
+                        </div>
+
+                        <div class="border-t border-yellow-800/50 pt-3">
+                          <h5 class="text-xs font-semibold text-yellow-300 mb-2"><div style="margin-top:24px; border-top:1px solid #EEE; padding-top:12px; font-weight:500;" data-lang-key="facial_features_section">😊 Fitur Wajah & Kepala</div></h5>
+                          <div class="space-y-2">
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="face_shape_label">Bentuk Wajah</label><input type="text" data-field="face_shape" class="editable-input col-span-2" placeholder="e.g., oval face"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="eye_color_label">Warna Mata</label><input type="text" data-field="eye_color" class="editable-input col-span-2" placeholder="e.g., dark brown eyes"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="eye_shape_label">Bentuk Mata (Ops)</label><input type="text" data-field="eye_shape" class="editable-input col-span-2" placeholder="e.g., almond-shaped"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="lip_shape_label">Tipe Bibir (Ops)</label><input type="text" data-field="lip_shape" class="editable-input col-span-2" placeholder="e.g., full lips"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="nose_shape_label">Bentuk Hidung (Ops)</label><input type="text" data-field="nose_shape" class="editable-input col-span-2" placeholder="e.g., straight nose"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="eyebrow_style_label">Gaya Alis (Ops)</label><input type="text" data-field="eyebrow_style" class="editable-input col-span-2" placeholder="e.g., thick, arched eyebrows"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="hair_style_label">Gaya Rambut</label><input type="text" data-field="hair_style" class="editable-input col-span-2" placeholder="e.g., long, sleek straight hair"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="hair_color_label">Warna Rambut</label><input type="text" data-field="hair_color" class="editable-input col-span-2" placeholder="e.g., dark brown"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="unique_features_label">Fitur Unik (Ops)</label><input type="text" data-field="unique_features" class="editable-input col-span-2" placeholder="e.g., light freckles across nose"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="makeup_style_label">Gaya Riasan (Ops)</label><input type="text" data-field="makeup_style" class="editable-input col-span-2" placeholder="e.g., natural makeup look"></div>
+                          </div>
+                        </div>
+
+                        <div class="border-t border-yellow-800/50 pt-3">
+                          <h5 class="text-xs font-semibold text-yellow-300 mb-2"><div style="margin-top:24px; border-top:1px solid #EEE; padding-top:12px; font-weight:500;" data-lang-key="physical_posture_section">🧍‍♀️ Fisik & Postur</div></h5>
+                          <div class="space-y-2">
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="skin_tone_label">Skin Tone</label><input type="text" data-field="skin_tone" class="editable-input col-span-2" placeholder="e.g., warm olive skin"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="body_shape_label">Bentuk Tubuh</label><input type="text" data-field="body_shape" class="editable-input col-span-2" placeholder="e.g., slender body, athletic build"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="height_label">Tinggi Badan</label><select data-field="height" class="editable-input col-span-2"><option value="average height" data-lang-key="height_average">Average</option><option value="tall" data-lang-key="height_tall">Tall</option><option value="petite" data-lang-key="height_petite">Petite</option></select></div>
+                          </div>
+                        </div>
+
+                        <div class="dynamic-field-section border-t border-yellow-800/50 pt-3">
+                          <h5 class="text-xs font-semibold text-yellow-300 mb-2" data-lang-key="style_aesthetics_section">GAYA & ESTETIKA</h5>
+                          <div class="space-y-2">
+                            <div class="grid grid-cols-3 items-center gap-2 field-clothing_style"><label class="text-xs" data-lang-key="clothing_style_label">Gaya Berpakaian</label><input type="text" data-field="clothing_style" class="editable-input col-span-2" placeholder="e.g., minimalist, modern, chic"></div>
+                            <div class="grid grid-cols-3 items-center gap-2 field-color_palette"><label class="text-xs" data-lang-key="color_palette_label">Warna Dominan</label><input type="text" data-field="color_palette" class="editable-input col-span-2" placeholder="e.g., neutral colors, black, white"></div>
+                            <div class="grid grid-cols-3 items-center gap-2 field-specific_outfit"><label class="text-xs" data-lang-key="specific_outfit_label">Pakaian Spesifik (Ops)</label><input type="text" data-field="specific_outfit" class="editable-input col-span-2" placeholder="e.g., wearing a relaxed white shirt"></div>
+                          </div>
+                        </div>
+
+                        <div class="border-t border-yellow-800/50 pt-3">
+                          <h5 class="text-xs font-semibold text-yellow-300 mb-2"><div style="margin-top:24px; border-top:1px solid #EEE; padding-top:12px; font-weight:500;" data-lang-key="personality_aura_section">✨ Kepribadian & Aura</div></h5>
+                          <div class="space-y-2">
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="dominant_aura_label">Aura Dominan</label><input type="text" data-field="vibe" class="editable-input col-span-2" placeholder="e.g., confident, elegant, cheerful"></div>
+                            <div class="grid grid-cols-3 items-center gap-2"><label class="text-xs" data-lang-key="additional_notes_label">Catatan Tambahan (Ops)</label><input type="text" data-field="notes" class="editable-input col-span-2" placeholder="e.g., always looks at camera"></div>
+                          </div>
+                        </div>
+                      </div>
+                      </template>
+
+                      <template id="preset-item-template">
+                      <div class="preset-item flex items-center justify-between p-2 bg-gray-900/50 rounded-md">
+                        <input type="text" class="preset-name-input editable-input text-sm flex-grow" value="Nama Preset">
+                          <div class="flex space-x-1 ml-2">
+                            <button class="save-preset-name-btn p-2 text-gray-400 hover:text-green-400" title="Simpan Nama Baru">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                            </button>
+                            <button class="delete-preset-btn p-2 text-gray-400 hover:text-red-400" title="Hapus Preset">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg>
+                            </button>
+                          </div>
+                        </div>
+                        </template>
+
+                        <template id="skeleton-card-template">
+                        <div class="skeleton-card">
+                          <div class="skeleton-line title"></div>
+                          <div class="space-y-3">
+                            <div class="skeleton-line long"></div>
+                            <div class="skeleton-line medium"></div>
+                            <div class="skeleton-line short"></div>
+                            <div class="skeleton-line long"></div>
+                            <div class="skeleton-line medium"></div>
+                            <div class="skeleton-line short"></div>
+                            <div class="skeleton-line long"></div>
+                            <div class="skeleton-line medium"></div>
+                          </div>
+                        </div>
+                        </template>
+
+                        <!-- Progress Bar -->
+                        <div id="progress-bar" class="progress-bar" style="display: none;">
+                          <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                        </div>
+
+                        <!-- Empty State Template -->
+                        <template id="empty-state-template">
+                        <div class="empty-state text-center py-12">
+                          <div class="empty-state-icon mb-6">
+                            <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" viewBox="0 0 120 120">
+                              <!-- Rocket illustration -->
+                              <g transform="translate(60,60)">
+                                <!-- Rocket body -->
+                                <ellipse cx="0" cy="-10" rx="8" ry="25" fill="currentColor" opacity="0.3"/>
+                                <!-- Rocket tip -->
+                                <path d="M-8,-35 L0,-45 L8,-35 Z" fill="currentColor" opacity="0.4"/>
+                                <!-- Rocket fins -->
+                                <path d="M-8,-5 L-15,10 L-8,5 Z" fill="currentColor" opacity="0.2"/>
+                                <path d="M8,-5 L15,10 L8,5 Z" fill="currentColor" opacity="0.2"/>
+                                <!-- Rocket window -->
+                                <circle cx="0" cy="-20" r="3" fill="currentColor" opacity="0.6"/>
+                                <!-- Fire/exhaust -->
+                                <path d="M-6,15 Q0,25 6,15 Q3,30 0,35 Q-3,30 -6,15" fill="#f59e0b" opacity="0.7">
+                                  <animate attributeName="opacity" values="0.7;0.4;0.7" dur="1.5s" repeatCount="indefinite"/>
+                                </path>
+                                <!-- Stars around -->
+                                <circle cx="-25" cy="-20" r="1" fill="currentColor" opacity="0.6">
+                                  <animate attributeName="opacity" values="0.6;0.2;0.6" dur="2s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="20" cy="-30" r="1" fill="currentColor" opacity="0.4">
+                                  <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2.5s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="-30" cy="10" r="1" fill="currentColor" opacity="0.5">
+                                  <animate attributeName="opacity" values="0.5;0.1;0.5" dur="3s" repeatCount="indefinite"/>
+                                </circle>
+                              </g>
+                            </svg>
+                          </div>
+                          <h3 class="empty-state-title text-xl font-semibold text-gray-300 mb-3">Belum Ada Konten</h3>
+                          <p class="empty-state-description text-gray-500 mb-8 max-w-sm mx-auto leading-relaxed">Mulai dengan mengisi form dan klik Generate untuk membuat konten pertama Anda.</p>
+                          <button class="empty-state-action btn-primary px-6 py-3 text-sm font-semibold">🚀 Mulai Generate</button>
+                        </div>
+                        </template>
+
+                        <template id="history-empty-state-template">
+                        <div class="history-empty-state text-center py-16">
+                          <div class="empty-state-icon mb-6">
+                            <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" viewBox="0 0 120 120">
+                              <!-- Clock/History illustration -->
+                              <g transform="translate(60,60)">
+                                <!-- Clock face -->
+                                <circle cx="0" cy="0" r="30" stroke="currentColor" stroke-width="2" fill="none" opacity="0.3"/>
+                                <!-- Clock numbers -->
+                                <circle cx="0" cy="-25" r="1.5" fill="currentColor" opacity="0.4"/>
+                                <circle cx="25" cy="0" r="1.5" fill="currentColor" opacity="0.4"/>
+                                <circle cx="0" cy="25" r="1.5" fill="currentColor" opacity="0.4"/>
+                                <circle cx="-25" cy="0" r="1.5" fill="currentColor" opacity="0.4"/>
+                                <!-- Clock hands -->
+                                <line x1="0" y1="0" x2="0" y2="-15" stroke="currentColor" stroke-width="2" opacity="0.5">
+                                  <animateTransform attributeName="transform" type="rotate" values="0;360" dur="8s" repeatCount="indefinite"/>
+                                </line>
+                                <line x1="0" y1="0" x2="12" y2="0" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+                                  <animateTransform attributeName="transform" type="rotate" values="0;360" dur="60s" repeatCount="indefinite"/>
+                                </line>
+                                <!-- Center dot -->
+                                <circle cx="0" cy="0" r="2" fill="currentColor" opacity="0.6"/>
+                                <!-- Floating documents -->
+                                <g opacity="0.3">
+                                  <rect x="-45" y="-15" width="8" height="10" rx="1" fill="currentColor">
+                                    <animate attributeName="y" values="-15;-20;-15" dur="3s" repeatCount="indefinite"/>
+                                  </rect>
+                                  <rect x="35" y="5" width="8" height="10" rx="1" fill="currentColor">
+                                    <animate attributeName="y" values="5;0;5" dur="4s" repeatCount="indefinite"/>
+                                  </rect>
+                                  <rect x="-10" y="-45" width="8" height="10" rx="1" fill="currentColor">
+                                    <animate attributeName="y" values="-45;-50;-45" dur="3.5s" repeatCount="indefinite"/>
+                                  </rect>
+                                </g>
+                              </g>
+                            </svg>
+                          </div>
+                          <h3 class="empty-state-title text-xl font-semibold text-gray-300 mb-3">Belum Ada Riwayat</h3>
+                          <p class="empty-state-description text-gray-500 mb-8 max-w-sm mx-auto leading-relaxed">Skrip yang Anda generate akan tersimpan di sini untuk referensi di masa mendatang.</p>
+                          <button class="empty-state-action btn-primary px-6 py-3 text-sm font-semibold" onclick="switchToGenerator()">📝 Buat Skrip Pertama</button>
+                        </div>
+                        </template>
+
+                        <template id="save-character-button-template">
+                        <button id="save-character-preset-btn" class="w-full btn-secondary text-sm font-semibold py-1.5 rounded-md mt-4" data-lang-key="save_character_button">
+                          💾 Simpan Karakter Saat Ini
+                        </button>
+                        </template>
+
+                        <script src="./js/parallax-controller.js"></script>
+                        <script type="module" src="./js/main.js"></script>
+                        <script type="module" src="./js/onboarding.js"></script>
+                        <script>
+if ('serviceWorker' in navigator) {
+  const isLocalhost = ['localhost', '127.0.0.1'].includes(location.hostname) || location.hostname.startsWith('192.168.') || location.hostname.startsWith('10.');
+  if (!isLocalhost) {
+    window.addEventListener('load', () => {
+      const ver = document.querySelector('meta[name="x-build"]')?.content || Date.now().toString();
+      navigator.serviceWorker.register(`./sw.js?v=${ver}`).catch(err => console.warn('SW reg failed', err));
+    });
+  } else if (navigator.serviceWorker.getRegistrations) {
+    navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+  }
+}
+</script>
+
+                        <!-- Overlay: Edit Settings Preset -->
+                        <div id="edit-settings-preset-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true">
+                          <div class="w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-gray-900 text-gray-100 rounded-xl border border-gray-700 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                              <h3 class="text-lg font-bold" data-lang-key="manage_presets_title">Kelola Preset Pengaturan</h3>
+                              <button id="edit-settings-preset-close" class="p-2 rounded hover:bg-gray-800" aria-label="Close overlay"><div class="icon icon-md icon-close"></div></button>
+                            </div>
+                            <div id="edit-settings-preset-content" class="space-y-4"></div>
+                            <div class="mt-4 flex justify-end gap-2">
+                              <button id="edit-settings-preset-cancel" class="px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600" data-lang-key="cancel_edit_button">Cancel</button>
+                              <button id="edit-settings-preset-save-as-new" class="px-3 py-1.5 rounded bg-gray-600 hover:bg-gray-500" data-lang-key="save_as_new_button">Save As New</button>
+                              <button id="edit-settings-preset-save" class="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700" data-lang-key="save_changes_button">Save Changes</button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Overlay: Edit Character Preset -->
+                        <div id="edit-character-preset-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true">
+                          <div class="w-full max-w-3xl max-h-[85vh] overflow-y-auto bg-gray-900 text-gray-100 rounded-xl border border-gray-700 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                              <h3 class="text-lg font-bold" data-lang-key="manage_character_presets_title">Kelola Preset Karakter</h3>
+                              <button id="edit-character-preset-close" class="p-2 rounded hover:bg-gray-800" aria-label="Close overlay"><div class="icon icon-md icon-close"></div></button>
+                            </div>
+                            <div id="edit-character-preset-content" class="space-y-4"></div>
+                            <div class="mt-4 flex justify-end gap-2">
+                              <button id="edit-character-preset-cancel" class="px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600" data-lang-key="cancel_edit_button">Cancel</button>
+                              <button id="edit-character-preset-save-as-new" class="px-3 py-1.5 rounded bg-gray-600 hover:bg-gray-500" data-lang-key="save_as_new_button">Save As New</button>
+                              <button id="edit-character-preset-save" class="px-3 py-1.5 rounded bg-amber-600 hover:bg-amber-700" data-lang-key="save_changes_button">Save Changes</button>
+                            </div>
+                          </div>
+                        </div>
+
+</body>
+                        </html>

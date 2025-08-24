@@ -1,0 +1,622 @@
+/* Loading Animations & Skeleton Screens - Premium UX for Aethera Studio */
+
+/* ========== LOADING ANIMATION VARIABLES ========== */
+
+:root {
+  --loading-primary: #d4af37;
+  --loading-secondary: rgba(212, 175, 55, 0.3);
+  --loading-background: rgba(255, 255, 255, 0.1);
+  --skeleton-base: #e2e8f0;
+  --skeleton-highlight: #f1f5f9;
+  --skeleton-dark-base: #374151;
+  --skeleton-dark-highlight: #4b5563;
+}
+
+.dark-mode {
+  --loading-background: rgba(0, 0, 0, 0.2);
+  --skeleton-base: var(--skeleton-dark-base);
+  --skeleton-highlight: var(--skeleton-dark-highlight);
+}
+
+/* ========== PREMIUM LOADING SPINNERS ========== */
+
+/* Enhanced primary spinner */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--loading-background);
+  border-top: 3px solid var(--loading-primary);
+  border-radius: 50%;
+  animation: luxury-spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  position: relative;
+}
+
+.loading-spinner::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--loading-secondary);
+  border-radius: 50%;
+  animation: luxury-spin 1.5s linear infinite reverse;
+}
+
+@keyframes luxury-spin {
+  0% {
+    transform: rotate(0deg);
+    filter: drop-shadow(0 0 5px var(--loading-primary));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px var(--loading-primary));
+  }
+  100% {
+    transform: rotate(360deg);
+    filter: drop-shadow(0 0 5px var(--loading-primary));
+  }
+}
+
+/* Pulsing dot loader */
+.dots-loader {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.dots-loader .dot {
+  width: 12px;
+  height: 12px;
+  background: var(--loading-primary);
+  border-radius: 50%;
+  animation: luxury-pulse 1.4s ease-in-out infinite both;
+}
+
+.dots-loader .dot:nth-child(1) { animation-delay: -0.32s; }
+.dots-loader .dot:nth-child(2) { animation-delay: -0.16s; }
+.dots-loader .dot:nth-child(3) { animation-delay: 0s; }
+
+@keyframes luxury-pulse {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+    box-shadow: 0 0 20px var(--loading-primary);
+  }
+}
+
+/* Wave loader */
+.wave-loader {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+.wave-loader .wave {
+  width: 4px;
+  height: 30px;
+  background: linear-gradient(45deg, var(--loading-primary), var(--loading-secondary));
+  border-radius: 2px;
+  animation: luxury-wave 1.2s ease-in-out infinite;
+}
+
+.wave-loader .wave:nth-child(1) { animation-delay: 0s; }
+.wave-loader .wave:nth-child(2) { animation-delay: 0.1s; }
+.wave-loader .wave:nth-child(3) { animation-delay: 0.2s; }
+.wave-loader .wave:nth-child(4) { animation-delay: 0.3s; }
+.wave-loader .wave:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes luxury-wave {
+  0%, 40%, 100% {
+    transform: scaleY(0.4);
+    opacity: 0.7;
+  }
+  20% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* ========== SKELETON SCREENS ========== */
+
+/* Base skeleton animation */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Skeleton base class */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-base) 75%
+  );
+  background-size: 200px 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* Skeleton card */
+.skeleton-card {
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--skeleton-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: skeleton-sweep 2s infinite;
+}
+
+@keyframes skeleton-sweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Skeleton text lines */
+.skeleton-text {
+  height: 16px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+}
+
+.skeleton-text.large {
+  height: 24px;
+  width: 60%;
+}
+
+.skeleton-text.medium {
+  height: 18px;
+  width: 80%;
+}
+
+.skeleton-text.small {
+  height: 14px;
+  width: 40%;
+}
+
+/* Skeleton button */
+.skeleton-button {
+  height: 44px;
+  width: 120px;
+  border-radius: 8px;
+  margin: 8px 4px;
+}
+
+/* Skeleton avatar */
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+/* ========== LOADING STATES FOR COMPONENTS ========== */
+
+/* Button loading state */
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: luxury-spin 0.8s linear infinite;
+}
+
+/* Form loading overlay */
+.form-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.form-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+  border-radius: inherit;
+}
+
+.form-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+  border: 3px solid var(--loading-background);
+  border-top: 3px solid var(--loading-primary);
+  border-radius: 50%;
+  animation: luxury-spin 1s linear infinite;
+  z-index: 11;
+}
+
+/* Card loading state */
+.card-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-loading .card-content {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.card-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 175, 55, 0.2),
+    transparent
+  );
+  animation: card-loading-sweep 2s infinite;
+  z-index: 1;
+}
+
+@keyframes card-loading-sweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* ========== PROGRESS INDICATORS ========== */
+
+/* Linear progress bar */
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--loading-background);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--loading-primary),
+    var(--loading-secondary),
+    var(--loading-primary)
+  );
+  animation: progress-slide 2s infinite;
+}
+
+@keyframes progress-slide {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Circular progress */
+.circular-progress {
+  width: 60px;
+  height: 60px;
+  position: relative;
+}
+
+.circular-progress svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.circular-progress circle {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.circular-progress .bg-circle {
+  stroke: var(--loading-background);
+}
+
+.circular-progress .progress-circle {
+  stroke: var(--loading-primary);
+  stroke-dasharray: 157;
+  stroke-dashoffset: 157;
+  animation: circular-progress-animation 2s ease-in-out infinite;
+}
+
+@keyframes circular-progress-animation {
+  0% {
+    stroke-dashoffset: 157;
+  }
+  50% {
+    stroke-dashoffset: 39;
+  }
+  100% {
+    stroke-dashoffset: 157;
+  }
+}
+
+/* ========== LOADING OVERLAYS ========== */
+
+/* Full page loading overlay */
+.page-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.page-loading.show {
+  opacity: 1;
+}
+
+.page-loading .loading-content {
+  text-align: center;
+  color: white;
+}
+
+.page-loading .loading-title {
+  margin-top: 24px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--loading-primary);
+}
+
+.page-loading .loading-subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Section loading overlay */
+.section-loading {
+  position: relative;
+  min-height: 200px;
+}
+
+.section-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+}
+
+.section-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 3px solid var(--loading-background);
+  border-top: 3px solid var(--loading-primary);
+  border-radius: 50%;
+  animation: luxury-spin 1s linear infinite;
+  z-index: 11;
+}
+
+/* ========== LOADING ANIMATIONS FOR SPECIFIC COMPONENTS ========== */
+
+/* Result card loading */
+.result-card.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.result-card.loading .result-content {
+  opacity: 0.3;
+}
+
+.result-card.loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 175, 55, 0.3),
+    transparent
+  );
+  animation: result-loading-sweep 1.5s infinite;
+}
+
+@keyframes result-loading-sweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Template button loading */
+.quick-template-btn.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.quick-template-btn.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--loading-primary);
+  border-radius: 50%;
+  animation: luxury-spin 0.8s linear infinite;
+}
+
+/* ========== RESPONSIVE LOADING ADJUSTMENTS ========== */
+
+@media (max-width: 768px) {
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+    border-width: 2px;
+  }
+  
+  .circular-progress {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .page-loading .loading-title {
+    font-size: 16px;
+  }
+  
+  .page-loading .loading-subtitle {
+    font-size: 12px;
+  }
+}
+
+/* ========== ACCESSIBILITY & PERFORMANCE ========== */
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner,
+  .dots-loader .dot,
+  .wave-loader .wave,
+  .skeleton,
+  .progress-bar::before,
+  .circular-progress .progress-circle {
+    animation: none;
+  }
+  
+  .skeleton {
+    background: var(--skeleton-base);
+  }
+}
+
+/* GPU acceleration for smooth animations */
+.loading-spinner,
+.dots-loader .dot,
+.wave-loader .wave,
+.btn-loading::after,
+.form-loading::after {
+  will-change: transform;
+}
+
+/* ========== UTILITY CLASSES ========== */
+
+.loading-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.loading-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
+.loading-blur {
+  filter: blur(2px);
+  transition: filter 0.3s ease;
+}
+
+.loading-scale {
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+/* ========== LOADING TEXT ANIMATIONS ========== */
+
+.loading-text {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-text::after {
+  content: '...';
+  animation: loading-dots 1.5s infinite;
+}
+
+@keyframes loading-dots {
+  0%, 20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60%, 100% {
+    content: '...';
+  }
+}
