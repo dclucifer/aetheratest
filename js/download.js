@@ -5,7 +5,12 @@ import { elements, showNotification, getFullScriptText, getCharacterDescriptionS
 import { t } from './i18n.js';
 import { getScripts } from './state.js';
 
-const jsPDF = await ensureJSPDF();
+let __jsPdfPromise;
+async function getJsPDF(){
+    if (window.jspdf?.jsPDF) return window.jspdf.jsPDF;
+    __jsPdfPromise = __jsPdfPromise || ensureJSPDF();
+    return __jsPdfPromise;
+}
 const XLSX = window.XLSX;
 
 export function downloadAllScripts(format) {
@@ -23,8 +28,9 @@ export function downloadAllScripts(format) {
     if (format === 'docx') downloadAllAsDOCX(lastGeneratedScripts, fileName);
     if (format === 'xlsx') downloadAllAsXLSX(lastGeneratedScripts, fileName);
 }
-function downloadAllAsPDF(scripts, fileName) {
-    if (!window.jspdf || !window.jspdf.jsPDF) {
+async function downloadAllAsPDF(scripts, fileName) {
+    const jsPDF = await getJsPDF();
+    if (!jsPDF) {
         showNotification(t('export_pdf_unavailable') || 'Export PDF unavailable: jsPDF not loaded.', 'error');
         return;
     }
