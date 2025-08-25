@@ -11,8 +11,8 @@ export const HooksCtaRegistry = {
   ctaMapping: null,
   async init() {
     const [hooks, ctas] = await Promise.all([
-      loadJSON('/js/constants/hooks_config.json'),
-      loadJSON('/js/constants/cta_mapping.json')
+      loadJSON('./js/constants/hooks_config.json'),
+      loadJSON('./js/constants/cta_mapping.json')
     ]);
     this.hooksConfig = hooks;
     this.ctaMapping = ctas;
