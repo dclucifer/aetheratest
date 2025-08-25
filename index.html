@@ -1289,9 +1289,16 @@ if ('serviceWorker' in navigator) {
                           window.HooksCtaRegistry = HooksCtaRegistry;
                         
                           // autosuggest CTA tiap kali platform/hook berubah
-                          const $platform = document.querySelector('#platform');     // sesuaikan id platform kamu
+                          const $platform = document.querySelector('#platform-target');     // sesuaikan id platform kamu
                           const $hook     = document.querySelector('#hook-type');
                           const $cta      = document.querySelector('#cta-type');     // select CTA kamu
+
+                          const normPlatform = v => {
+                            const s = (v||'').toLowerCase();
+                            if (s === 'threads') return 'instagram';
+                            if (s === 'shorts')  return 'youtube';
+                            return s; // tiktok / instagram / shopee / youtube
+                          };
                           
                         
                           function applySuggestedCTAs() {
