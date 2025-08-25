@@ -1271,6 +1271,7 @@ if ('serviceWorker' in navigator) {
                           import { HooksCtaRegistry, validateFirstFrame } from '/js/hooks-cta-loader.js';
                         
                           // init registry (load JSON)
+                          (async () => {
                           await HooksCtaRegistry.init();
                         
                           // optional: singkatkan akses secara global
@@ -1280,6 +1281,7 @@ if ('serviceWorker' in navigator) {
                           const $platform = document.querySelector('#platform');     // sesuaikan id platform kamu
                           const $hook     = document.querySelector('#hook-type');
                           const $cta      = document.querySelector('#cta-type');     // select CTA kamu
+                          
                         
                           function applySuggestedCTAs() {
                             if (!$platform || !$hook || !$cta) return;
@@ -1295,6 +1297,7 @@ if ('serviceWorker' in navigator) {
                         
                           $platform?.addEventListener('change', applySuggestedCTAs);
                           $hook?.addEventListener('change', applySuggestedCTAs);
+                          $cta?.addEventListener('change', applySuggestedCTAs);
                           applySuggestedCTAs();
                         
                           // validator 3 detik (opsional) – beri warning bila teks hook kepanjangan
@@ -1307,6 +1310,7 @@ if ('serviceWorker' in navigator) {
                           }
                           $hookText?.addEventListener('input', validate);
                           validate();
+                        })();
                         </script>                        
 
 </body>
