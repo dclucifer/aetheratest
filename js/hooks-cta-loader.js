@@ -10,20 +10,13 @@ export const HooksCtaRegistry = {
   hooksConfig: null,
   ctaMapping: null,
   async init() {
-    const [hooks, ctas] = await Promise.all([
-      loadJSON('../constants/hooks_config.json'),
-      loadJSON('../constants/cta_mapping.json')
-    ]);
+    const hooks = (await import('../constants/hooks_config.json')).default;
+    const ctas  = (await import('../constants/cta_mapping.json')).default;
     this.hooksConfig = hooks;
-    this.ctaMapping = ctas;
+    this.ctaMapping  = ctas;
   },
-  suggestCtas(platform, hookId) {
-    if (!this.ctaMapping || !this.ctaMapping[platform]) return [];
-    return this.ctaMapping[platform][hookId] || [];
-  },
-  listFormats() {
-    return (this.hooksConfig && this.hooksConfig.formats) ? this.hooksConfig.formats : [];
-  }
+  suggestCtas(p, h) { return this.ctaMapping?.[p]?.[h] || []; },
+  listFormats() { return this.hooksConfig?.formats || []; }
 };
 
 export function validateFirstFrame(text) {
