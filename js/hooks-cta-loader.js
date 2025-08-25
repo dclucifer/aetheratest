@@ -10,8 +10,9 @@ export const HooksCtaRegistry = {
   hooksConfig: null,
   ctaMapping: null,
   async init() {
-    const hooks = (await import('../constants/hooks_config.json')).default;
-    const ctas  = (await import('../constants/cta_mapping.json')).default;
+    // RELATIVE dari file ini: js/hooks-cta-loader.js → js/constants/...
+    const hooks = (await import('./constants/hooks_config.json')).default;
+    const ctas  = (await import('./constants/cta_mapping.json')).default;
     this.hooksConfig = hooks;
     this.ctaMapping  = ctas;
   },
