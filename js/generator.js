@@ -75,7 +75,34 @@ export function getHookInstructions(hookType) {
             'Reveal insider knowledge tentang AI industry, sustainability tips, atau Gen Alpha insights. Contoh: "Rahasia AI yang cuma diketahui tech insider..." atau "Sustainability hacks yang gak pernah dibagi..."',
         'hook_transformation': isEnglish ?
             'Show transformation with AI tools, sustainable living, or mental health improvement. Examples: "From tech-phobic to AI expert..." or "Mental health transformation in 30 days..."' :
-            'Tunjukkan transformasi dengan AI tools, sustainable living, atau mental health improvement. Contoh: "Dari tech-phobic jadi AI expert..." atau "Transformasi mental health dalam 30 hari..."'
+            'Tunjukkan transformasi dengan AI tools, sustainable living, atau mental health improvement. Contoh: "Dari tech-phobic jadi AI expert..." atau "Transformasi mental health dalam 30 hari..."',
+        'hook_pattern_interrupt': isEnglish ?
+            'Use a pattern interrupt in the first 1-2 seconds: unexpected motion, jump cut, visual glitch, or bold text overlay to force attention. Immediately tie it to the core benefit.' :
+            'Gunakan pattern interrupt di 1-2 detik pertama: gerakan tak terduga, jump cut, visual glitch, atau teks tebal untuk memaksa perhatian. Segera hubungkan ke manfaat utama.',
+        'hook_unpopular_opinion': isEnglish ?
+            'Start with a bold, polarizing statement (unpopular opinion) that challenges common beliefs; keep it respectful and data-backed.' :
+            'Mulai dengan pernyataan tegas yang memicu perdebatan (unpopular opinion) yang menantang keyakinan umum; tetap hormat dan didukung data.',
+        'hook_myth_busting': isEnglish ?
+            'Bust a common myth with a surprising fact or demo. Lead with the myth, then immediately reveal the truth.' :
+            'Bongkar mitos umum dengan fakta atau demo mengejutkan. Mulai dari mitos, lalu segera ungkap kebenarannya.',
+        'hook_before_after': isEnglish ?
+            'Show an eye-catching BEFORE vs AFTER in the first frame. Make the transformation obvious and high-contrast.' :
+            'Tampilkan BEFORE vs AFTER yang mencolok pada frame pertama. Buat transformasinya jelas dan kontras tinggi.',
+        'hook_speedrun_demo': isEnglish ?
+            'Do a speedrun demo: “Watch me do X in 10 seconds”. Use fast pacing and timers to build retention.' :
+            'Lakukan speedrun demo: “Lihat aku lakukan X dalam 10 detik”. Gunakan pacing cepat dan timer untuk menjaga retensi.',
+        'hook_stitch_duet_react': isEnglish ?
+            'Open by reacting to a trending clip (stitch/duet). Provide a punchy take in 1 sentence, then add your unique angle.' :
+            'Buka dengan reaksi ke klip trending (stitch/duet). Berikan opini tajam dalam 1 kalimat, lalu tambahkan sudut pandang unik Anda.',
+        'hook_no_face_asmr': isEnglish ?
+            'Use faceless/ASMR-style visuals with satisfying sounds; overlay a concise voice/text hook to anchor the benefit.' :
+            'Gunakan visual faceless/ASMR dengan suara memuaskan; tambahkan voice/text hook singkat untuk menambatkan manfaat.',
+        'hook_testing_for_you': isEnglish ?
+            '“I tested X so you don’t have to” format. Summarize the result upfront, then micro-proof in 2-3 beats.' :
+            'Format “Aku sudah mencoba X jadi kamu tidak perlu”. Ringkas hasil di depan, lalu bukti singkat 2-3 poin.',
+        'hook_price_anchor': isEnglish ?
+            'Lead with a price/value anchor: “People pay $299 for this… here’s a $29 alternative”. Keep comparisons fair and honest.' :
+            'Mulai dengan anchor harga/nilai: “Orang bayar Rp4,5jt untuk ini… ini alternatif Rp450rb”. Jaga perbandingan tetap adil dan jujur.'
     };
     
     const defaultInstruction = isEnglish ? 
@@ -137,6 +164,36 @@ export function getCTAInstructions(ctaType) {
         'cta_challenge': isEnglish ?
             'Challenge related to AI skills or sustainable habits. Examples: "7-day AI productivity challenge!" or "#SustainableLifestyle challenge!"' :
             'Challenge terkait AI skills atau sustainable habits. Contoh: "Challenge AI productivity 7 hari!" atau "#SustainableLifestyle challenge!"',
+        'cta_add_to_cart': isEnglish ?
+            'Direct add-to-cart CTA tailored to commerce flows. Examples: "Tap the cart now" / "Add to cart, checkout later".' :
+            'CTA langsung tambah ke keranjang yang sesuai alur commerce. Contoh: "Tap keranjang sekarang" / "Tambah ke keranjang, checkout nanti".',
+        'cta_claim_voucher': isEnglish ?
+            'Claim time-bound voucher/coupon. Examples: "Claim 20% voucher today" / "Claim coins before midnight".' :
+            'Klaim voucher/kupon berbatas waktu. Contoh: "Klaim voucher 20% hari ini" / "Klaim koin sebelum tengah malam".',
+        'cta_chat_seller': isEnglish ?
+            'Prompt to chat seller for bundle, sizing, or custom deals. Examples: "Chat seller for bundle price".' :
+            'Ajak chat penjual untuk bundling, ukuran, atau deal khusus. Contoh: "Chat penjual untuk harga bundling".',
+        'cta_follow_shop': isEnglish ?
+            'Ask to follow the shop/brand for exclusive drops and vouchers.' :
+            'Ajak follow toko/brand untuk eksklusif drop dan voucher.',
+        'cta_join_live': isEnglish ?
+            'Invite to join live shopping/AMA session. Examples: "Join our live at 7PM for extra voucher".' :
+            'Ajak bergabung ke live shopping/AMA. Contoh: "Join live jam 19.00 untuk voucher ekstra".',
+        'cta_reply_keyword': isEnglish ?
+            'Comment a keyword to get link/template. Examples: "Comment LINK to get it" / "Reply: GUIDE".' :
+            'Komentar keyword untuk dapat link/template. Contoh: "Komen LINK untuk dapat" / "Reply: PANDUAN".',
+        'cta_pinned_comment': isEnglish ?
+            'Point to pinned comment (Shorts/Reels). Example: "Link in pinned comment".' :
+            'Arahkan ke komentar tersemat (Shorts/Reels). Contoh: "Link di komentar teratas".',
+        'cta_save_share': isEnglish ?
+            'Ask to save and share for algorithm lift. Example: "Save and share to help more people".' :
+            'Ajak simpan dan bagikan untuk dorong algoritma. Contoh: "Simpan & share biar lebih banyak yang kebantu".',
+        'cta_dm_keyword': isEnglish ?
+            'DM a keyword to receive a resource. Example: "DM ‘CHECKLIST’ to get the PDF".' :
+            'DM keyword untuk menerima resource. Contoh: "DM ‘CHECKLIST’ untuk terima PDF".',
+        'cta_join_broadcast': isEnglish ?
+            'Invite to join IG broadcast channel for drops and codes.' :
+            'Ajak join broadcast channel IG untuk drop dan kode.'
     };
     
     const defaultInstruction = isEnglish ?
