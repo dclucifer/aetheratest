@@ -96,10 +96,7 @@
   "hook_price_anchor": "Anchor Harga",
   "cta_type_label": "Jenis CTA (Call-to-Action)",
   "cta_general": "Umum",
-  "cta_tiktok": "TikTok (Keranjang Kuning)",
-  "cta_shopee": "Shopee (Keranjang Oren)",
-  "cta_instagram": "Instagram/Threads (Link di Bio)",
-  "cta_youtube": "YouTube (Subscribe & Tonton Video Lain)",
+  
   "cta_comment": "Mengarahkan ke Komentar",
   "cta_urgency": "Urgensi & FOMO",
   "cta_scarcity": "Kelangkaan Terbatas",

@@ -126,10 +126,7 @@
   "hook_price_anchor": "Price Anchor",
   "cta_type_label": "CTA (Call-to-Action) Type",
   "cta_general": "General",
-  "cta_tiktok": "TikTok (Yellow Cart)",
-  "cta_shopee": "Shopee (Orange Cart)",
-  "cta_instagram": "Instagram/Threads (Link in Bio)",
-  "cta_youtube": "YouTube (Subscribe & Watch Other Videos)",
+  
   "cta_comment": "Direct to Comments",
   "cta_urgency": "Urgency & FOMO",
   "cta_scarcity": "Limited Scarcity",
