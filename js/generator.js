@@ -521,7 +521,7 @@ export function constructPrompt() {
     
     // Prompt Injection: Model & Platform Target
     const modelTarget = localStorage.getItem('model_target') || 'auto';
-    const platformTarget = localStorage.getItem('platform_target') || 'tiktok';
+    const platformTarget = localStorage.getItem('platform_target') || localStorage.getItem('targetPlatform') || 'tiktok';
     
     // Generate negative prompts based on model target
     let negativePromptInstruction = '';
@@ -822,7 +822,7 @@ export async function handleGenerateAssets(card) {
     try {
         const script = JSON.parse(card.dataset.script);
         const fullScriptText = getFullScriptText(script);
-        const platform = (localStorage.getItem('targetPlatform') || 'tiktok').toLowerCase();
+        const platform = (localStorage.getItem('platform_target') || localStorage.getItem('targetPlatform') || 'tiktok').toLowerCase();
         const prompt = `${t('asset_generation_prompt') || 'Berdasarkan skrip berikut, buatlah 3 opsi judul/caption yang menarik, 1 set hashtag yang relevan (gabungan umum dan niche), dan 3 ide teks singkat untuk thumbnail/cover.'}
 
 Tambahkan juga daftar hashtag yang SPESIFIK untuk platform: ${platform}.

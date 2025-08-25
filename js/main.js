@@ -312,14 +312,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     elements.modeSingleBtn.addEventListener('click', () => switchMode('single'));
     elements.modeCarouselBtn.addEventListener('click', () => switchMode('carousel'));
 
-    // Quick platform selector buttons
-    document.querySelectorAll('.platform-select').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const p = btn.dataset.platform;
-            localStorage.setItem('targetPlatform', p);
-            showNotification(`${t('target_platform_label') || 'Target Platform'}: ${p}`, 'success');
-        });
-    });
+    // Platform selector (unified)
+    try {
+        const platformSelect = document.getElementById('platform-target');
+        const savedPlatform = localStorage.getItem('platform_target') || localStorage.getItem('targetPlatform') || 'tiktok';
+        if (platformSelect) {
+            platformSelect.value = savedPlatform;
+            platformSelect.addEventListener('change', () => {
+                const p = platformSelect.value;
+                localStorage.setItem('platform_target', p);
+                // Back-compat old key used elsewhere
+                localStorage.setItem('targetPlatform', p);
+                showNotification(`${t('target_platform_label') || 'Target Platform'}: ${p}`, 'success');
+                // Optional: suggest CTA based on platform
+                try {
+                    const cta = document.getElementById('cta-type');
+                    if (cta) {
+                        const suggest = (
+                            p === 'tiktok' ? 'cta_tiktok' :
+                            p === 'shopee' ? 'cta_shopee' :
+                            p === 'instagram' ? 'cta_instagram' :
+                            p === 'threads' ? 'cta_instagram' :
+                            p === 'shorts' ? 'cta_youtube' : 'cta_general'
+                        );
+                        if (Array.from(cta.options).some(o => o.value === suggest)) {
+                            cta.value = suggest;
+                        }
+                    }
+                } catch(_) {}
+            });
+        }
+    } catch(_) {}
 
     elements.strategyDefaultBtn.addEventListener('click', () => switchVisualStrategy('default'));
     elements.strategyFacelessBtn.addEventListener('click', () => switchVisualStrategy('faceless'));
