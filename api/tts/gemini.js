@@ -1,14 +1,10 @@
 // api/tts/gemini.js
-// Vercel Node API (CommonJS) + dynamic import agar aman di proyek non-ESM.
+// Vercel Node API (CommonJS). Panggil Gemini TTS via REST dan balas selalu JSON.
 
 export default async function handler(req, res) {
   try {
-    if (req.method !== "POST") {
-      res.setHeader("Content-Type", "application/json; charset=utf-8");
-      return res.status(405).json({ error: "Method not allowed" });
-    }
+    if (req.method !== "POST") return jsonErr(res, 405, "Method not allowed");
 
-    // Body bisa berupa string (Vercel) atau object
     const raw = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
     const { text, voiceName = "Kore" } = raw;
     const apiKey = req.headers["x-user-api-key"] || process.env.GEMINI_API_KEY;
@@ -16,37 +12,47 @@ export default async function handler(req, res) {
     if (!apiKey) return jsonErr(res, 500, "GEMINI_API_KEY missing");
     if (!text)  return jsonErr(res, 400, "text required");
 
-    // ✅ dynamic import → tidak bikin crash di proyek tanpa "type":"module"
-    let GoogleGenerativeAI;
-    try {
-      ({ GoogleGenerativeAI } = await import("@google/genai"));
-    } catch (e) {
-      return jsonErr(res, 500, `@google/genai not found or ESM error: ${e?.message || e}`);
-    }
-
-    const ai = new GoogleGenerativeAI({ apiKey });
-
-    const response = await ai.models.generateContent({
+    // Payload REST — gunakan "config" (bukan generationConfig) untuk TTS
+    const payload = {
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text }] }],
+      // penting: taruh di "config" agar audio dibangkitkan
       config: {
         responseModalities: ["AUDIO"],
         speechConfig: {
-          voiceConfig: { prebuiltVoiceConfig: { voiceName } },
-        },
-      },
-    });
+          voiceConfig: { prebuiltVoiceConfig: { voiceName } }
+        }
+      }
+    };
 
-    // cari bagian audio (inlineData.data)
-    const part = response?.candidates?.[0]?.content?.parts?.find(p => p?.inlineData?.data);
+    const r = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey
+        },
+        body: JSON.stringify(payload)
+      }
+    );
+
+    const txt = await r.text();
+    if (!r.ok) return jsonErr(res, r.status, `Gemini API ${r.status}: ${txt}`);
+
+    let data;
+    try { data = JSON.parse(txt); } catch (e) { return jsonErr(res, 502, "Invalid JSON from Gemini", { raw: txt }); }
+
+    // ambil audio (inlineData.data)
+    const part = data?.candidates?.[0]?.content?.parts?.find(p => p?.inlineData?.data);
     const b64pcm = part?.inlineData?.data;
 
     if (!b64pcm) {
-      // kirim JSON yang bisa dibaca FE (hindari "A server error occurred")
-      return jsonErr(res, 502, "No audio data in Gemini response", { raw: response });
+      // kirim raw balik untuk debug jika masih kosong
+      return jsonErr(res, 502, "No audio data in Gemini response", { raw: data });
     }
 
-    // Bungkus PCM 24k mono → WAV
+    // Bungkus PCM 24kHz mono → WAV
     const pcm = Buffer.from(b64pcm, "base64");
     const wav = toWavFromPCM16Mono(pcm, 24000);
     const audio_base64 = Buffer.from(wav).toString("base64");
