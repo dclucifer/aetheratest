@@ -621,5 +621,8 @@
   "cta_subscribe": "Subscribe",
   "cta_collect_live_voucher": "Collect LIVE Voucher",
   "cta_reply_keyword": "Reply with Keyword",
-  "cta_chat_seller": "Chat with Seller"
+  "cta_chat_seller": "Chat with Seller",
+  "asset_titles_label": "Title/Caption Options",
+  "asset_hashtags_label": "Hashtag Recommendations",
+  "asset_thumbnail_label": "Thumbnail Text Ideas"
 }

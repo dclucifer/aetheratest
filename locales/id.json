@@ -607,5 +607,8 @@
   "hook_scarcity_urgency": "Stok Terbatas & Urgensi",
   "hook_risk_reversal": "Risk Reversal (Garansi)",
   "hook_objection_buster": "Objection Buster (FAQ)",
-  "hook_unboxing": "Unboxing / First-Impression"
+  "hook_unboxing": "Unboxing / First-Impression",
+  "asset_titles_label": "Opsi Judul/Caption",
+  "asset_hashtags_label": "Rekomendasi Hashtag",
+  "asset_thumbnail_label": "Ide Teks Thumbnail"
 }
