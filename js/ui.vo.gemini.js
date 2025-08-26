@@ -1,5 +1,5 @@
 import { buildVOAssets } from '../vo/compile.js';
-import { showNotification } from '../utils.js';
+import { showNotification } from './utils.js';
 
 export async function previewGeminiAPI(result, state = {}, voiceName = 'Kore', opts = {}) {
   const { geminiText } = buildVOAssets(result, state);
