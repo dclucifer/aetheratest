@@ -1030,16 +1030,18 @@ export async function openScriptViewer(sourceCard, script){
   // Sisipkan tombol & container "Buat aset tambahan" di overlay
   try{ content.insertAdjacentHTML('beforeend', createAssetsHTML(script)); 
     try {
-    if (script.additional_assets_html) {
-      const assetsContainer = content.querySelector('.additional-assets-container');
-      const loader = content.querySelector('.asset-loader');
-      const body = content.querySelector('.asset-content');
-      assetsContainer?.classList.remove('hidden');
-      loader?.classList.add('hidden');
-      body?.classList.remove('hidden');
-      if (body) body.innerHTML = script.additional_assets_html;
-    }
-  } catch(_) {} }catch(_){ }
+        if (script.additional_assets_html) {
+          const assetsContainer = content.querySelector('.additional-assets-container');
+          const loader = content.querySelector('.asset-loader');
+          const body = content.querySelector('.asset-content');
+          assetsContainer?.classList.remove('hidden');
+          loader?.classList.add('hidden');
+          if (body) {
+            body.classList.remove('hidden');
+            body.innerHTML = script.additional_assets_html;
+          }
+        }
+      } catch(_) {} }catch(_){ }
   // Delegasi: tombol copy & A/B actions
   content.onclick = async (e) => {
     // Overlay export dropdown toggle

@@ -428,18 +428,18 @@ card.dataset.script = JSON.stringify(script);
     }
     // Update the content of the card
     contentDiv.innerHTML = finalHTML;
+    // restore persisted assets if exist
     try {
         if (script.additional_assets_html) {
-          const assetsContainer = contentDiv.querySelector('.additional-assets-container');
-          const loader = contentDiv.querySelector('.asset-loader');
-          const body = contentDiv.querySelector('.asset-content');
-          // tampilkan container & isi konten yang sudah tersimpan
-          if (assetsContainer) assetsContainer.classList.remove('hidden');
-          if (loader) loader.classList.add('hidden');
-          if (body) {
+        const assetsContainer = contentDiv.querySelector('.additional-assets-container');
+        const loader = contentDiv.querySelector('.asset-loader');
+        const body = contentDiv.querySelector('.asset-content');
+        assetsContainer?.classList.remove('hidden');
+        loader?.classList.add('hidden');
+        if (body) {
             body.classList.remove('hidden');
             body.innerHTML = script.additional_assets_html;
-          }
         }
-      } catch (_) {}
+        }
+    } catch(_) {}
 }

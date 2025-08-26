@@ -92,7 +92,7 @@ export async function analyzeImageWithAI(base64Data, mimeType) {
     }
 }
 
-export async function callGeminiAPI(prompt, schema, temperature) {
+export async function callGeminiAPI(prompt, schema, temperature, timeoutMs = 60000) {
     try {
         // Siapkan headers dasar
         const headers = { 'Content-Type': 'application/json' };
@@ -113,11 +113,17 @@ export async function callGeminiAPI(prompt, schema, temperature) {
             headers['x-user-api-key'] = userApiKey;
         }
 
+        const controller = new AbortController();
+        const to = setTimeout(() => controller.abort(), timeoutMs);
+
         const response = await fetch('/api/generateScript', {
             method: 'POST',
             headers,
-            body: JSON.stringify({ prompt, schema, temperature })
+            body: JSON.stringify({ prompt, schema, temperature }),
+            signal: controller.signal
         });
+
+        clearTimeout(to);
 
         if (!response.ok) {
             // Coba parsing JSON error, fallback ke pesan default/i18n

@@ -1,10 +1,11 @@
 import { buildVOAssets } from '../vo/compile.js';
-import { showNotification } from './utils.js';
+import { showNotification } from '../utils.js';
 
 export async function previewGeminiAPI(result, state = {}, voiceName = 'Kore', opts = {}) {
   const { geminiText } = buildVOAssets(result, state);
   const btn = opts?.button || null;
-  // simpan tombol ke global agar bisa direset saat stop
+
+  // simpan tombol sedang-busy untuk bisa direset oleh stop()
   if (btn) window.__voBusyBtn = btn;
 
   // guard & loading UI
@@ -15,12 +16,13 @@ export async function previewGeminiAPI(result, state = {}, voiceName = 'Kore', o
     btn.disabled = b;
     btn.classList.toggle('opacity-50', b);
     btn.textContent = b ? '⏳ Generating...' : '▶️ Preview Gemini (API)';
-    showNotification('Generating audio...', 'info')
   };
+
   setBusy(true);
+  showNotification('Generating audio...', 'info');
 
   try {
-    // stop audio sebelumnya
+    // hentikan audio lama jika ada
     if (window.__voAudio) { try { window.__voAudio.pause(); } catch(_){} }
 
     const r = await fetch('/api/tts/gemini', {
@@ -28,25 +30,38 @@ export async function previewGeminiAPI(result, state = {}, voiceName = 'Kore', o
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: geminiText, voiceName })
     });
+
     const bodyText = await r.text();
     if (!r.ok) {
       let msg = bodyText;
       try { const j = JSON.parse(bodyText); msg = j.error || bodyText; } catch {}
       throw new Error(msg);
     }
+
     const { audio_base64, mime } = JSON.parse(bodyText);
     const audio = new Audio(`data:${mime||'audio/wav'};base64,${audio_base64}`);
     window.__voAudio = audio;
-    audio.addEventListener('ended', () => { setBusy(false); window.__voBusyBtn = null; });
-    audio.addEventListener('error', () => { setBusy(false); window.__voBusyBtn = null; });
+
+    audio.addEventListener('ended', () => {
+      setBusy(false);
+      window.__voBusyBtn = null;
+    });
+    audio.addEventListener('error', () => {
+      setBusy(false);
+      window.__voBusyBtn = null;
+    });
+
     await audio.play();
-    showNotification('Audio generated successfully', 'Playing')
+    showNotification('Playing preview...', 'success');
   } catch (e) {
     setBusy(false);
+    window.__voBusyBtn = null;
+    showNotification(e.message || 'Preview gagal', 'error');
     alert(e.message || e);
   }
 }
 
+// NEW: tombol Stop
 export function stopGeminiPreview() {
   try {
     if (window.__voAudio) {
@@ -62,4 +77,5 @@ export function stopGeminiPreview() {
     btn.textContent = '▶️ Preview Gemini (API)';
   }
   window.__voBusyBtn = null;
+  showNotification('Preview stopped.', 'info');
 }

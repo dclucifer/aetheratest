@@ -1281,56 +1281,65 @@ if ('serviceWorker' in navigator) {
                         </div>
 
                         <script type="module">
-                          import { HooksCtaRegistry, validateFirstFrame } from './js/hooks-cta-loader.js';
+                          import { HooksCtaRegistry } from '/js/hooks-cta-loader.js'; // atau -nofetch.js
                         
-                          // init registry (load JSON)
                           (async () => {
-                          await HooksCtaRegistry.init();
+                            await HooksCtaRegistry.init();
                         
-                          // optional: singkatkan akses secara global
-                          window.HooksCtaRegistry = HooksCtaRegistry;
+                            const $platform = document.querySelector('#platform-target');
+                            const $hook     = document.querySelector('#hook-type');
+                            const $cta      = document.querySelector('#cta-type');
                         
-                          // autosuggest CTA tiap kali platform/hook berubah
-                          const $platform = document.querySelector('#platform-target');     // sesuaikan id platform kamu
-                          const $hook     = document.querySelector('#hook-type');
-                          const $cta      = document.querySelector('#cta-type');     // select CTA kamu
-
-                          const normPlatform = v => {
-                            const s = (v||'').toLowerCase();
-                            if (s === 'threads') return 'instagram';
-                            if (s === 'shorts')  return 'youtube';
-                            return s; // tiktok / instagram / shopee / youtube
-                          };
-                          
+                            let userTouchedCTA = false;
                         
-                          function applySuggestedCTAs() {
-                            if (!$platform || !$hook || !$cta) return;
-                            const list = HooksCtaRegistry.suggestCtas($platform.value, $hook.value);
-                            // reset selection
-                            [...$cta.options].forEach(o => { o.selected = false; o.textContent = o.textContent.replace(/^✅\s?/, ''); });
-                            // tandai & preselect 2–3 CTA teratas
-                            list.slice(0, 3).forEach(id => {
-                              const opt = [...$cta.options].find(o => o.value === id);
-                              if (opt) { opt.selected = true; opt.textContent = `✅ ${opt.textContent.replace(/^✅\s?/, '')}`; }
+                            // user mulai memilih CTA secara manual
+                            $cta?.addEventListener('change', () => { userTouchedCTA = true; });
+                        
+                            function markRecommendations() {
+                              if (!$platform || !$hook || !$cta) return;
+                        
+                              // hapus tanda ✅ di semua opsi (tanpa mengganti selection)
+                              [...$cta.options].forEach(o => {
+                                o.textContent = o.textContent.replace(/^✅\s*/, '');
+                              });
+                        
+                              // normalisasi platform untuk mapping
+                              const pRaw = ($platform.value || '').toLowerCase().trim();
+                              const platform = pRaw === 'threads' ? 'instagram'
+                                              : pRaw === 'shorts'  ? 'youtube'
+                                              : pRaw;
+                        
+                              const rec = HooksCtaRegistry.suggestCtas(platform, $hook.value) || [];
+                        
+                              // tambahkan ✅ di 2–3 rekomendasi teratas
+                              rec.slice(0,3).forEach(id => {
+                                const opt = [...$cta.options].find(o => o.value === id);
+                                if (opt) opt.textContent = '✅ ' + opt.textContent.replace(/^✅\s*/, '');
+                              });
+                        
+                              // hanya auto-select sekali (default) kalau user belum sentuh CTA
+                              if (!userTouchedCTA) {
+                                const currentHasValue = [...$cta.options].some(o => o.selected);
+                                if (!currentHasValue) {
+                                  const first = rec[0] && [...$cta.options].find(o => o.value === rec[0]);
+                                  if (first) first.selected = true;
+                                }
+                              }
+                            }
+                        
+                            // rekomendasi hanya di-trigger saat platform/hook berubah
+                            $platform?.addEventListener('change', () => {
+                              userTouchedCTA = false;   // reset default ketika konteks berubah
+                              markRecommendations();
                             });
-                          }
+                            $hook?.addEventListener('change', () => {
+                              userTouchedCTA = false;   // reset default ketika konteks berubah
+                              markRecommendations();
+                            });
                         
-                          $platform?.addEventListener('change', applySuggestedCTAs);
-                          $hook?.addEventListener('change', applySuggestedCTAs);
-                          $cta?.addEventListener('change', applySuggestedCTAs);
-                          applySuggestedCTAs();
-                        
-                          // validator 3 detik (opsional) – beri warning bila teks hook kepanjangan
-                          const $hookText = document.querySelector('#hook-text'); // text input judul/hook kamu (sesuaikan id)
-                          const $warn = document.querySelector('#hook-text-warning'); // <div> buat warning
-                          function validate() {
-                            if (!$hookText || !$warn) return;
-                            const { ok, maxChars, length } = validateFirstFrame($hookText.value || '');
-                            $warn.textContent = ok ? '' : `Teks hook terlalu panjang (${length} chars). Maksimal ${maxChars} agar kebaca di 0–3 detik.`;
-                          }
-                          $hookText?.addEventListener('input', validate);
-                          validate();
-                        })();
+                            // inisialisasi awal
+                            markRecommendations();
+                          })();
                         </script>                        
 
 </body>

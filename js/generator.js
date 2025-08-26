@@ -1,5 +1,5 @@
 // js/generator.js
-import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState} from './utils.js';
+import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState, showNotification } from './utils.js';
 import { t } from './i18n.js';
 import { analyzeImageWithAI, callGeminiAPI } from './api.js';
 import { getPersonas } from './persona.js';
@@ -818,6 +818,7 @@ export async function handleGenerateAssets(card) {
     loader.classList.remove('hidden');
     contentDiv.classList.add('hidden');
     contentDiv.innerHTML = '';
+    showNotification('Generating assets...', 'info');
 
     try {
         const script = JSON.parse(card.dataset.script);
@@ -872,19 +873,22 @@ WAJIB: Selain platform yang dipilih, SELALU sertakan juga daftar khusus untuk Sh
 
         contentDiv.innerHTML = assetsHTML;
 
+        showNotification('Assets generated.', 'success');
+
     } catch (error) {
         console.error("Error generating assets:", error);
         contentDiv.innerHTML = `<p class="text-red-400 text-xs">${t('failed_to_generate_assets') || 'Failed to generate assets:'} ${error.message}</p>`;
     } 
-    // persist
+    // persist assets ke script agar tidak hilang saat overlay ditutup
+    try {
     const script = JSON.parse(card.dataset.script);
-    script.additional_assets = assets;                  // data mentah
-    script.additional_assets_html = assetsHTML;         // HTML siap render
+    script.additional_assets = assets;              // data mentah
+    script.additional_assets_html = assetsHTML;     // HTML siap render
     card.dataset.script = JSON.stringify(script);
-    try { 
+  
     const { updateSingleScript } = await import('./state.js');
     updateSingleScript(script);
-    } catch(_) {}
+  } catch(_) {}
       finally {
         loader.classList.add('hidden');
         contentDiv.classList.remove('hidden');
