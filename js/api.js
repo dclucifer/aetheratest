@@ -92,7 +92,8 @@ export async function analyzeImageWithAI(base64Data, mimeType) {
     }
 }
 
-export async function callGeminiAPI(prompt, schema, temperature, timeoutMs = 60000) {
+const DEFAULT_TIMEOUT_MS = Number(localStorage.getItem('aethera_timeout_ms')) || 120000;
+export async function callGeminiAPI(prompt, schema, temperature, timeoutMs = DEFAULT_TIMEOUT_MS) {
     try {
         // Siapkan headers dasar
         const headers = { 'Content-Type': 'application/json' };
@@ -114,7 +115,7 @@ export async function callGeminiAPI(prompt, schema, temperature, timeoutMs = 600
         }
 
         const controller = new AbortController();
-        const to = setTimeout(() => controller.abort(), timeoutMs);
+        const to = setTimeout(() => controller.abort(new DOMException('timeout','AbortError')), timeoutMs);
 
         const response = await fetch('/api/generateScript', {
             method: 'POST',
@@ -138,6 +139,12 @@ export async function callGeminiAPI(prompt, schema, temperature, timeoutMs = 600
         return await response.json();
     } catch (error) {
         console.error("Error calling backend function:", error);
+        if (error?.name === 'AbortError') {
+        const secs = Math.round((timeoutMs||DEFAULT_TIMEOUT_MS)/1000);
+        const e = new Error(`Request timeout after ${secs}s. Server lambat atau antrian penuh—coba lagi atau naikkan timeout.`);
+        e.code = 'TIMEOUT';
+        throw e;
+        }
         throw error;
     }
 }

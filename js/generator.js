@@ -342,7 +342,9 @@ export async function handleGenerate() {
         // Update progress: 40% - Sending to AI
         if (progressFill) progressFill.style.width = '40%';
         
-        const results = await callGeminiAPI(prompt, getResponseSchema(), temperature);
+        // izinkan override timeout via localStorage, default 180s
+        const timeoutMs = Number(localStorage.getItem('aethera_timeout_ms')) || 180000;
+        const results = await callGeminiAPI(prompt, getResponseSchema(), temperature, timeoutMs);
         
         // Update progress: 80% - Processing results
         if (progressFill) progressFill.style.width = '80%';
@@ -820,6 +822,9 @@ export async function handleGenerateAssets(card) {
     contentDiv.innerHTML = '';
     showNotification('Generating assets...', 'info');
 
+    let assets = null;
+    let assetsHTML = '';
+
     try {
         const script = JSON.parse(card.dataset.script);
         const fullScriptText = getFullScriptText(script);
@@ -836,7 +841,9 @@ WAJIB: Selain platform yang dipilih, SELALU sertakan juga daftar khusus untuk Sh
  ${fullScriptText}
  ---
  `;
-        const assets = await callGeminiAPI(prompt, getAdditionalAssetsResponseSchema());
+        // >>> pakai timeout lebih panjang khusus assets
+        const timeoutMs = Number(localStorage.getItem('aethera_timeout_ms')) || 120000;
+        assets = await callGeminiAPI(prompt, getAdditionalAssetsResponseSchema(), /*temperature*/0.7, timeoutMs);
 
         let assetsHTML = '<div class="space-y-4">';
 
@@ -875,21 +882,22 @@ WAJIB: Selain platform yang dipilih, SELALU sertakan juga daftar khusus untuk Sh
 
         showNotification('Assets generated.', 'success');
 
+        // persist supaya tidak hilang saat overlay ditutup
+        try {
+            const scriptToPersist = JSON.parse(card.dataset.script);
+            scriptToPersist.additional_assets = assets;
+            scriptToPersist.additional_assets_html = assetsHTML;
+            card.dataset.script = JSON.stringify(scriptToPersist);
+  
+            const { updateSingleScript } = await import('./state.js');
+            updateSingleScript(scriptToPersist);
+        } catch (_) {}
+
     } catch (error) {
         console.error("Error generating assets:", error);
         contentDiv.innerHTML = `<p class="text-red-400 text-xs">${t('failed_to_generate_assets') || 'Failed to generate assets:'} ${error.message}</p>`;
-    } 
-    // persist assets ke script agar tidak hilang saat overlay ditutup
-    try {
-    const script = JSON.parse(card.dataset.script);
-    script.additional_assets = assets;              // data mentah
-    script.additional_assets_html = assetsHTML;     // HTML siap render
-    card.dataset.script = JSON.stringify(script);
-  
-    const { updateSingleScript } = await import('./state.js');
-    updateSingleScript(script);
-  } catch(_) {}
-      finally {
+        showNotification(error.message || (t('failed_to_generate_assets') || 'Failed to generate assets'), 'error');
+    } finally {
         loader.classList.add('hidden');
         contentDiv.classList.remove('hidden');
     }
