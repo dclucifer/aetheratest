@@ -1,5 +1,5 @@
 // js/generator.js
-import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState, showNotification } from './utils.js';
+import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState } from './utils.js';
 import { t } from './i18n.js';
 import { analyzeImageWithAI, callGeminiAPI } from './api.js';
 import { getPersonas } from './persona.js';
