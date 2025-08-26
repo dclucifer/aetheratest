@@ -10,8 +10,13 @@ export async function previewGeminiAPI(result, state = {}, voiceName = "Kore") {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text: geminiText, voiceName })
   });
-  if (!r.ok) throw new Error(await r.text());
-  const { audio_base64, mime } = await r.json();
+  const bodyText = await r.text();
+  if (!r.ok) {
+    let msg = bodyText;
+    try { const j = JSON.parse(bodyText); msg = j.error || bodyText; } catch {}
+    throw new Error(msg);
+  }
+  const { audio_base64, mime } = JSON.parse(bodyText);
   const audio = new Audio(`data:${mime||"audio/wav"};base64,${audio_base64}`);
   audio.play();
 }
