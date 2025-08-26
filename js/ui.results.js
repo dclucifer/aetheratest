@@ -4,7 +4,7 @@ import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoading
 import { updateCardContent, initSwiper, createAssetsHTML } from './ui.js';
 import { updateSingleScript } from './state.js';
 import { exportPromptPackJSON, exportPromptPackCSV, exportCapCutSRT, exportCapCutCSV } from './download.js';
-import { copyGeminiText, copyElevenSSML, downloadVOFiles, previewBrowserTTS } from './ui.vo.js';
+import { copyGeminiText, copyElevenSSML, downloadVOFiles } from './ui.vo.js';
 import { previewGeminiAPI } from './ui.vo.gemini.js';
 
 // Helper hash dan komputasi skor global yang lebih stabil dan bervariasi
@@ -790,9 +790,8 @@ export function attachExportListeners(card) {
     const btnCopyGem  = mkBtn('🎙️ Copy VO — Gemini Text');
     const btnCopySSML = mkBtn('🔊 Copy VO — ElevenLabs SSML');
     const btnDlVO     = mkBtn('💾 Download VO Files');
-    const btnPrevLoc  = mkBtn('▶️ Preview (Browser TTS)');
     const btnPrevGem  = mkBtn('▶️ Preview Gemini (API)');
-    exportMenu.append(sepVO, btnCopyGem, btnCopySSML, btnDlVO, btnPrevLoc, btnPrevGem);
+    exportMenu.append(sepVO, btnCopyGem, btnCopySSML, btnDlVO, btnPrevGem);
 
     // siapkan voState + voInput dari script card:
     const platformMap={ tiktok:'tiktok_video', shopee:'shopee_video', instagram:'igreels', threads:'threads', shorts:'shorts' };
@@ -804,8 +803,7 @@ export function attachExportListeners(card) {
     btnCopyGem.addEventListener('click', async ()=>{ await copyGeminiText(voInput, voState); exportMenu.classList.add('hidden'); });
     btnCopySSML.addEventListener('click', async ()=>{ await copyElevenSSML(voInput, voState); exportMenu.classList.add('hidden'); });
     btnDlVO.addEventListener('click', ()=>{ downloadVOFiles(voInput, voState); exportMenu.classList.add('hidden'); });
-    btnPrevLoc.addEventListener('click', ()=>{ previewBrowserTTS(voInput, voState); exportMenu.classList.add('hidden'); });
-    btnPrevGem.addEventListener('click', ()=>{ previewGeminiAPI(voInput, voState, 'Kore').catch(e=>alert(e.message||e)); exportMenu.classList.add('hidden'); });
+    btnPrevGem.addEventListener('click', ()=>{ previewGeminiAPI(voInput, voState, 'Kore', { button: btnPrevGem }); exportMenu.classList.add('hidden'); });
     
     // Toggle dropdown
     exportBtn.addEventListener('click', (e) => {
@@ -1053,7 +1051,7 @@ export async function openScriptViewer(sourceCard, script){
         } else if (type === 'zip-single') {
           const { exportZipForScripts } = await import('./ux/exportZip.js');
           await exportZipForScripts([script], false);
-        } else if (type === 'vo-copy-gemini' || type === 'vo-copy-ssml' || type === 'vo-download' || type === 'vo-prev-local' || type === 'vo-prev-gemini') {
+        } else if (type === 'vo-copy-gemini' || type === 'vo-copy-ssml' || type === 'vo-download' || type === 'vo-prev-gemini') {
           // siapkan state & input VO
           const platformMap = { tiktok:'tiktok_video', shopee:'shopee_video', instagram:'igreels', threads:'threads', shorts:'shorts' };
           const pf = (document.getElementById('platform-target')?.value || 'tiktok').toLowerCase();
@@ -1064,7 +1062,7 @@ export async function openScriptViewer(sourceCard, script){
           else if (type === 'vo-copy-ssml')   await copyElevenSSML(voInput, voState);
           else if (type === 'vo-download')    downloadVOFiles(voInput, voState);
           else if (type === 'vo-prev-local')  previewBrowserTTS(voInput, voState);
-          else if (type === 'vo-prev-gemini') await previewGeminiAPI(voInput, voState, 'Kore');
+          else if (type === 'vo-prev-gemini') await previewGeminiAPI(voInput, voState, 'Kore', { button: exportItem });
         }
       } catch (_) {}
       const parentMenu = e.target.closest('.overlay-export-menu');

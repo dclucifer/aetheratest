@@ -4,6 +4,77 @@
 import { buildVOAssets } from "../vo/compile.js";
 import { speakSequence } from "./tts.browser.js";
 
+async function ensureJSZip() {
+  if (window.JSZip) return window.JSZip;
+  await new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+    s.onload = res; s.onerror = rej; document.head.appendChild(s);
+  });
+  return window.JSZip;
+}
+
+function makePreviewHTML(geminiTextDefault) {
+  // NOTE: file ini bekerja sempurna bila dihosting di domain app-mu (agar /api/tts/gemini bisa diakses).
+  // Jika dibuka dari file://, fetch ke /api/tts/gemini akan diblok CORS/browser.
+  return `<!doctype html>
+<html lang="en"><meta charset="utf-8">
+<title>VO Preview (Gemini)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,Inter,Arial;padding:16px;background:#0b1220;color:#e5e7eb}
+  .row{display:flex;gap:8px;align-items:center;margin:8px 0}
+  textarea{width:100%;height:200px;background:#0f1629;color:#e5e7eb;border:1px solid #23314d;border-radius:8px;padding:10px}
+  select,button{padding:8px 12px;border-radius:8px;border:1px solid #23314d;background:#111a2e;color:#e5e7eb;cursor:pointer}
+  button[disabled]{opacity:.6;cursor:not-allowed}
+  .hint{color:#9aa4b2;font-size:12px}
+</style>
+<h2>VO Preview (Gemini)</h2>
+<div class="row">
+  <label>Voice:</label>
+  <select id="voice">
+    <option value="Kore" selected>Kore</option>
+    <option value="Puck">Puck</option>
+  </select>
+</div>
+<textarea id="text"></textarea>
+<div class="row">
+  <button id="play">▶️ Preview Gemini</button>
+  <span id="status" class="hint"></span>
+</div>
+<script>
+  const ta = document.getElementById('text');
+  ta.value = ${JSON.stringify(geminiTextDefault || '')};
+  const btn = document.getElementById('play');
+  const status = document.getElementById('status');
+  let audioRef = null, busy = false;
+  async function play() {
+    if (busy) return;
+    busy = true; btn.disabled = true; status.textContent = 'Generating audio...';
+    try {
+      if (audioRef) { try{ audioRef.pause(); }catch(e){} }
+      const voiceName = document.getElementById('voice').value || 'Kore';
+      const r = await fetch('/api/tts/gemini', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ text: ta.value, voiceName })
+      });
+      const txt = await r.text();
+      if (!r.ok) { let msg = txt; try{ const j=JSON.parse(txt); msg=j.error||txt; }catch{} throw new Error(msg); }
+      const { audio_base64, mime } = JSON.parse(txt);
+      audioRef = new Audio(\`data:\${mime||'audio/wav'};base64,\${audio_base64}\`);
+      audioRef.onended = ()=>{ busy=false; btn.disabled=false; status.textContent=''; };
+      audioRef.onerror = ()=>{ busy=false; btn.disabled=false; status.textContent='(audio error)'; };
+      audioRef.play().then(()=>{ status.textContent='Playing...'; });
+    } catch(e) {
+      status.textContent = e.message || String(e);
+      busy=false; btn.disabled=false;
+    }
+  }
+  btn.addEventListener('click', play);
+</script>
+</html>`;
+}
+
 export function renderVOBlock(result, state = {}) {
   const assets = buildVOAssets(result, state);
   const wrap = (label, content) => `\n\n=== ${label} ===\n${content}`;
@@ -43,10 +114,20 @@ export function downloadText(name, content){
   setTimeout(()=>URL.revokeObjectURL(url), 5000);
 }
 
-export function downloadVOFiles(result, state={}){
+export async function downloadVOFiles(result, state={}){
   const { ssml, geminiText, lang, platform } = buildVOAssets(result, state);
-  downloadText(`vo_${platform}_${lang}.ssml`, ssml);
-  downloadText(`vo_${platform}_${lang}_gemini.txt`, geminiText);
+  const JSZip = await ensureJSZip();
+  const zip = new JSZip();
+  const folder = zip.folder(`VO/${platform}_${lang}`);
+  folder.file(`vo_${platform}_${lang}_gemini.txt`, geminiText);
+  folder.file(`vo_${platform}_${lang}.ssml`, ssml);
+  folder.file(`vo_preview_gemini.html`, makePreviewHTML(geminiText));
+  const blob = await zip.generateAsync({ type:'blob' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `vo_${platform}_${lang}.zip`;
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 export function previewBrowserTTS(result, state = {}) {
