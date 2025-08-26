@@ -1,9 +1,11 @@
 // js/ui.results.js (split from ui.js)
 import { t } from './i18n.js'; // You might also need this if not already imported
-import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoadingState } from './utils.js';
+import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoadingStat, languageState } from './utils.js';
 import { updateCardContent, initSwiper, createAssetsHTML } from './ui.js';
 import { updateSingleScript } from './state.js';
 import { exportPromptPackJSON, exportPromptPackCSV, exportCapCutSRT, exportCapCutCSV } from './download.js';
+import { copyGeminiText, copyElevenSSML, downloadVOFiles, previewBrowserTTS } from './ui.vo.js';
+import { previewGeminiAPI } from './ui.vo.gemini.js';
 
 // Helper hash dan komputasi skor global yang lebih stabil dan bervariasi
 function hashString(input) {
@@ -777,6 +779,70 @@ export function attachExportListeners(card) {
     const exportMenu = card.querySelector('.export-menu');
     const script = JSON.parse(card.dataset.script);
     
+     // === VO: inject buttons into export dropdown ===
+    const mkBtn = (label) => {
+        const b = document.createElement('button');
+        b.className = 'w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50';
+        b.textContent = label;
+        return b;
+    };
+
+    // separator
+    const sepVO = document.createElement('div');
+    sepVO.className = 'border-t border-gray-100 my-1';
+
+    // buttons
+    const btnCopyGemini = mkBtn('🎙️ Copy VO — Gemini Text');
+    const btnCopySSML   = mkBtn('🔊 Copy VO — ElevenLabs SSML');
+    const btnDownload   = mkBtn('💾 Download VO Files');
+    const btnPrevLocal  = mkBtn('▶️ Preview (Browser TTS)');
+    const btnPrevGemini = mkBtn('▶️ Preview Gemini (API)');
+
+    // Tambah ke menu (setelah item bawaan)
+    exportMenu.append(sepVO, btnCopyGemini, btnCopySSML, btnDownload, btnPrevLocal, btnPrevGemini);
+
+    // State VO (ambil platform & bahasa dari UI)
+    const platformSelect = document.getElementById('platform-target');
+    const pf = (platformSelect?.value || 'tiktok').toLowerCase();
+    const platformMap = { tiktok:'tiktok_video', shopee:'shopee_video', instagram:'igreels', threads:'threads', shorts:'shorts' };
+    const voState = {
+        platform: platformMap[pf] || 'tiktok_video',
+        lang: (languageState?.current === 'en') ? 'en' : 'id'
+    };
+
+    // Adaptasi struktur script -> format VO {hook, scenes[], cta}
+    const toVO = (sc) => ({
+        hook: sc?.hook?.text || sc?.hook || '',
+        scenes: [ (sc?.body?.text || '') ],
+        cta: sc?.cta?.text || sc?.cta || ''
+    });
+    const voInput = toVO(script);
+
+    // Listeners
+    btnCopyGemini.addEventListener('click', async () => {
+        await copyGeminiText(voInput, voState);
+        exportMenu.classList.add('hidden');
+    });
+    btnCopySSML.addEventListener('click', async () => {
+        await copyElevenSSML(voInput, voState);
+        exportMenu.classList.add('hidden');
+    });
+    btnDownload.addEventListener('click', () => {
+        downloadVOFiles(voInput, voState);
+        exportMenu.classList.add('hidden');
+    });
+    btnPrevLocal.addEventListener('click', () => {
+        previewBrowserTTS(voInput, voState);
+        exportMenu.classList.add('hidden');
+    });
+    btnPrevGemini.addEventListener('click', async () => {
+        try {
+        await previewGeminiAPI(voInput, voState, 'Kore'); // pilih suara Gemini di sini
+        } catch (e) { alert(e.message || e); }
+        exportMenu.classList.add('hidden');
+    });
+    // === end VO inject ===
+
     // Toggle dropdown
     exportBtn.addEventListener('click', (e) => {
         e.stopPropagation();
