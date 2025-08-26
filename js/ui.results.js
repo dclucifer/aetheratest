@@ -1,6 +1,6 @@
 // js/ui.results.js (split from ui.js)
 import { t } from './i18n.js'; // You might also need this if not already imported
-import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoadingStat, languageState } from './utils.js';
+import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoadingState, languageState } from './utils.js';
 import { updateCardContent, initSwiper, createAssetsHTML } from './ui.js';
 import { updateSingleScript } from './state.js';
 import { exportPromptPackJSON, exportPromptPackCSV, exportCapCutSRT, exportCapCutCSV } from './download.js';
@@ -778,6 +778,15 @@ export function attachExportListeners(card) {
     const exportBtn = card.querySelector('.export-btn');
     const exportMenu = card.querySelector('.export-menu');
     const script = JSON.parse(card.dataset.script);
+    function mkBtn(label, cls = 'w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50') {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = cls;
+        b.textContent = label;
+        return b;
+    }
+    const sepVO = document.createElement('div');
+    sepVO.className = 'border-t border-gray-100 my-1';
     const btnCopyGem  = mkBtn('🎙️ Copy VO — Gemini Text');
     const btnCopySSML = mkBtn('🔊 Copy VO — ElevenLabs SSML');
     const btnDlVO     = mkBtn('💾 Download VO Files');
