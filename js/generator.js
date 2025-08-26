@@ -875,7 +875,17 @@ WAJIB: Selain platform yang dipilih, SELALU sertakan juga daftar khusus untuk Sh
     } catch (error) {
         console.error("Error generating assets:", error);
         contentDiv.innerHTML = `<p class="text-red-400 text-xs">${t('failed_to_generate_assets') || 'Failed to generate assets:'} ${error.message}</p>`;
-    } finally {
+    } 
+    // persist
+    const script = JSON.parse(card.dataset.script);
+    script.additional_assets = assets;                  // data mentah
+    script.additional_assets_html = assetsHTML;         // HTML siap render
+    card.dataset.script = JSON.stringify(script);
+    try { 
+    const { updateSingleScript } = await import('./state.js');
+    updateSingleScript(script);
+    } catch(_) {}
+      finally {
         loader.classList.add('hidden');
         contentDiv.classList.remove('hidden');
     }

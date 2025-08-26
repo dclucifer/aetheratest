@@ -628,3 +628,27 @@ if (freedomSlider) {
 
 try{ import('./ux/exportZip.js').then(m=>m.initResultsExportToolbar && m.initResultsExportToolbar()); }catch(e){}
 try{ import('./ux/rank.js').then(m=>m.initRankAll && m.initRankAll()); }catch(e){}
+
+// Sinkronisasi chip CTA -> <select id="cta-type">
+document.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-cta-value]');
+    if (!chip) return;
+    const val = chip.getAttribute('data-cta-value');
+    const sel = document.getElementById('cta-type');
+    if (sel && val) {
+      sel.value = val;
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+      // highlight chip terpilih
+      document.querySelectorAll('[data-cta-value]').forEach(el => el.classList.toggle('selected', el === chip));
+    }
+  });
+  
+  // Pastikan select CTA tidak nonaktif/terkunci oleh styling
+  (() => {
+    const sel = document.getElementById('cta-type');
+    if (sel) {
+      sel.disabled = false;
+      const grp = sel.closest('.form-group');
+      grp?.classList.remove('pointer-events-none', 'opacity-50');
+    }
+  })();

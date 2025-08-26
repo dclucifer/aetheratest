@@ -110,10 +110,16 @@ export async function exportZipForScripts(scripts, includeThumbs){
       const b=await generateThumbBlob(s);
       if(b) sub.file(`${base}_thumb_1080x1920.png`, b);
     }
+    
+    const voInput = {
+      hook:  s?.hook?.text  || s?.hook  || '',
+      scenes:[s?.body?.text  || s?.body  || ''],
+      cta:   s?.cta?.text   || s?.cta   || ''
+    };
 
     // === VO export per item ===
     try {
-      appendVOToZip(sub, s, voState);
+      appendVOToZip(sub, voInput, voState);
     } catch (e) {
       console.warn('appendVOToZip failed:', e);
     }

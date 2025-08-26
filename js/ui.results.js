@@ -5,7 +5,7 @@ import { updateCardContent, initSwiper, createAssetsHTML } from './ui.js';
 import { updateSingleScript } from './state.js';
 import { exportPromptPackJSON, exportPromptPackCSV, exportCapCutSRT, exportCapCutCSV } from './download.js';
 import { copyGeminiText, copyElevenSSML, downloadVOFiles } from './ui.vo.js';
-import { previewGeminiAPI } from './ui.vo.gemini.js';
+import { previewGeminiAPI, stopGeminiPreview } from './ui.vo.gemini.js';
 
 // Helper hash dan komputasi skor global yang lebih stabil dan bervariasi
 function hashString(input) {
@@ -791,7 +791,8 @@ export function attachExportListeners(card) {
     const btnCopySSML = mkBtn('🔊 Copy VO — ElevenLabs SSML');
     const btnDlVO     = mkBtn('💾 Download VO Files');
     const btnPrevGem  = mkBtn('▶️ Preview Gemini (API)');
-    exportMenu.append(sepVO, btnCopyGem, btnCopySSML, btnDlVO, btnPrevGem);
+    const btnStop     = mkBtn('⏹ Stop Audio');
+    exportMenu.append(sepVO, btnCopyGem, btnCopySSML, btnDlVO, btnPrevGem, btnStop);
 
     // siapkan voState + voInput dari script card:
     const platformMap={ tiktok:'tiktok_video', shopee:'shopee_video', instagram:'igreels', threads:'threads', shorts:'shorts' };
@@ -804,6 +805,7 @@ export function attachExportListeners(card) {
     btnCopySSML.addEventListener('click', async ()=>{ await copyElevenSSML(voInput, voState); exportMenu.classList.add('hidden'); });
     btnDlVO.addEventListener('click', ()=>{ downloadVOFiles(voInput, voState); exportMenu.classList.add('hidden'); });
     btnPrevGem.addEventListener('click', ()=>{ previewGeminiAPI(voInput, voState, 'Kore', { button: btnPrevGem }); exportMenu.classList.add('hidden'); });
+    btnStop.addEventListener('click',       ()=>{ stopGeminiPreview(); exportMenu.classList.add('hidden'); });
     
     // Toggle dropdown
     exportBtn.addEventListener('click', (e) => {
@@ -978,8 +980,8 @@ export async function openScriptViewer(sourceCard, script){
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-copy-gemini">🎙️ Copy VO — Gemini Text</button>
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-copy-ssml">🔊 Copy VO — ElevenLabs SSML</button>
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-download">💾 Download VO Files</button>
-        <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-prev-local">▶️ Preview (Browser TTS)</button>
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-prev-gemini">▶️ Preview Gemini (API)</button>
+        <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-stop">⏹ Stop Audio</button>
       </div>
     </div>
     <button class="overlay-edit-btn px-3 py-1.5 text-xs rounded bg-yellow-600 text-white hover:bg-yellow-700" data-tooltip><span>${t('edit_button') || 'Edit'}</span><span class="tooltip-hint">${t('edit_tooltip') || 'Edit teks skrip & regenerasi visual'}</span></button>
@@ -1026,7 +1028,17 @@ export async function openScriptViewer(sourceCard, script){
     if (ab) content.insertAdjacentHTML('beforeend', ab);
   }catch(_){ }
   // Sisipkan tombol & container "Buat aset tambahan" di overlay
-  try{ content.insertAdjacentHTML('beforeend', createAssetsHTML(script)); }catch(_){ }
+  try{ content.insertAdjacentHTML('beforeend', createAssetsHTML(script)); try {
+    if (script.additional_assets_html) {
+      const assetsContainer = content.querySelector('.additional-assets-container');
+      const loader = content.querySelector('.asset-loader');
+      const body = content.querySelector('.asset-content');
+      assetsContainer?.classList.remove('hidden');
+      loader?.classList.add('hidden');
+      body?.classList.remove('hidden');
+      if (body) body.innerHTML = script.additional_assets_html;
+    }
+  } catch(_) {} }catch(_){ }
   // Delegasi: tombol copy & A/B actions
   content.onclick = async (e) => {
     // Overlay export dropdown toggle
@@ -1061,8 +1073,8 @@ export async function openScriptViewer(sourceCard, script){
           if (type === 'vo-copy-gemini')      await copyGeminiText(voInput, voState);
           else if (type === 'vo-copy-ssml')   await copyElevenSSML(voInput, voState);
           else if (type === 'vo-download')    downloadVOFiles(voInput, voState);
-          else if (type === 'vo-prev-local')  previewBrowserTTS(voInput, voState);
           else if (type === 'vo-prev-gemini') await previewGeminiAPI(voInput, voState, 'Kore', { button: exportItem });
+          else if (type === 'vo-stop')        stopGeminiPreview();
         }
       } catch (_) {}
       const parentMenu = e.target.closest('.overlay-export-menu');

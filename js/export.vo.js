@@ -42,12 +42,10 @@ export function appendVOToZip(zipOrFolder, result, state = {}, opts = {}) {
   };
   const base = opts.base || `VO/${platform}_${lang}`;
   const add = (name, content) => {
-    if (typeof zipOrFolder.folder === 'function' && !name.includes('/')) zipOrFolder.file(name, content);
-    else zipOrFolder.file(`${base}/${name}`, content);
+    zipOrFolder.file(`${base}/${name}`, content);
   };
   add(`vo_${platform}_${lang}.ssml`, ssml);
   add(`vo_${platform}_${lang}_gemini.txt`, geminiText);
   add(`vo_meta_${platform}_${lang}.json`, JSON.stringify(meta, null, 2));
-  // NEW: HTML preview ikut ke ZIP
   add(`vo_preview_gemini.html`, makePreviewHTML(geminiText));
 }
