@@ -1028,7 +1028,8 @@ export async function openScriptViewer(sourceCard, script){
     if (ab) content.insertAdjacentHTML('beforeend', ab);
   }catch(_){ }
   // Sisipkan tombol & container "Buat aset tambahan" di overlay
-  try{ content.insertAdjacentHTML('beforeend', createAssetsHTML(script)); try {
+  try{ content.insertAdjacentHTML('beforeend', createAssetsHTML(script)); 
+    try {
     if (script.additional_assets_html) {
       const assetsContainer = content.querySelector('.additional-assets-container');
       const loader = content.querySelector('.asset-loader');
