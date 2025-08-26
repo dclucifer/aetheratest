@@ -359,7 +359,7 @@ export async function createResultCard(script, index) {
 
     // Sembunyikan tombol aksi pada tampilan list
     try {
-      card.querySelectorAll('.export-dropdown, .edit-btn, .copy-btn, .view-btn').forEach(el=>{ el.style.display='none'; });
+      card.querySelectorAll('.edit-btn, .copy-btn, .view-btn').forEach(el=>{ el.style.display='none'; });
     } catch(_){}
 
     // Pada tampilan list, jangan render A/B variants; hanya akan ditampilkan di overlay viewer
@@ -976,6 +976,12 @@ export async function openScriptViewer(sourceCard, script){
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="capcut-srt">CapCut (SRT)</button>
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="capcut-csv">CapCut (CSV)</button>
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="zip-single">Export This (ZIP)</button>
+        <div class="border-t border-gray-800 my-1"></div>
+        <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-copy-gemini">🎙️ Copy VO — Gemini Text</button>
+        <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-copy-ssml">🔊 Copy VO — ElevenLabs SSML</button>
+        <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-download">💾 Download VO Files</button>
+        <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-prev-local">▶️ Preview (Browser TTS)</button>
+        <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-prev-gemini">▶️ Preview Gemini (API)</button>
       </div>
     </div>
     <button class="overlay-edit-btn px-3 py-1.5 text-xs rounded bg-yellow-600 text-white hover:bg-yellow-700" data-tooltip><span>${t('edit_button') || 'Edit'}</span><span class="tooltip-hint">${t('edit_tooltip') || 'Edit teks skrip & regenerasi visual'}</span></button>
@@ -1047,6 +1053,18 @@ export async function openScriptViewer(sourceCard, script){
         } else if (type === 'zip-single') {
           const { exportZipForScripts } = await import('./ux/exportZip.js');
           await exportZipForScripts([script], false);
+        } else if (type === 'vo-copy-gemini' || type === 'vo-copy-ssml' || type === 'vo-download' || type === 'vo-prev-local' || type === 'vo-prev-gemini') {
+          // siapkan state & input VO
+          const platformMap = { tiktok:'tiktok_video', shopee:'shopee_video', instagram:'igreels', threads:'threads', shorts:'shorts' };
+          const pf = (document.getElementById('platform-target')?.value || 'tiktok').toLowerCase();
+          const voState = { platform: platformMap[pf] || 'tiktok_video', lang: (languageState?.current === 'en') ? 'en' : 'id' };
+          const toVO = sc => ({ hook: sc?.hook?.text || sc?.hook || '', scenes:[ sc?.body?.text || sc?.body || '' ], cta: sc?.cta?.text || sc?.cta || '' });
+          const voInput = toVO(script);
+          if (type === 'vo-copy-gemini')      await copyGeminiText(voInput, voState);
+          else if (type === 'vo-copy-ssml')   await copyElevenSSML(voInput, voState);
+          else if (type === 'vo-download')    downloadVOFiles(voInput, voState);
+          else if (type === 'vo-prev-local')  previewBrowserTTS(voInput, voState);
+          else if (type === 'vo-prev-gemini') await previewGeminiAPI(voInput, voState, 'Kore');
         }
       } catch (_) {}
       const parentMenu = e.target.closest('.overlay-export-menu');
