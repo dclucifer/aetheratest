@@ -950,9 +950,13 @@ export async function openScriptViewer(sourceCard, script){
     </div>
     <button class="overlay-edit-btn px-3 py-1.5 text-xs rounded bg-yellow-600 text-white hover:bg-yellow-700" data-tooltip><span>${t('edit_button') || 'Edit'}</span><span class="tooltip-hint">${t('edit_tooltip') || 'Edit teks skrip & regenerasi visual'}</span></button>
   </div>`;
-  const renderPart=(label, part)=>{
+  const renderPartWithCopy=(sectionKey, label, part)=>{
     if(!part) return '';
-    let s=`<div class=\"mb-4\"><h4 class=\"font-semibold mb-2\">${label}</h4>`;
+    let s=`<div class=\"mb-4\">`+
+          `<div class=\"flex items-center justify-between mb-2\">`+
+          `<h4 class=\"font-semibold\">${label}</h4>`+
+          `<button class=\"overlay-section-copy-btn px-2 py-1 text-xs rounded bg-gray-700 text-white hover:bg-gray-600\" data-section=\"${sectionKey}\">${t('copy_button')||'Copy'}</button>`+
+          `</div>`;
     s+=`<p class=\"mb-2 whitespace-pre-wrap\">${safe(part.text||part)}</p>`;
     const shots=part.shots||[];
     if(Array.isArray(shots) && shots.length){
@@ -976,9 +980,9 @@ export async function openScriptViewer(sourceCard, script){
     });
     html+=`</div>`;
   }
-  html += renderPart(t('hook_title')||'Hook', script.hook);
-  html += renderPart(t('body_title')||'Body', script.body);
-  html += renderPart(t('cta_title')||'CTA', script.cta);
+  html += renderPartWithCopy('hook', t('hook_title')||'Hook', script.hook);
+  html += renderPartWithCopy('body', t('body_title')||'Body', script.body);
+  html += renderPartWithCopy('cta', t('cta_title')||'CTA', script.cta);
   // Render ke overlay lalu aktifkan event delegation
   content.innerHTML=html;
   // Set script pada dataset overlay agar fitur tambahan (assets) bisa baca data
@@ -1037,6 +1041,18 @@ export async function openScriptViewer(sourceCard, script){
         if (em) em.style.zIndex = '1001';
         if (viewer) viewer.style.zIndex = '1000';
       } catch(_){}
+      return;
+    }
+    const sectionCopyBtn = e.target.closest('.overlay-section-copy-btn');
+    if (sectionCopyBtn) {
+      try {
+        const sec = sectionCopyBtn.dataset.section;
+        let textToCopy = '';
+        if (sec === 'hook') textToCopy = (script.hook?.text || script.hook || '').toString();
+        else if (sec === 'body') textToCopy = (script.body?.text || script.body || '').toString();
+        else if (sec === 'cta') textToCopy = (script.cta?.text || script.cta || '').toString();
+        copyToClipboard(textToCopy, sectionCopyBtn);
+      } catch(_) {}
       return;
     }
     const copyBtn = e.target.closest('.prompt-copy-btn');

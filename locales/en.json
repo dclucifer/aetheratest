@@ -573,6 +573,7 @@
   "analyzing_image": "Analyzing image...",
   "analysis_complete": "analysis complete",
   "copy_full_script": "Copy Full Script",
+  "copy_button": "Copy",
   "refine_script_title": "Refine Script",
   "original_version_label": "Original Version (for Reference)",
   "revision_instruction_label": "Your Revision Instruction",
