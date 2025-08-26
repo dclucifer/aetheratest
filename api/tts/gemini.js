@@ -1,23 +1,23 @@
 // api/tts/gemini.js
-// Vercel Node API (CommonJS). Panggil Gemini TTS via REST dan balas selalu JSON.
-
 export default async function handler(req, res) {
   try {
     if (req.method !== "POST") return jsonErr(res, 405, "Method not allowed");
 
-    const raw = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
-    const { text, voiceName = "Kore" } = raw;
+    const raw  = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+    const text = raw.text;
+    const voiceName = raw.voiceName || "Kore";
     const apiKey = req.headers["x-user-api-key"] || process.env.GEMINI_API_KEY;
 
     if (!apiKey) return jsonErr(res, 500, "GEMINI_API_KEY missing");
     if (!text)  return jsonErr(res, 400, "text required");
 
-    // Payload REST — gunakan "config" (bukan generationConfig) untuk TTS
+    // ✅ REST payload yang benar untuk TTS
     const payload = {
       model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text }] }],
-      // penting: taruh di "config" agar audio dibangkitkan
-      config: {
+      contents: [
+        { role: "user", parts: [{ text }] } // penting: sertakan role
+      ],
+      generationConfig: {                   // penting: gunakan generationConfig (bukan "config")
         responseModalities: ["AUDIO"],
         speechConfig: {
           voiceConfig: { prebuiltVoiceConfig: { voiceName } }
@@ -29,10 +29,7 @@ export default async function handler(req, res) {
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey
-        },
+        headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
         body: JSON.stringify(payload)
       }
     );
@@ -41,22 +38,21 @@ export default async function handler(req, res) {
     if (!r.ok) return jsonErr(res, r.status, `Gemini API ${r.status}: ${txt}`);
 
     let data;
-    try { data = JSON.parse(txt); } catch (e) { return jsonErr(res, 502, "Invalid JSON from Gemini", { raw: txt }); }
+    try { data = JSON.parse(txt); } catch { return jsonErr(res, 502, "Invalid JSON from Gemini", { raw: txt }); }
 
-    // ambil audio (inlineData.data)
-    const part = data?.candidates?.[0]?.content?.parts?.find(p => p?.inlineData?.data);
+    const cand = data?.candidates?.[0];
+    const part = cand?.content?.parts?.find(p => p?.inlineData?.data);
     const b64pcm = part?.inlineData?.data;
 
     if (!b64pcm) {
-      // kirim raw balik untuk debug jika masih kosong
-      return jsonErr(res, 502, "No audio data in Gemini response", { raw: data });
+      return jsonErr(res, 502, "No audio data in Gemini response", {
+        finishReason: cand?.finishReason, safetyRatings: cand?.safetyRatings, raw: data
+      });
     }
 
-    // Bungkus PCM 24kHz mono → WAV
     const pcm = Buffer.from(b64pcm, "base64");
     const wav = toWavFromPCM16Mono(pcm, 24000);
     const audio_base64 = Buffer.from(wav).toString("base64");
-
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     return res.status(200).json({ audio_base64, mime: "audio/wav" });
   } catch (err) {
@@ -75,7 +71,6 @@ function toWavFromPCM16Mono(pcmBuffer, sampleRate = 24000) {
   const byteRate = sampleRate * blockAlign;
   const dataSize = pcmBuffer.length;
   const buffer = Buffer.alloc(44 + dataSize);
-
   buffer.write("RIFF", 0);
   buffer.writeUInt32LE(36 + dataSize, 4);
   buffer.write("WAVE", 8);
