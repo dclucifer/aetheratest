@@ -2,7 +2,7 @@
 import { t } from '../i18n.js';
 import { getScripts } from '../state.js';
 import { showNotification, languageState } from '../utils.js';
-import { appendVOToZip } from './exportZip.js';
+import { appendVOToZip } from '../export.vo.js';
 async function ensureJSZip(){ if(window.JSZip) return window.JSZip; await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); return window.JSZip; }
 function toSafeName(s){ return String(s||'').trim().replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-]/g,'').slice(0,64)||'script'; }
 function makeSRT(script){ const lines=(script.body?.text||script.body||'').toString().split('\n').filter(Boolean); const dur=2; let t=0,idx=1,out=''; for(const ln of lines){ const start=new Date(t*1000).toISOString().substr(11,8)+',000'; const end=new Date((t+dur)*1000).toISOString().substr(11,8)+',000'; out+=`${idx}\n${start} --> ${end}\n${ln}\n\n`; t+=dur; idx++; } return out; }
