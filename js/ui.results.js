@@ -2,7 +2,7 @@
 import { t } from './i18n.js'; // You might also need this if not already imported
 import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoadingState, languageState } from './utils.js';
 import { updateCardContent, initSwiper, createAssetsHTML } from './ui.js';
-import { updateSingleScript } from './state.js';
+import { updateSingleScript, getScripts } from './state.js';
 import { exportPromptPackJSON, exportPromptPackCSV, exportCapCutSRT, exportCapCutCSV } from './download.js';
 import { copyGeminiText, copyElevenSSML, downloadVOFiles } from './ui.vo.js';
 import { previewGeminiAPI, stopGeminiPreview } from './ui.vo.gemini.js';
@@ -946,6 +946,11 @@ export async function openScriptViewer(sourceCard, script){
   const modal=document.getElementById('script-viewer-modal');
   const content=document.getElementById('script-viewer-content');
   if(!modal||!content) return;
+  try {
+    // Rehydrate script dari state agar perubahan terbaru (assets/varian) ikut tampil
+    const byId = (getScripts && typeof getScripts === 'function') ? getScripts().find(s => s.id === script?.id) : null;
+    if (byId) script = byId;
+  } catch(_) {}
   const safe=(v)=> (v||'').toString();
   // Hitung score global untuk ditampilkan di overlay
   let globalScore=0;
@@ -1047,6 +1052,8 @@ export async function openScriptViewer(sourceCard, script){
     if (exportBtn) {
       const menu = exportBtn.parentElement.querySelector('.overlay-export-menu');
       if (menu) menu.classList.toggle('hidden');
+      // Sembunyikan tooltip agar tidak menutupi menu
+      try { const hint = exportBtn.querySelector('.tooltip-hint'); if (hint) hint.style.display = 'none'; } catch(_) {}
       return;
     }
     const exportItem = e.target.closest('.overlay-export-item');
@@ -1064,14 +1071,14 @@ export async function openScriptViewer(sourceCard, script){
         } else if (type === 'zip-single') {
           const { exportZipForScripts } = await import('./ux/exportZip.js');
           await exportZipForScripts([script], false);
-        } else if (type === 'vo-copy-gemini' || type === 'vo-copy-ssml' || type === 'vo-download' || type === 'vo-prev-gemini') {
+        } else if (type === 'vo-copy-gemini' || type === 'vo-copy-ssml' || type === 'vo-download' || type === 'vo-prev-gemini' || type === 'vo-stop') {
           // siapkan state & input VO
           const platformMap = { tiktok:'tiktok_video', shopee:'shopee_video', instagram:'igreels', threads:'threads', shorts:'shorts' };
           const pf = (document.getElementById('platform-target')?.value || 'tiktok').toLowerCase();
           const voState = { platform: platformMap[pf] || 'tiktok_video', lang: (languageState?.current === 'en') ? 'en' : 'id' };
           const toVO = sc => ({ hook: sc?.hook?.text || sc?.hook || '', scenes:[ sc?.body?.text || sc?.body || '' ], cta: sc?.cta?.text || sc?.cta || '' });
           const voInput = toVO(script);
-          const cacheKey = sc?.id ? `script:${sc.id}` : undefined;
+          const cacheKey = script?.id ? `script:${script.id}` : undefined;
           if (type === 'vo-copy-gemini')      await copyGeminiText(voInput, voState);
           else if (type === 'vo-copy-ssml')   await copyElevenSSML(voInput, voState);
           else if (type === 'vo-download')    downloadVOFiles(voInput, voState);

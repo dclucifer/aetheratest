@@ -428,12 +428,12 @@ card.dataset.script = JSON.stringify(script);
     }
     // Update the content of the card
     contentDiv.innerHTML = finalHTML;
-    // restore persisted assets if exist
+    // restore persisted assets if exist (fix: use contentDiv scope)
     try {
         if (script.additional_assets_html) {
-          const assetsContainer = content.querySelector('.additional-assets-container');
-          const loader = content.querySelector('.asset-loader');
-          const body = content.querySelector('.asset-content');
+          const assetsContainer = contentDiv.querySelector('.additional-assets-container');
+          const loader = contentDiv.querySelector('.asset-loader');
+          const body = contentDiv.querySelector('.asset-content');
           assetsContainer?.classList.remove('hidden');
           loader?.classList.add('hidden');
           if (body) { body.classList.remove('hidden'); body.innerHTML = script.additional_assets_html; }

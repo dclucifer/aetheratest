@@ -60,6 +60,8 @@ export async function previewGeminiAPI(result, state = {}, voiceName = 'Kore', o
     const audio = getAudioEl();
     audio.src = cached.src;
     window.__voState.playingKey = key;
+    // pastikan tombol bisa di-reset oleh stop()
+    window.__voState.busyBtn = btn || null;
 
     audio.onended = () => { setBusy(btn, false); window.__voState.busyBtn = null; };
     audio.onerror = () => { setBusy(btn, false); window.__voState.busyBtn = null; };
@@ -74,6 +76,24 @@ export async function previewGeminiAPI(result, state = {}, voiceName = 'Kore', o
       showNotification(e.message || 'Failed to play', 'error');
     }
     return;
+  }
+  if (cached?.speech) {
+    try {
+      window.__voState.busyBtn = btn || null;
+      setBusy(btn, true);
+      const utter = new SpeechSynthesisUtterance(cached.speech);
+      utter.onend = () => { setBusy(btn, false); window.__voState.busyBtn = null; };
+      utter.onerror = () => { setBusy(btn, false); window.__voState.busyBtn = null; };
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+      showNotification('Playing cached preview…', 'success');
+      return;
+    } catch (e) {
+      setBusy(btn, false);
+      window.__voState.busyBtn = null;
+      showNotification(e.message || 'Failed to play', 'error');
+      return;
+    }
   }
 
   // tidak ada cache → generate
@@ -97,7 +117,21 @@ export async function previewGeminiAPI(result, state = {}, voiceName = 'Kore', o
     if (!r.ok) {
       let msg = bodyText;
       try { const j = JSON.parse(bodyText); msg = j.error || bodyText; } catch {}
-      throw new Error(msg);
+      // fallback ke Browser TTS jika endpoint belum tersedia
+      try {
+        // cache speech fallback supaya klik ulang tidak fetch lagi
+        window.__voCache.set(key, { speech: geminiText, createdAt: Date.now() });
+        const utter = new SpeechSynthesisUtterance(geminiText);
+        utter.onend = () => { setBusy(btn, false); window.__voState.busyBtn = null; };
+        utter.onerror = () => { setBusy(btn, false); window.__voState.busyBtn = null; };
+        window.__voState.busyBtn = btn || null;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utter);
+        showNotification('Preview (browser TTS fallback)…', 'info');
+        return;
+      } catch (_) {
+        throw new Error(msg);
+      }
     }
 
     const { audio_base64, mime } = JSON.parse(bodyText);
@@ -142,6 +176,9 @@ export function stopGeminiPreview() {
     audio.src = '';
     audio.load();
   } catch(_) {}
+
+  // hentikan browser speech synthesis bila digunakan sebagai fallback
+  try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch(_) {}
 
   // reset state tombol
   const btn = window.__voState.busyBtn;

@@ -344,7 +344,7 @@ export async function handleGenerate() {
         
         // izinkan override timeout via localStorage, default 180s
         const timeoutMs = Number(localStorage.getItem('aethera_timeout_ms')) || 180000;
-        const results = await callGeminiAPI(prompt, getResponseSchema(), temperature, timeoutMs);
+        let results = await callGeminiAPI(prompt, getResponseSchema(), temperature, timeoutMs);
         
         // Update progress: 80% - Processing results
         if (progressFill) progressFill.style.width = '80%';
@@ -353,8 +353,36 @@ export async function handleGenerate() {
             throw new Error(t('notification_script_generation_error') || 'Error generating script');
         }
 
+        // Deduplicate hasil dan top-up jika identik
+        const requestedCount = parseInt(document.getElementById('script-count')?.value || '1', 10);
+        const normalize = (s) => (s||'').toString().toLowerCase().replace(/\s+/g,' ').replace(/[\-–—_,.;:!?"'`~()\[\]{}]/g,'').trim();
+        const signatureOf = (sc) => [normalize(sc?.hook?.text||sc?.hook||''), normalize(sc?.body?.text||sc?.body||''), normalize(sc?.cta?.text||sc?.cta||'')].join('|');
+        const uniques = new Map();
+        results.forEach(r=>{ const sig = signatureOf(r); if (!uniques.has(sig)) uniques.set(sig, r); });
+        if (uniques.size < requestedCount) {
+          // Minta variasi tambahan yang berbeda jelas
+          const avoidHooks = Array.from(uniques.values()).map(u=> (u?.hook?.text||u?.hook||'')).filter(Boolean).slice(0,8);
+          const avoidBodies = Array.from(uniques.values()).map(u=> (u?.body?.text||u?.body||'')).filter(Boolean).slice(0,8);
+          const avoidCtas   = Array.from(uniques.values()).map(u=> (u?.cta?.text ||u?.cta ||'')).filter(Boolean).slice(0,8);
+          const extraInstr = languageState.current==='en'
+            ? `\n- DIVERSITY RULE: Each variation MUST be clearly different in angle, wording, and structure.\n- STRICTLY AVOID reusing these exact texts (as-is) for any part:\nHOOK_AVOID: ${avoidHooks.join(' || ')}\nBODY_AVOID: ${avoidBodies.join(' || ')}\nCTA_AVOID: ${avoidCtas.join(' || ')}`
+            : `\n- ATURAN KERAGAMAN: Setiap variasi WAJIB jelas berbeda dalam angle, diksi, dan struktur.\n- HINDARI keras mengulang teks persis berikut (apa adanya) pada bagian manapun:\nHOOK_HINDARI: ${avoidHooks.join(' || ')}\nBODY_HINDARI: ${avoidBodies.join(' || ')}\nCTA_HINDARI: ${avoidCtas.join(' || ')}`;
+          const topupPrompt = prompt + extraInstr;
+          const missing = Math.max(0, requestedCount - uniques.size);
+          if (missing > 0) {
+            try {
+              const more = await callGeminiAPI(topupPrompt, getResponseSchema(missing), Math.min(1, (temperature||0.7)+0.1), timeoutMs);
+              if (Array.isArray(more)) {
+                more.forEach(r=>{ const sig = signatureOf(r); if (!uniques.has(sig) && uniques.size < requestedCount) uniques.set(sig, r); });
+              }
+            } catch(_) { /* abaikan jika top-up gagal */ }
+          }
+        }
+
+        // Finalize hasil sesuai requestedCount
+        const finalized = Array.from(uniques.values()).slice(0, requestedCount);
         // PERUBAHAN UTAMA DI SINI
-        const generatedScripts = results.map((script, index) => ({ ...script, visual_dna: elements.visualDnaStorage.textContent, id: `script-${Date.now()}-${index}` }));
+        const generatedScripts = finalized.map((script, index) => ({ ...script, visual_dna: elements.visualDnaStorage.textContent, id: `script-${Date.now()}-${index}` }));
         
         // Gunakan state manager untuk menyimpan skrip dan riwayat
         const currentMode = localStorage.getItem('currentMode') || 'single';
