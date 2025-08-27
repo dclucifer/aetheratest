@@ -888,10 +888,9 @@ WAJIB: Selain platform yang dipilih, SELALU sertakan juga daftar khusus untuk Sh
             scriptToPersist.additional_assets = assets;
             scriptToPersist.additional_assets_html = assetsHTML;
             card.dataset.script = JSON.stringify(scriptToPersist);
-  
             const { updateSingleScript } = await import('./state.js');
             updateSingleScript(scriptToPersist);
-        } catch (_) {}
+          } catch(_) {}
 
     } catch (error) {
         console.error("Error generating assets:", error);

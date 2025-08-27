@@ -800,11 +800,12 @@ export function attachExportListeners(card) {
     const voState={ platform: platformMap[pf]||'tiktok_video', lang:(languageState?.current==='en')?'en':'id' };
     const toVO = sc => ({ hook: sc?.hook?.text || sc?.hook || '', scenes:[ sc?.body?.text || sc?.body || '' ], cta: sc?.cta?.text || sc?.cta || '' });
     const voInput = toVO(script);
+    const cacheKey = script?.id ? `script:${script.id}` : undefined;
 
     btnCopyGem.addEventListener('click', async ()=>{ await copyGeminiText(voInput, voState); exportMenu.classList.add('hidden'); });
     btnCopySSML.addEventListener('click', async ()=>{ await copyElevenSSML(voInput, voState); exportMenu.classList.add('hidden'); });
     btnDlVO.addEventListener('click', ()=>{ downloadVOFiles(voInput, voState); exportMenu.classList.add('hidden'); });
-    btnPrevGem.addEventListener('click', ()=>{ previewGeminiAPI(voInput, voState, 'Kore', { button: btnPrevGem }); exportMenu.classList.add('hidden'); });
+    btnPrevGem.addEventListener('click', ()=>{ previewGeminiAPI(voInput, voState, 'Kore', { button: btnPrevGem, cacheKey }); exportMenu.classList.add('hidden'); });
     btnStop.addEventListener('click',       ()=>{ stopGeminiPreview(); exportMenu.classList.add('hidden'); });
     
     // Toggle dropdown
@@ -1036,10 +1037,7 @@ export async function openScriptViewer(sourceCard, script){
           const body = content.querySelector('.asset-content');
           assetsContainer?.classList.remove('hidden');
           loader?.classList.add('hidden');
-          if (body) {
-            body.classList.remove('hidden');
-            body.innerHTML = script.additional_assets_html;
-          }
+          if (body) { body.classList.remove('hidden'); body.innerHTML = script.additional_assets_html; }
         }
       } catch(_) {} }catch(_){ }
   // Delegasi: tombol copy & A/B actions
@@ -1073,10 +1071,11 @@ export async function openScriptViewer(sourceCard, script){
           const voState = { platform: platformMap[pf] || 'tiktok_video', lang: (languageState?.current === 'en') ? 'en' : 'id' };
           const toVO = sc => ({ hook: sc?.hook?.text || sc?.hook || '', scenes:[ sc?.body?.text || sc?.body || '' ], cta: sc?.cta?.text || sc?.cta || '' });
           const voInput = toVO(script);
+          const cacheKey = sc?.id ? `script:${sc.id}` : undefined;
           if (type === 'vo-copy-gemini')      await copyGeminiText(voInput, voState);
           else if (type === 'vo-copy-ssml')   await copyElevenSSML(voInput, voState);
           else if (type === 'vo-download')    downloadVOFiles(voInput, voState);
-          else if (type === 'vo-prev-gemini') await previewGeminiAPI(voInput, voState, 'Kore', { button: exportItem });
+          else if (type === 'vo-prev-gemini') await previewGeminiAPI(voInput, voState, 'Kore', { button: exportItem,cacheKey });
           else if (type === 'vo-stop')        stopGeminiPreview();
         }
       } catch (_) {}

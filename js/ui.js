@@ -431,15 +431,12 @@ card.dataset.script = JSON.stringify(script);
     // restore persisted assets if exist
     try {
         if (script.additional_assets_html) {
-        const assetsContainer = contentDiv.querySelector('.additional-assets-container');
-        const loader = contentDiv.querySelector('.asset-loader');
-        const body = contentDiv.querySelector('.asset-content');
-        assetsContainer?.classList.remove('hidden');
-        loader?.classList.add('hidden');
-        if (body) {
-            body.classList.remove('hidden');
-            body.innerHTML = script.additional_assets_html;
+          const assetsContainer = content.querySelector('.additional-assets-container');
+          const loader = content.querySelector('.asset-loader');
+          const body = content.querySelector('.asset-content');
+          assetsContainer?.classList.remove('hidden');
+          loader?.classList.add('hidden');
+          if (body) { body.classList.remove('hidden'); body.innerHTML = script.additional_assets_html; }
         }
-        }
-    } catch(_) {}
+      } catch(_) {}
 }
