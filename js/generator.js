@@ -545,12 +545,7 @@ function getLanguageSpecificSystemPrompt() {
 
 export function constructPrompt() {
     const currentMode = localStorage.getItem('currentMode') || 'single';
-    const _unused_old_system_prompt = getLanguageSpecificSystemPrompt();
-const systemPromptRaw = getLanguageSpecificSystemPrompt();
-const placeholdersUsed = (systemPromptRaw.includes('[[PLATFORM_NOTES]]') || systemPromptRaw.includes('[[PLATFORM_PLAN_JSON]]'));
-const systemPrompt = systemPromptRaw
-  .replace('[[PLATFORM_NOTES]]', platformOptimization)
-  .replace('[[PLATFORM_PLAN_JSON]]', platformPlanJson);
+    const currentLanguage = languageState.current;
 
     const scriptCount = currentMode === 'single' ? elements.inputs.scriptCount.value : 1;
     const selectedPersonaId = elements.personaSelector.value;
@@ -625,10 +620,17 @@ const systemPrompt = systemPromptRaw
         };
     const platformPlanJson = JSON.stringify(planPayload);
 
+    // === System prompt with placeholders (compute AFTER platform strings are ready) ===
+    const _unused_old_system_prompt = getLanguageSpecificSystemPrompt();
+    const systemPromptRaw = getLanguageSpecificSystemPrompt();
+    const placeholdersUsed = (systemPromptRaw.includes('[[PLATFORM_NOTES]]') || systemPromptRaw.includes('[[PLATFORM_PLAN_JSON]]'));
+    const systemPrompt = systemPromptRaw
+      .replace('[[PLATFORM_NOTES]]', platformOptimization)
+      .replace('[[PLATFORM_PLAN_JSON]]', platformPlanJson);
+
     
     // Generate negative prompts based on model target
     let negativePromptInstruction = '';
-    const currentLanguage = languageState.current;
     if (modelTarget === 'flux') {
         negativePromptInstruction = currentLanguage === 'en' 
             ? `\n- **NEGATIVE PROMPT (REQUIRED):** blurry, watermark, text artifacts, lowres, pixelated, deformed, extra fingers`
