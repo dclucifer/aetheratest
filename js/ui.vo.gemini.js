@@ -1,6 +1,6 @@
 // js/ui.vo.gemini.js
 import { buildVOAssets } from '../vo/compile.js';
-import { showNotification } from '../utils.js';
+import { showNotification } from './utils.js';
 
 // singleton <audio> + cache + controller
 function getAudioEl() {
