@@ -1,7 +1,12 @@
 // js/history.js
 import { elements, languageState } from './utils.js';
 import { t } from './i18n.js';
-import { createResultCard } from './ui.results.js';
+
+// Dynamic import to avoid circular dependency with ui.results.js
+async function __getCreateResultCard() {
+    const mod = await import('./ui.results.js');
+    return mod.createResultCard;
+}
 
 // Pagination and filtering state
 let currentPage = 1;
@@ -167,6 +172,7 @@ async function renderHistoryPage() {
         // Ambil satu script untuk dirender sebagai kartu
         const script = (entry && Array.isArray(entry.scripts)) ? (entry.scripts[0] || null) : entry;
         if (!script) continue;
+        const createResultCard = await __getCreateResultCard();
         const card = await createResultCard(script, 0);
         historyPanel.appendChild(card);
     }
