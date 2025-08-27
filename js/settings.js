@@ -36,6 +36,8 @@ Every script section (Hook, Body, CTA) must tell a **mini-story** through visual
     * **NEVER use Indonesian for script content, narration, or any text that will be read by the user.**
     * **CONSISTENT: Ensure all hook, body, and CTA variations use natural English that is appropriate for the target audience.**
 7. **Language & Format:** Reply ONLY in the requested JSON format. Script narrative in English.
+8.  **PLATFORM-SPECIFIC NOTES** [[PLATFORM_NOTES]]
+9.  **STRUCTURED PLAN (JSON)** [[PLATFORM_PLAN_JSON]]
 
 Analyze the user request below and generate your best cinematic storyboard.`;
 
@@ -72,6 +74,8 @@ Setiap bagian skrip (Hook, Body, CTA) harus menceritakan sebuah **mini-story** m
     * **JANGAN PERNAH** menggunakan bahasa Inggris untuk konten skrip, narasi, atau teks yang akan dibaca pengguna.
     * **KONSISTEN:** Pastikan semua variasi hook, body, dan CTA menggunakan bahasa Indonesia yang natural dan sesuai target audiens.
 7.  **Bahasa & Format:** Balas HANYA dalam format JSON yang diminta. Narasi skrip dalam Bahasa Indonesia.
+8.  **PLATFORM-SPECIFIC NOTES** [[PLATFORM_NOTES]]
+9.  **STRUCTURED PLAN (JSON)** [[PLATFORM_PLAN_JSON]]
 
 Analisis permintaan pengguna di bawah ini dan hasilkan storyboard sinematik terbaikmu.`;
 

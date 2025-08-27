@@ -1,4 +1,5 @@
 // js/generator.js
+import { PLATFORM_CONFIG, buildPlatformPlan } from './platform.config.js';
 import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState } from './utils.js';
 import { t } from './i18n.js';
 import { analyzeImageWithAI, callGeminiAPI } from './api.js';
@@ -544,7 +545,13 @@ function getLanguageSpecificSystemPrompt() {
 
 export function constructPrompt() {
     const currentMode = localStorage.getItem('currentMode') || 'single';
-    const systemPrompt = getLanguageSpecificSystemPrompt();
+    const _unused_old_system_prompt = getLanguageSpecificSystemPrompt();
+const systemPromptRaw = getLanguageSpecificSystemPrompt();
+const placeholdersUsed = (systemPromptRaw.includes('[[PLATFORM_NOTES]]') || systemPromptRaw.includes('[[PLATFORM_PLAN_JSON]]'));
+const systemPrompt = systemPromptRaw
+  .replace('[[PLATFORM_NOTES]]', platformOptimization)
+  .replace('[[PLATFORM_PLAN_JSON]]', platformPlanJson);
+
     const scriptCount = currentMode === 'single' ? elements.inputs.scriptCount.value : 1;
     const selectedPersonaId = elements.personaSelector.value;
     const colorPaletteJSON = localStorage.getItem('productColorPalette');
@@ -552,6 +559,72 @@ export function constructPrompt() {
     // Prompt Injection: Model & Platform Target
     const modelTarget = localStorage.getItem('model_target') || 'auto';
     const platformTarget = localStorage.getItem('platform_target') || localStorage.getItem('targetPlatform') || 'tiktok';
+    // === Platform Smart Plan (config-driven) ===
+    const contentMode = (localStorage.getItem('content_mode') || 'post'); // 'post' | 'carousel'
+    const plan = buildPlatformPlan(platformTarget, currentLanguage, contentMode);
+
+    // UI overrides
+    const uiAspect = (localStorage.getItem('aspectRatio') || '').trim(); // "9:16" | "4:5" | "1:1" | "auto"
+    const uiDurationRaw = document.getElementById('script-duration')?.value;
+    const uiDuration = Number(uiDurationRaw) > 0 ? Number(uiDurationRaw) : null;
+    const uiSlidesRaw = document.getElementById('carousel-slide-count')?.value;
+    const uiSlides = Number(uiSlidesRaw) > 0 ? Number(uiSlidesRaw) : null;
+
+    const isCarousel = contentMode === 'carousel';
+    const finalAspect = isCarousel
+      ? ((uiAspect && uiAspect !== 'auto') ? uiAspect : '4:5')
+      : ((uiAspect && uiAspect !== 'auto') ? uiAspect : (plan.cfg.aspect || '9:16'));
+    const finalDuration = !isCarousel ? (uiDuration || plan.cfg.maxDuration || 30) : null;
+    const finalSlides = isCarousel ? (uiSlides || plan.meta.slides || 7) : null;
+
+    function scaleBeats(beats, from, to) {
+      if (!Array.isArray(beats) || !from || !to || from === to) return beats || [];
+      const k = to / from;
+      return beats.map(b => ({
+        ...b,
+        t: (typeof b.t === 'number') ? Math.max(0, Math.round(b.t * k)) : b.t
+      }));
+    }
+    const beatsScaled = isCarousel ? [] : scaleBeats(plan.beats, plan.cfg.maxDuration, finalDuration);
+
+    // Strictness based on Creative Freedom slider (if exists)
+    const creativeSlider = document.getElementById('creative-freedom');
+    const creative = creativeSlider ? parseFloat(creativeSlider.value) : 0.7;
+    const strictness = Math.max(0, Math.min(1, 1 - creative));
+    const planLineFlex = strictness < 0.5
+      ? (currentLanguage === 'en'
+          ? '- Treat the structure as advisory; you may deviate if clarity improves.'
+          : '- Struktur sebagai panduan; boleh menyimpang bila hasil lebih jelas.')
+      : (currentLanguage === 'en'
+          ? '- Follow the structure closely.'
+          : '- Ikuti struktur secara ketat.');
+
+    const isEnNotes = currentLanguage === 'en';
+    const baseNotes = isCarousel
+      ? `${isEnNotes ? 'Slides' : 'Jumlah slide'}: ${finalSlides}\n${isEnNotes ? 'Aspect' : 'Rasio'}: ${finalAspect}`
+      : `${isEnNotes ? 'Aspect' : 'Rasio'}: ${finalAspect}\n${isEnNotes ? 'Target duration' : 'Durasi target'}: ${finalDuration}s`;
+
+    let platformOptimization = isEnNotes
+      ? `\n- **${platformTarget.toUpperCase()} ${isCarousel ? 'CAROUSEL' : 'PLAN'}:**\n- ${baseNotes}${plan.promptNotes}\n${planLineFlex}`
+      : `\n- **RANCANGAN ${platformTarget.toUpperCase()} ${isCarousel ? 'CAROUSEL' : ''}:**\n- ${baseNotes}${plan.promptNotes}\n${planLineFlex}`;
+
+    const planPayload = isCarousel
+      ? {
+          type: 'carousel',
+          slides: finalSlides,
+          structure: plan.cfg.structure || ['Slide1 HOOK','Slide2-6 value','Slide7 CTA'],
+          fontMaxWordsPerSlide: plan.meta.fontMaxWordsPerSlide || 12,
+          meta: { aspect: finalAspect }
+        }
+      : {
+          type: 'post',
+          beats: beatsScaled,
+          cta: plan.cta,
+          commentBait: plan.commentBait,
+          meta: { ...plan.meta, aspect: finalAspect, targetDuration: finalDuration }
+        };
+    const platformPlanJson = JSON.stringify(planPayload);
+
     
     // Generate negative prompts based on model target
     let negativePromptInstruction = '';
@@ -571,30 +644,6 @@ export function constructPrompt() {
     const abVariantsInstruction = currentLanguage === 'en'
         ? `\n- **A/B VARIANTS (MUST BE RETURNED):** Besides the main Hook/Body/CTA/shots structure, also return:\n  - hook_variants: array containing EXACTLY ${AB_VARIANT_COUNT} alternative hook variations\n  - body_intro: short intro string for body (optional)\n  - body_variants: array containing 2-3 alternative body variations\n  - cta_variants: array containing EXACTLY ${AB_VARIANT_COUNT} alternative CTA variations`
         : `\n- **A/B VARIANTS (WAJIB DIKEMBALIKAN):** Selain struktur utama Hook/Body/CTA/shots, kembalikan juga:\n  - hook_variants: array berisi TEPAT ${AB_VARIANT_COUNT} variasi hook alternatif\n  - body_intro: string intro singkat untuk body (opsional)\n  - body_variants: array berisi 2-3 variasi body alternatif\n  - cta_variants: array berisi TEPAT ${AB_VARIANT_COUNT} variasi CTA alternatif`;
-    
-    // Platform-specific optimizations
-    let platformOptimization = '';
-    if (platformTarget === 'tiktok') {
-        platformOptimization = currentLanguage === 'en'
-            ? `\n- **TIKTOK OPTIMIZATION:** Use Gen Alpha language, trending keywords 2025, focus on sustainability and AI features. Hook must be catchy in the first 3 seconds.`
-            : `\n- **OPTIMASI TIKTOK:** Gunakan bahasa Gen Alpha, trending keywords 2025, fokus sustainability dan AI features. Hook harus catchy dalam 3 detik pertama.`;
-    } else if (platformTarget === 'shopee') {
-        platformOptimization = currentLanguage === 'en'
-            ? `\n- **SHOPEE OPTIMIZATION:** Highlight eco-friendly shipping, AI recommendations, carbon-neutral delivery. Focus on value proposition and urgency.`
-            : `\n- **OPTIMASI SHOPEE:** Highlight eco-friendly shipping, AI recommendations, carbon-neutral delivery. Fokus pada value proposition dan urgency.`;
-    } else if (platformTarget === 'instagram') {
-        platformOptimization = currentLanguage === 'en'
-            ? `\n- **INSTAGRAM OPTIMIZATION:** Direct to sustainable content and AI tools. Use mindful language and aesthetic appeal.`
-            : `\n- **OPTIMASI INSTAGRAM:** Arahkan ke sustainable content dan AI tools. Gunakan mindful language dan aesthetic appeal.`;
-    } else if (platformTarget === 'threads') {
-        platformOptimization = currentLanguage === 'en'
-            ? `\n- **THREADS OPTIMIZATION:** Focus on conversational tone, community building, and authentic storytelling.`
-            : `\n- **OPTIMASI THREADS:** Fokus pada conversational tone, community building, dan authentic storytelling.`;
-    } else if (platformTarget === 'shorts') {
-        platformOptimization = currentLanguage === 'en'
-            ? `\n- **YOUTUBE SHORTS OPTIMIZATION:** Quick pacing, clear value delivery, strong retention hooks every 3-5 seconds.`
-            : `\n- **OPTIMASI YOUTUBE SHORTS:** Quick pacing, clear value delivery, strong retention hooks setiap 3-5 detik.`;
-    }
     
     let paletteInstruction = '';
     if (colorPaletteJSON && colorPaletteJSON !== 'undefined' && colorPaletteJSON !== 'null') {
@@ -737,7 +786,12 @@ export function constructPrompt() {
                 **STRATEGI CTA SPESIFIK:**
                 ${ctaInstructions}`;
     
-    const visualDna = elements.visualDnaStorage.textContent;
+    
+    // Fallback: if no placeholders, append plan to the end of base
+    if (!placeholdersUsed) {
+      base += platformOptimization + `\n\n[[PLATFORM_PLAN_JSON]]\n${platformPlanJson}`;
+    }
+const visualDna = elements.visualDnaStorage.textContent;
     if (visualDna) {
         base += currentLanguage === 'en'
             ? `\n- **PRODUCT VISUAL KEYWORDS (MUST BE USED):**\n${visualDna}`
