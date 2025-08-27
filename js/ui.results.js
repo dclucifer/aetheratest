@@ -1,7 +1,7 @@
 // js/ui.results.js (split from ui.js)
 import { t } from './i18n.js'; // You might also need this if not already imported
 import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoadingState, languageState } from './utils.js';
-import { updateCardContent, initSwiper, createAssetsHTML } from './ui.js';
+import { updateCardContent, initSwiper, createAssetsHTML, createCarouselSlideHTML } from './ui.js';
 import { updateSingleScript, getScripts } from './state.js';
 import { exportPromptPackJSON, exportPromptPackCSV, exportCapCutSRT, exportCapCutCSV } from './download.js';
 import { copyGeminiText, copyElevenSSML, downloadVOFiles } from './ui.vo.js';
@@ -1022,9 +1022,25 @@ export async function openScriptViewer(sourceCard, script){
     });
     html+=`</div>`;
   }
-  html += renderPartWithCopy('hook', t('hook_title')||'Hook', script.hook);
-  html += renderPartWithCopy('body', t('body_title')||'Body', script.body);
-  html += renderPartWithCopy('cta', t('cta_title')||'CTA', script.cta);
+  // Mode Single (hook/body/cta)
+  if (!script.slides) {
+    html += renderPartWithCopy('hook', t('hook_title')||'Hook', script.hook);
+    html += renderPartWithCopy('body', t('body_title')||'Body', script.body);
+    html += renderPartWithCopy('cta', t('cta_title')||'CTA', script.cta);
+  } else {
+    // Mode Carousel: render slides dalam swiper
+    const slidesHTML = (script.slides || []).map((slide, idx) => createCarouselSlideHTML(slide, idx)).join('');
+    html += `
+      <div class="mb-4">
+        <h4 class="font-semibold mb-2">${t('slides_title') || 'Slides'}</h4>
+        <div class="swiper carousel-swiper-container bg-gray-900/40 p-4 rounded-lg border border-gray-800/40">
+          <div class="swiper-wrapper">${slidesHTML}</div>
+          <div class="swiper-pagination !bottom-2"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div>
+      </div>`;
+  }
   // Render ke overlay lalu aktifkan event delegation
   content.innerHTML=html;
   // Set script pada dataset overlay agar fitur tambahan (assets) bisa baca data
@@ -1141,6 +1157,10 @@ export async function openScriptViewer(sourceCard, script){
     if (btnUse) { await useSpecificVariant(sourceCard, script, btnUse.dataset.section, parseInt(btnUse.dataset.index)); openScriptViewer(sourceCard, script); return; }
     if (btnShort) { await useShortenedVariant(sourceCard, script, btnShort.dataset.section, parseInt(btnShort.dataset.index)); openScriptViewer(sourceCard, script); return; }
   };
+  // Inisialisasi swiper untuk carousel di overlay (jika ada)
+  try {
+    if (script.slides) initSwiper('#script-viewer-content .carousel-swiper-container');
+  } catch(_) {}
   modal.classList.remove('opacity-0','pointer-events-none');
   const closeBtn=document.getElementById('script-viewer-close');
   if(!modal.__bound){
