@@ -479,7 +479,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         // message may be in query or hash
         const message = url.searchParams.get('message') || (url.hash.includes('message=') ? decodeURIComponent(url.hash.split('message=')[1]) : '');
         if (code) {
-            try { await supabaseClient.auth.exchangeCodeForSession(code); } catch (_) {}
+            try {
+              await supabaseClient.auth.exchangeCodeForSession(code);
+              // ensure UI moves out of login overlay after session established
+              try { elements.loginOverlay?.classList.add('hidden'); elements.appContainer?.classList.remove('hidden'); } catch(_){}
+              try { await checkLogin(); } catch(_){}
+            } catch (_) {}
             // After successful exchange, mirror current email to profiles
             try {
               const { data: { session } } = await supabaseClient.auth.getSession();
