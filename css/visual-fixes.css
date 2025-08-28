@@ -181,6 +181,11 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600 !important;
 }
 
+/* Fix: allow export dropdown to overflow result card (prevent clipping) */
+.result-card { overflow: visible !important; }
+.result-card .export-dropdown { position: relative !important; overflow: visible !important; }
+.result-card .export-menu { z-index: 1000 !important; }
+
 /* Improved paragraph spacing */
 p {
   line-height: 1.7 !important;
