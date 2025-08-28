@@ -35,8 +35,8 @@ export async function loadAccountPage() {
 
 export function initAccountHandlers() {
   const saveBtn = document.getElementById('acc-save-profile');
+  const updEmail = document.getElementById('acc-update-email');
   const updPass = document.getElementById('acc-update-password');
-  const sendReset = document.getElementById('acc-send-reset');
 
   saveBtn?.addEventListener('click', async () => {
     setLoadingState(true, saveBtn);
@@ -79,19 +79,40 @@ export function initAccountHandlers() {
     } finally { setLoadingState(false, updPass); }
   });
 
-  // Send password reset link to current email
-  sendReset?.addEventListener('click', async () => {
-    setLoadingState(true, sendReset);
+  // Update email: send confirmation to current email; change applies after confirmation
+  updEmail?.addEventListener('click', async () => {
+    setLoadingState(true, updEmail);
     try {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session?.user?.email) throw new Error('Not authenticated');
+      const newEmail = (document.getElementById('acc-email')?.value || '').trim();
+      if (!newEmail) return;
+      // Supabase will send a confirmation email to both addresses depending on project config
+      const redirectTo = window.location.origin;
+      const { error } = await supabaseClient.auth.updateUser({ email: newEmail }, { emailRedirectTo: redirectTo });
+      if (error) throw error;
+      showNotification(t('email_update_sent') || 'Email konfirmasi dikirim. Cek inbox Anda.', 'success');
+    } catch (e) {
+      showNotification(e.message || 'Gagal mengirim konfirmasi perubahan email', 'error');
+    } finally { setLoadingState(false, updEmail); }
+  });
+
+  // Update password: require email confirmation (via reset link to current email)
+  updPass?.addEventListener('click', async () => {
+    setLoadingState(true, updPass);
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session?.user?.email) throw new Error('Not authenticated');
+      const pwd = (document.getElementById('acc-password')?.value || '').trim();
+      if (!pwd || pwd.length < 6) { showNotification(t('password_too_short')||'Password minimal 6 karakter', 'warning'); return; }
+      // Instead of changing directly, send reset link to current email
       const redirectTo = window.location.origin;
       const { error } = await supabaseClient.auth.resetPasswordForEmail(session.user.email, { redirectTo });
       if (error) throw error;
       showNotification(t('password_reset_sent') || 'Link reset password dikirim ke email Anda.', 'success');
     } catch (e) {
       showNotification(e.message || 'Gagal mengirim link reset', 'error');
-    } finally { setLoadingState(false, sendReset); }
+    } finally { setLoadingState(false, updPass); }
   });
 }
 
