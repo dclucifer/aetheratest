@@ -9,6 +9,53 @@ import { cloudStorage } from './cloud-storage.js';
 import { populatePresetSelector } from './presets.js';
 import { populateCharacterPresetSelector } from './characterPresets.js';
 
+let __singleSessionTimer = null;
+
+async function generateSessionId() {
+    try {
+        const arr = new Uint8Array(16);
+        crypto.getRandomValues(arr);
+        return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch {
+        return String(Date.now()) + Math.random().toString(36).slice(2);
+    }
+}
+
+async function ensureSingleSessionGuard() {
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session?.user) return;
+        const userId = session.user.id;
+        let localId = localStorage.getItem('aethera_session_id');
+        if (!localId) {
+            localId = await generateSessionId();
+            localStorage.setItem('aethera_session_id', localId);
+        }
+        // Set as the current active session on login/refresh
+        await supabaseClient.from('profiles').upsert({ id: userId, last_session_id: localId });
+
+        // Verification function
+        const verify = async () => {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('profiles')
+                    .select('last_session_id')
+                    .eq('id', userId)
+                    .single();
+                if (!error && data && data.last_session_id && data.last_session_id !== localId) {
+                    showNotification(t('session_conflict') || 'Akun Anda digunakan di perangkat lain. Anda akan keluar.', 'error');
+                    await handleLogout();
+                }
+            } catch (_) {}
+        };
+
+        // Clear previous timer and set a new one
+        if (__singleSessionTimer) { clearInterval(__singleSessionTimer); __singleSessionTimer = null; }
+        __singleSessionTimer = setInterval(verify, 20000);
+        window.addEventListener('focus', verify, { passive: true });
+    } catch (_) {}
+}
+
 export async function checkLogin() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
@@ -19,6 +66,8 @@ export async function checkLogin() {
         renderPersonas();
         renderDefaultPersonas();
         populatePersonaSelector();
+        // Activate single-session guard
+        ensureSingleSessionGuard();
         
         // Sync data from cloud and populate UI
         try {
@@ -66,6 +115,15 @@ export async function handleLogin() {
         const key = 'notification_login_success';
         const translated = t(key);
         showNotification((translated && translated !== key) ? translated : (localStorage.getItem('aethera_language') === 'en' ? 'Login successful' : 'Berhasil masuk'));
+        // Create & store local session id, and push to profiles
+        try {
+            let localId = await generateSessionId();
+            localStorage.setItem('aethera_session_id', localId);
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session?.user?.id) {
+                await supabaseClient.from('profiles').upsert({ id: session.user.id, last_session_id: localId });
+            }
+        } catch(_) {}
         await checkLogin();
     }
 }

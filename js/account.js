@@ -35,8 +35,8 @@ export async function loadAccountPage() {
 
 export function initAccountHandlers() {
   const saveBtn = document.getElementById('acc-save-profile');
-  const updEmail = document.getElementById('acc-update-email');
   const updPass = document.getElementById('acc-update-password');
+  const sendReset = document.getElementById('acc-send-reset');
 
   saveBtn?.addEventListener('click', async () => {
     setLoadingState(true, saveBtn);
@@ -65,19 +65,6 @@ export function initAccountHandlers() {
     } finally { setLoadingState(false, saveBtn); }
   });
 
-  updEmail?.addEventListener('click', async () => {
-    setLoadingState(true, updEmail);
-    try {
-      const email = (document.getElementById('acc-email')?.value || '').trim();
-      if (!email) return;
-      const { error } = await supabaseClient.auth.updateUser({ email });
-      if (error) throw error;
-      showNotification(t('email_update_sent') || 'Email konfirmasi dikirim. Cek inbox Anda.', 'success');
-    } catch (e) {
-      showNotification(e.message || 'Gagal update email', 'error');
-    } finally { setLoadingState(false, updEmail); }
-  });
-
   updPass?.addEventListener('click', async () => {
     setLoadingState(true, updPass);
     try {
@@ -90,6 +77,21 @@ export function initAccountHandlers() {
     } catch (e) {
       showNotification(e.message || 'Gagal update password', 'error');
     } finally { setLoadingState(false, updPass); }
+  });
+
+  // Send password reset link to current email
+  sendReset?.addEventListener('click', async () => {
+    setLoadingState(true, sendReset);
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session?.user?.email) throw new Error('Not authenticated');
+      const redirectTo = window.location.origin;
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(session.user.email, { redirectTo });
+      if (error) throw error;
+      showNotification(t('password_reset_sent') || 'Link reset password dikirim ke email Anda.', 'success');
+    } catch (e) {
+      showNotification(e.message || 'Gagal mengirim link reset', 'error');
+    } finally { setLoadingState(false, sendReset); }
   });
 }
 

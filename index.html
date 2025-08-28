@@ -598,19 +598,9 @@
                 </section>
                 <section class="bg-gray-900/50 p-6 rounded-lg border border-gray-700/50">
                   <h3 class="text-xl font-semibold mb-4" data-lang-key="security">Keamanan</h3>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-sm text-gray-300 mb-1">Email</label>
-                      <input id="acc-email" type="email" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white" />
-                    </div>
-                    <div>
-                      <label class="block text-sm text-gray-300 mb-1" data-lang-key="new_password">Password Baru</label>
-                      <input id="acc-password" type="password" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white" />
-                    </div>
-                  </div>
-                  <div class="mt-4 flex gap-2">
-                    <button id="acc-update-email" class="btn-secondary px-4 py-2 rounded-md" data-lang-key="update_email">Update Email</button>
-                    <button id="acc-update-password" class="btn-secondary px-4 py-2 rounded-md" data-lang-key="update_password">Update Password</button>
+                  <p class="text-sm text-gray-400 mb-3" data-lang-key="security_note">Untuk keamanan, perubahan password dan email dilakukan via tautan yang dikirim ke email Anda saat ini.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button id="acc-send-reset" class="btn-secondary px-4 py-2 rounded-md" data-lang-key="send_password_reset">Kirim Link Reset Password</button>
                   </div>
                 </section>
               </main>
