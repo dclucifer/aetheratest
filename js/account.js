@@ -65,20 +65,6 @@ export function initAccountHandlers() {
     } finally { setLoadingState(false, saveBtn); }
   });
 
-  updPass?.addEventListener('click', async () => {
-    setLoadingState(true, updPass);
-    try {
-      const pwd = (document.getElementById('acc-password')?.value || '').trim();
-      if (!pwd || pwd.length < 6) { showNotification(t('password_too_short')||'Password minimal 6 karakter', 'warning'); return; }
-      const { error } = await supabaseClient.auth.updateUser({ password: pwd });
-      if (error) throw error;
-      showNotification(t('password_updated') || 'Password diperbarui', 'success');
-      document.getElementById('acc-password').value='';
-    } catch (e) {
-      showNotification(e.message || 'Gagal update password', 'error');
-    } finally { setLoadingState(false, updPass); }
-  });
-
   // Update email: send confirmation to current email; change applies after confirmation
   updEmail?.addEventListener('click', async () => {
     setLoadingState(true, updEmail);
