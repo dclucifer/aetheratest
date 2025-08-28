@@ -8,9 +8,11 @@ export const elements = {
     generatorPage: document.getElementById('generator-page'),
     historyPage: document.getElementById('history-page'),
     settingsPage: document.getElementById('settings-page'),
+    accountPage: document.getElementById('account-page'),
     navGenerator: document.getElementById('nav-generator'),
     navHistory: document.getElementById('nav-history'),
     navSettings: document.getElementById('nav-settings'),
+    navAccount: document.getElementById('nav-account'),
     logoutBtn: document.getElementById('logout-btn'),
     mobileLogoutBtn: document.getElementById('mobile-logout-btn'),
     mobileMenuButton: document.getElementById('mobile-menu-button'),
@@ -101,6 +103,7 @@ export const elements = {
     mobileNavGenerator: document.getElementById('mobile-nav-generator'),
     mobileNavHistory: document.getElementById('mobile-nav-history'),
     mobileNavSettings: document.getElementById('mobile-nav-settings'),
+    mobileNavAccount: document.getElementById('mobile-nav-account'),
 };
 
 export const themeState = {

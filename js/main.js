@@ -24,6 +24,7 @@ import { initSyncIndicator } from './sync-ui.js';
 import { initUXImprovements } from './ux-improvements.js';
 import { initResultsExportToolbar } from './ux/exportZip.js';
 import { initRankAll } from './ux/rank.js';
+import { loadAccountPage, initAccountHandlers } from './account.js';
 import { HooksCtaRegistry } from './hooks-cta-loader.js';
 
 function pathSafeConsoleLogTranslations() {
@@ -291,6 +292,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         showPage('history');
     });
     elements.navSettings.addEventListener('click', (e) => { e.preventDefault(); showPage('settings'); });
+    elements.navAccount?.addEventListener('click', async (e) => { e.preventDefault(); showPage('account'); await loadAccountPage(); });
 
     elements.mobileMenuButton.addEventListener('click', toggleMobileMenu);
     elements.mobileNavGenerator.addEventListener('click', (e) => { e.preventDefault(); showPage('generator'); toggleMobileMenu(); });
@@ -302,6 +304,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         toggleMobileMenu();
     });
     elements.mobileNavSettings.addEventListener('click', (e) => { e.preventDefault(); showPage('settings'); toggleMobileMenu(); });
+    elements.mobileNavAccount?.addEventListener('click', async (e) => { e.preventDefault(); showPage('account'); toggleMobileMenu(); await loadAccountPage(); });
 
     elements.apiKeyModal.saveBtn.addEventListener('click', async () => {
         const { setLoadingState } = await import('./utils.js');
@@ -380,6 +383,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     elements.saveSettingsBtn.addEventListener('click', saveSettings);
+
+    // Init account handlers
+    initAccountHandlers();
 
     elements.personaModal.addBtn.addEventListener('click', () => openPersonaModal());
     elements.personaModal.closeBtn.addEventListener('click', async () => {
