@@ -523,3 +523,16 @@
 }
 .dark-mode .btn-primary:hover { background: #c79a10; }
 .dark-mode .btn-primary:active { background: #a87e00; }
+
+
+/* === AUTO-APPEND: compact-header-light === */
+
+/* Light mode header – translucent & premium */
+.light-mode header {
+  background: rgba(255, 255, 255, .72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 var(--stroke, rgba(0,0,0,.08));
+}
+
+/* === END AUTO-APPEND: compact-header-light === */

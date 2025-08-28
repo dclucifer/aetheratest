@@ -2329,3 +2329,29 @@ body.light-mode .variant-item p {
   clip: auto;
   white-space: normal;
 }
+
+
+/* === AUTO-APPEND: compact-header-root+dark+brand-credit === */
+
+:root { --header-h: 56px; }
+@media (min-width: 768px) {
+  :root { --header-h: 64px; }
+}
+
+/* Dark mode header – lighter, translucent */
+.dark-mode header {
+  background: rgba(17, 24, 39, .60);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom-color: rgba(75, 85, 99, .45);
+}
+
+/* Brand credit cleanup */
+.brand-credit {
+  font-size: 12px;
+  line-height: 1;
+  color: var(--muted, #9aa3ad);
+  margin-top: 2px !important; /* override any previous negative margins */
+}
+
+/* === END AUTO-APPEND: compact-header-root+dark+brand-credit === */

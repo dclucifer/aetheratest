@@ -184,14 +184,14 @@
     </div>
 
     <div id="app-container" class="hidden">
-      <header class="bg-gray-900/70 backdrop-blur-sm border-b border-gray-700/50 sticky top-0 z-20">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between h-16">
+      <header class="border-b sticky top-0 z-20 backdrop-blur-md">
+        <div class="container mx-auto px-3 sm:px-4 lg:px-6">
+          <div class="flex items-center justify-between h-14 md:h-16">
             <div class="flex items-start">
               <img src="assets/images/logo-icon.png" alt="AS" class="w-8 h-8 mt-0.5">
             <div class="ml-3 leading-tight">
               <h1 id="app-title" class="text-xl font-bold">Aethera Studio</h1>
-            <div class="brand-credit">
+            <div class="brand-credit hidden md:block">
               built by <a href="https://www.threads.com/@dimslabs" target="_blank" rel="noopener" class="dims">DIMSLABS</a>
             </div>
           </div>
@@ -252,7 +252,7 @@
       </header>
       <div id="main-content" class="main-container">
         <main id="generator-page">
-          <div class="lg:grid lg:grid-cols-10 lg:h-[calc(100vh-64px)]">
+          <div class="lg:grid lg:grid-cols-10 lg:h-[calc(100vh-var(--header-h))]">
             <div class="lg:col-span-4 bg-gray-900/50 lg:border-r lg:border-gray-800/50 p-6 lg:overflow-y-auto">
               <div class="flex flex-col h-full">
                 <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white" data-lang-key="new_script_title">Create New Script</h2>
