@@ -621,5 +621,6 @@
   "hook_unboxing": "Unboxing / First-Impression",
   "asset_titles_label": "Opsi Judul/Caption",
   "asset_hashtags_label": "Rekomendasi Hashtag",
-  "asset_thumbnail_label": "Ide Teks Thumbnail"
+  "asset_thumbnail_label": "Ide Teks Thumbnail",
+  "password_too_short": "Password minimal 6 karakter"
 }

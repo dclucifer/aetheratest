@@ -638,5 +638,6 @@
   "cta_chat_seller": "Chat with Seller",
   "asset_titles_label": "Title/Caption Options",
   "asset_hashtags_label": "Hashtag Recommendations",
-  "asset_thumbnail_label": "Thumbnail Text Ideas"
+  "asset_thumbnail_label": "Thumbnail Text Ideas",
+  "password_too_short": "Password must be at least 6 characters"
 }
