@@ -100,6 +100,7 @@ export async function callGeminiAPI(prompt, schema, temperature, timeoutMs = DEF
 
         // Sertakan token Supabase jika tersedia, namun jangan blokir jika tidak ada
         try {
+            // Hindari memicu refresh token saat offline; hanya gunakan session jika tersedia tanpa network call
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session?.access_token) {
                 headers['Authorization'] = `Bearer ${session.access_token}`;

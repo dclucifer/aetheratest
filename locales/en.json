@@ -588,6 +588,7 @@
   "score_tooltip": "Combined score from Hook/Body/CTA",
   "copy_tooltip": "Copy all script text",
   "export_tooltip": "Export to multiple formats",
+  "edit_tooltip": "Edit script",
   "target_platform_label": "Target Platform",
   "platform_tiktok": "TikTok",
   "platform_shopee": "Shopee",

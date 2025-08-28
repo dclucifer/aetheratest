@@ -7,9 +7,10 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 export const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
-        autoRefreshToken: true,
+        // Hindari auto-refresh di background yang memicu error "Failed to fetch" saat offline
+        autoRefreshToken: false,
         persistSession: true,
-        detectSessionInUrl: true,
+        detectSessionInUrl: false,
         flowType: 'pkce'
     },
     global: {
