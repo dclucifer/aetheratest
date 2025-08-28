@@ -31,11 +31,11 @@
   <div class="wrap">
     <div class="card">
       <h1>Aethera Studio — Buku Manual Pengguna (ID/EN)</h1>
-      <p class="muted">Versi 2025-08-11</p>
+      <p class="muted">Versi 2025-08-28</p>
       <div class="lang" id="id">
         
 <h1>Aethera Studio — Buku Manual Pengguna</h1>
-<p><strong>Versi:</strong> 2025-08-11</p>
+<p><strong>Versi:</strong> 2025-08-28</p>
 
 <h2>1. Ringkasan</h2>
 <p><strong>Aethera Studio</strong> adalah tool web untuk membuat naskah <em>Hook–Body–CTA</em> beserta ide visual sinematik dan
@@ -100,10 +100,49 @@ prompt T2I/I2V. Cocok untuk konten pendek, iklan, dan kampanye afiliasi. Aplikas
   <li>Atur bahasa (ID/EN) dan tema (Terang/Gelap).</li>
 </ul>
 
+<h3>4.8 UI Hasil: Kartu & Overlay</h3>
+<ul>
+  <li>Hasil ditampilkan sebagai <strong>kartu ringkas</strong> di panel kanan.</li>
+  <li>Klik kartu untuk membuka <strong>Overlay</strong> berisi Hook/Body/CTA, A/B variants, ide visual, dan aset.</li>
+  <li>Tersedia tombol <strong>Copy</strong> untuk Hook, Body, CTA, serta prompt T2I/I2V.</li>
+  <li>Badge <strong>Score</strong> dan <strong>Best of All</strong> tampil proporsional di mode terang/gelap.</li>
+</ul>
+
+<h3>4.9 Rank All & Skoring</h3>
+<ul>
+  <li>Jika Anda generate ≥ 2 skrip, toolbar <strong>Rank All</strong> muncul.</li>
+  <li>Skor 60–98 dengan variasi berbasis konten + <em>content hashing</em> untuk tie-break.</li>
+  <li>Duplikasi dideteksi dan sistem melakukan <em>top-up</em> untuk keragaman.</li>
+</ul>
+
+<h3>4.10 Additional Assets</h3>
+<ul>
+  <li>Generate judul/caption, hashtag per platform (mis. TikTok, Shopee), dan ide thumbnail.</li>
+  <li>Hasil aset <strong>tersimpan</strong> pada skrip dan akan muncul kembali saat overlay dibuka ulang.</li>
+</ul>
+
+<h3>4.11 VO Preview (Gemini/API)</h3>
+<ul>
+  <li>Preview suara dengan cache agar <strong>tidak regenerate</strong> berulang untuk konten yang sama.</li>
+  <li>Tombol <strong>Stop</strong> menghentikan audio <em>HTML5</em> dan <em>speechSynthesis</em> (fallback).</li>
+  <li>Dukungan unduh VO pack dan salin SSML.</li>
+</ul>
+
+<h3>4.12 Akun & Keamanan</h3>
+<ul>
+  <li>Halaman <strong>Account</strong>: profil (nama, username, bio) dan keamanan.</li>
+  <li><strong>Update Email/Password</strong> melalui tautan konfirmasi email (bukan ganti langsung).</li>
+  <li><strong>Forgot Password</strong>: kirim tautan reset dari halaman login.</li>
+  <li><strong>Single Session</strong>: akun hanya aktif di satu perangkat; sesi lain akan keluar otomatis.</li>
+</ul>
+
 <h2>5. Keamanan & Privasi</h2>
 <ul>
-  <li>API key disimpan lokal (<em>Local Storage</em>) dan digunakan hanya saat memanggil endpoint <code>/api</code> Anda melalui HTTPS.</li>
-  <li>Konten yang Anda buat tetap milik Anda. Perhatikan hak cipta untuk materi visual/audio pihak ketiga.</li>
+  <li><strong>API Key Lokal:</strong> disimpan di <em>Local Storage</em> dan hanya dipakai lewat HTTPS ke endpoint <code>/api</code> Anda.</li>
+  <li><strong>Email & Password:</strong> perubahan dilakukan via <em>email confirmation link</em>. Password reset juga via tautan email.</li>
+  <li><strong>Single Session Guard:</strong> aplikasi menyimpan <code>last_session_id</code> pada profil; jika berbeda, pengguna akan otomatis logout.</li>
+  <li><strong>Supabase RLS (rekomendasi):</strong> batasi baca/tulis tabel <code>profiles</code> hanya untuk <code>auth.uid()</code> terkait.</li>
+  <li>Konten yang Anda buat tetap milik Anda. Hormati hak cipta materi visual/audio pihak ketiga.</li>
 </ul>
 
 <h2>6. PWA & Offline</h2>
@@ -121,9 +160,16 @@ prompt T2I/I2V. Cocok untuk konten pendek, iklan, dan kampanye afiliasi. Aplikas
 
 <h2>8. Troubleshooting</h2>
 <ul>
-  <li><strong>Download tidak muncul:</strong> pastikan izin download di browser aktif dan tidak diblok ekstensi.</li>
-  <li><strong>Hasil kosong/error:</strong> periksa koneksi internet dan kunci API; coba ulang beberapa detik kemudian.</li>
-  <li><strong>Bahasa tidak berubah:</strong> klik tombol ID/EN pada header, lalu muat ulang halaman jika diperlukan.</li>
+  <li><strong>Toolbar Rank All tidak muncul:</strong> pastikan generate ≥ 2 skrip. Toolbar diposisikan di luar panel hasil; muat ulang bila perlu.</li>
+  <li><strong>Copy prompt menampilkan &lt;char-desc&gt;:</strong> tombol copy overlay otomatis menghapus tag tersebut dari T2I/I2V.</li>
+  <li><strong>Analyze Image gagal/JSON error:</strong> cek koneksi, kunci API, dan server <code>/api/analyzeImage</code>. Aplikasi menangani respons non‑JSON secara aman.</li>
+  <li><strong>Reset password kembali ke login:</strong> buka tautan di browser yang sama; aplikasi akan mendeteksi <code>?code=</code> dan menampilkan dialog setel password baru.</li>
+  <li><strong>Email berubah di auth.users tapi tidak di profiles:</strong> login ulang/refresh; aplikasi menyinkronkan <code>email</code> & <code>email_pending</code> ke tabel <code>profiles</code>.</li>
+  <li><strong>Hasil skrip identik:</strong> sistem melakukan deduplikasi dan <em>top‑up</em>. Coba ubah persona/target/platform untuk variasi lebih tinggi.</li>
+  <li><strong>VO Stop tidak bekerja:</strong> perbarui aplikasi; tombol Stop kini menghentikan audio <em>dan</em> <em>speechSynthesis</em>.</li>
+  <li><strong>Tooltip export tidak hilang:</strong> saat menu terbuka, tooltip otomatis disembunyikan.</li>
+  <li><strong>Mode Carousel kosong:</strong> buka kartu → overlay; slide dirender dengan Swiper dan muncul setelah init.</li>
+  <li><strong>Supabase “Failed to fetch”:</strong> saat offline, aplikasi beralih ke mode offline dan menunda sinkronisasi.</li>
 </ul>
 
 <h2>9. FAQ</h2>
@@ -145,7 +191,7 @@ prompt T2I/I2V. Cocok untuk konten pendek, iklan, dan kampanye afiliasi. Aplikas
       <div class="lang" id="en">
         
 <h1>Aethera Studio — User Manual</h1>
-<p><strong>Version:</strong> 2025-08-11</p>
+<p><strong>Version:</strong> 2025-08-28</p>
 
 <h2>1. Overview</h2>
 <p><strong>Aethera Studio</strong> is a web tool for generating <em>Hook–Body–CTA</em> scripts with cinematic visual ideas and
@@ -210,10 +256,49 @@ T2I/I2V prompts. Great for short-form content, ads, and affiliate campaigns. It 
   <li>Switch language (ID/EN) and theme (Light/Dark).</li>
 </ul>
 
+<h3>4.8 Results UI: Cards & Overlay</h3>
+<ul>
+  <li>Results appear as <strong>compact cards</strong> on the right panel.</li>
+  <li>Click a card to open the <strong>Overlay</strong> with Hook/Body/CTA, A/B variants, visual ideas, and assets.</li>
+  <li><strong>Copy</strong> buttons exist for Hook, Body, CTA, and T2I/I2V prompts.</li>
+  <li><strong>Score</strong> and <strong>Best of All</strong> badges are sized for both light/dark modes.</li>
+</ul>
+
+<h3>4.9 Rank All & Scoring</h3>
+<ul>
+  <li>When generating ≥ 2 scripts, the <strong>Rank All</strong> toolbar appears.</li>
+  <li>Scores range 60–98 with content‑based variation and hashing for tie‑breaks.</li>
+  <li>Duplicates are detected and a <em>top‑up</em> pass improves diversity.</li>
+</ul>
+
+<h3>4.10 Additional Assets</h3>
+<ul>
+  <li>Generate titles/captions, platform‑specific hashtags (e.g., TikTok, Shopee), and thumbnail text.</li>
+  <li>Assets are <strong>persisted</strong> on the script and reappear when reopening the overlay.</li>
+</ul>
+
+<h3>4.11 VO Preview (Gemini/API)</h3>
+<ul>
+  <li>Audio is cached so repeated previews <strong>don’t re‑generate</strong>.</li>
+  <li><strong>Stop</strong> halts both HTML5 audio and the <em>speechSynthesis</em> fallback.</li>
+  <li>Download VO packs and copy SSML are supported.</li>
+</ul>
+
+<h3>4.12 Account & Security</h3>
+<ul>
+  <li><strong>Account</strong> page: profile (full name, username, bio) and security.</li>
+  <li><strong>Update Email/Password</strong> via confirmation links (not immediate changes).</li>
+  <li><strong>Forgot Password</strong>: send a reset link from the login page.</li>
+  <li><strong>Single Session</strong>: only one active device; others are signed out.</li>
+</ul>
+
 <h2>5. Security & Privacy</h2>
 <ul>
-  <li>Your API key is stored locally (<em>Local Storage</em>) and used only over HTTPS to call your <code>/api</code> endpoints.</li>
-  <li>You own your generated content. Respect copyrights for any third‑party visuals/audio.</li>
+  <li><strong>Local API Key:</strong> stored in <em>Local Storage</em>, used only via HTTPS against your <code>/api</code> endpoints.</li>
+  <li><strong>Email & Password:</strong> changes occur through email confirmation links. Password resets are link‑based.</li>
+  <li><strong>Single Session Guard:</strong> the app stores <code>last_session_id</code>; if it changes, the user is signed out.</li>
+  <li><strong>Supabase RLS (recommended):</strong> restrict <code>profiles</code> read/write to the matching <code>auth.uid()</code>.</li>
+  <li>You own your generated content. Respect third‑party visual/audio copyrights.</li>
 </ul>
 
 <h2>6. PWA & Offline</h2>
@@ -231,9 +316,16 @@ T2I/I2V prompts. Great for short-form content, ads, and affiliate campaigns. It 
 
 <h2>8. Troubleshooting</h2>
 <ul>
-  <li><strong>No download prompted:</strong> allow downloads in your browser and check for blocking extensions.</li>
-  <li><strong>Empty/error result:</strong> check your connection and API key; try again after a moment.</li>
-  <li><strong>Language not switching:</strong> use the ID/EN buttons; refresh if needed.</li>
+  <li><strong>Rank All toolbar not visible:</strong> generate ≥ 2 scripts. The toolbar is placed outside the results panel; reload if needed.</li>
+  <li><strong>Copied prompt shows &lt;char-desc&gt;:</strong> overlay copy buttons strip those tags from T2I/I2V prompts.</li>
+  <li><strong>Analyze Image fails/JSON error:</strong> check connection, API key, and <code>/api/analyzeImage</code>. The app safely handles non‑JSON replies.</li>
+  <li><strong>Password reset returns to login:</strong> open the link in the same browser; the app detects <code>?code=</code> and shows the set‑new‑password dialog.</li>
+  <li><strong>Email changed in auth.users but not in profiles:</strong> re‑login/refresh; the app syncs <code>email</code> & <code>email_pending</code> into <code>profiles</code>.</li>
+  <li><strong>Identical scripts:</strong> de‑duplication and a diversity <em>top‑up</em> run are applied. Try different persona/target/platform.</li>
+  <li><strong>VO Stop doesn’t work:</strong> update the app; Stop now halts audio and <em>speechSynthesis</em>.</li>
+  <li><strong>Export tooltip sticks:</strong> opening the export menu hides the tooltip.</li>
+  <li><strong>Carousel mode empty:</strong> open the card → overlay; slides render via Swiper after init.</li>
+  <li><strong>Supabase “Failed to fetch”:</strong> when offline, the app switches to offline mode and delays sync.</li>
 </ul>
 
 <h2>9. FAQ</h2>

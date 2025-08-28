@@ -66,14 +66,15 @@
         <!-- Step 1: Introduction -->
         <div class="onboarding-step" data-step="1">
           <h3 class="text-xl font-semibold mb-4 text-accent" data-lang-key="onboarding_step1_title">🚀 Langkah 1: Pengenalan</h3>
-          <p class="text-secondary mb-4" data-lang-key="onboarding_step1_desc">Aethera Studio adalah AI Virtual Director yang membantu Anda membuat skrip konten viral untuk berbagai platform seperti TikTok, Instagram, YouTube, dan Shopee.</p>
+          <p class="text-secondary mb-4" data-lang-key="onboarding_step1_desc">Aethera Studio adalah AI Virtual Director untuk membuat skrip Hook–Body–CTA + ide visual sinematik (T2I/I2V) dengan cepat.</p>
           <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
             <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_key_features">✨ Fitur Utama:</h4>
             <ul class="text-sm text-secondary space-y-1">
-              <li data-lang-key="onboarding_feature1">• Hook viral terbaru dari berbagai platform</li>
-              <li data-lang-key="onboarding_feature2">• CTA yang terbukti meningkatkan konversi</li>
-              <li data-lang-key="onboarding_feature3">• Character sheet untuk konsistensi karakter</li>
-              <li data-lang-key="onboarding_feature4">• Template siap pakai untuk pemula</li>
+              <li>• Tampilan kartu hasil + Overlay detail, A/B variants, “Best of All”</li>
+              <li>• Platform selector terpisah dari CTA; CTA cerdas per platform</li>
+              <li>• Generate Additional Assets: judul/caption, hashtag platform, thumbnail text</li>
+              <li>• VO Preview (Gemini/API) + fallback Browser TTS, unduh VO pack</li>
+              <li>• Keamanan akun: konfirmasi email, reset password via email, single-session</li>
             </ul>
           </div>
         </div>
@@ -85,11 +86,11 @@
           <div class="space-y-3">
             <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
               <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_platform_title">1. Pilih Platform Target</h4>
-              <p class="text-sm text-secondary" data-lang-key="onboarding_platform_desc">Setiap platform memiliki karakteristik unik. Pilih platform utama Anda untuk mendapatkan rekomendasi yang tepat.</p>
+              <p class="text-sm text-secondary" data-lang-key="onboarding_platform_desc">Setiap platform punya gaya sendiri (hashtag, durasi, CTA). Pilih platform agar prompt & assets jadi relevan.</p>
             </div>
             <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
-              <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_audience_title">2. Tentukan Target Audiens</h4>
-              <p class="text-sm text-secondary" data-lang-key="onboarding_audience_desc">Semakin spesifik target audiens, semakin efektif konten yang dihasilkan.</p>
+              <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_audience_title">2. Tentukan Target Audiens & CTA</h4>
+              <p class="text-sm text-secondary" data-lang-key="onboarding_audience_desc">Pilih audiens & CTA. CTA mendukung platform (contoh: keranjang kuning TikTok, Shopee live voucher).</p>
             </div>
           </div>
         </div>
@@ -108,7 +109,7 @@
             </div>
             <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
               <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_cta_title">📢 CTA (Call to Action)</h4>
-              <p class="text-sm text-secondary mb-2" data-lang-key="onboarding_cta_desc">Mengarahkan audiens untuk bertindak</p>
+              <p class="text-sm text-secondary mb-2" data-lang-key="onboarding_cta_desc">CTA sinkron dengan platform (add-to-cart, live voucher, pinned comment, dll.).</p>
               <div class="text-xs text-muted">
                 <strong data-lang-key="onboarding_example_label">Contoh:</strong> <span data-lang-key="onboarding_cta_example">"Klik link di bio untuk diskon 50%!"</span>
               </div>
@@ -119,7 +120,7 @@
         <!-- Step 4: Character Sheet -->
         <div class="onboarding-step hidden" data-step="4">
           <h3 class="text-xl font-semibold mb-4 text-accent" data-lang-key="onboarding_step4_title">👤 Langkah 4: Character Sheet</h3>
-          <p class="text-secondary mb-4" data-lang-key="onboarding_step4_desc">Untuk konsistensi karakter di semua konten Anda:</p>
+          <p class="text-secondary mb-4" data-lang-key="onboarding_step4_desc">Untuk konsistensi karakter di semua konten Anda. T2I gunakan tag &lt;char-desc&gt; untuk deskripsi fisik, I2V tidak.</p>
           <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
             <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_why_important">Mengapa Penting?</h4>
             <ul class="text-sm text-secondary space-y-1">
@@ -129,6 +130,26 @@
               <li data-lang-key="onboarding_benefit4">• Meningkatkan engagement dan loyalitas</li>
             </ul>
           </div>
+        </div>
+
+        <!-- Step 5: Akun & Keamanan -->
+        <div class="onboarding-step hidden" data-step="5">
+          <h3 class="text-xl font-semibold mb-4 text-accent">🔐 Akun & Keamanan</h3>
+          <ul class="text-sm text-secondary space-y-2">
+            <li>• Update Email/Password via konfirmasi email (dua langkah jika “Double confirm” aktif).</li>
+            <li>• Lupa Password: kirim link reset dari halaman login.</li>
+            <li>• Single Session: akun hanya aktif di satu perangkat. Jika terdeteksi di tempat lain, sesi ini akan keluar otomatis.</li>
+          </ul>
+        </div>
+
+        <!-- Step 6: Tips -->
+        <div class="onboarding-step hidden" data-step="6">
+          <h3 class="text-xl font-semibold mb-4 text-accent">💡 Tips</h3>
+          <ul class="text-sm text-secondary space-y-2">
+            <li>• Atur API Key di Pengaturan untuk performa stabil dan timeout lebih tinggi.</li>
+            <li>• Gunakan Rank All untuk memilih hasil terbaik saat generate multi opsi.</li>
+            <li>• Simpan preset/karakter untuk reuse; sinkron otomatis via cloud.</li>
+          </ul>
         </div>
         
         <!-- Step 5: Ready to Start -->
@@ -958,19 +979,15 @@
 <div id="about-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
   <div class="modal-content w-full max-w-xl bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95 max-h-[90vh] flex flex-col">
     <div class="p-6 md:p-8 overflow-y-auto">
-      <h3 class="text-xl font-bold text-[#eee] mb-3" data-lang-key="about_title">Tentang Aethera Studio</h3>
-      <p class="text-sm text-gray-300 leading-relaxed mb-3" data-lang-key="about_p1">
-        Aethera Studio adalah asisten kreatif untuk membuat naskah <b>Hook–Body–CTA</b> lengkap dengan ide visual sinematik dan
-        <b>prompt T2I/I2V</b> — dirancang untuk konten pendek, iklan, dan kampanye afiliasi.
-      </p>
-      <p class="text-sm text-gray-300 leading-relaxed mb-3" data-lang-key="about_p2">
-        Fitur utama: <b>Generator skrip multi-opsi</b>, <b>Visual DNA (Analyze Image)</b> berbasis Gemini,
-        <b>Persona</b> & preset, <b>Riwayat</b>, serta ekspor <b>PDF/XLSX/DOCX</b>. Tersedia <b>mode terang/gelap</b> dan <b>bahasa ID/EN</b>.
-      </p>
-      <p class="text-sm text-gray-300 leading-relaxed" data-lang-key="about_p3">
-        Cara kerja: data disusun di browser, lalu permintaan AI dikirim aman ke endpoint <b>/api</b> milik Anda di Vercel.
-        Jika memasukkan <b>Gemini API key</b>, kunci disimpan lokal (Local Storage) dan hanya dipakai saat memanggil endpoint Anda melalui HTTPS.
-      </p>
+      <h3 class="text-xl font-bold text-[#eee] mb-3">Tentang Aethera Studio</h3>
+      <ul class="text-sm text-gray-300 mb-4 list-disc pl-5 space-y-1">
+        <li>Overlay hasil: A/B variants, skor, “Best of All”, copy prompt T2I/I2V</li>
+        <li>Platform selector + CTA cerdas per platform</li>
+        <li>Generate Additional Assets: judul/caption, hashtag platform, thumbnail text</li>
+        <li>VO Preview (Gemini/API) + fallback Browser TTS, unduh VO pack</li>
+        <li>Akun & keamanan: konfirmasi email, reset password via email, single-session</li>
+      </ul>
+      <p class="text-sm text-gray-400">Privasi: aplikasi berjalan di browser; API key disimpan lokal dan digunakan via HTTPS. Endpoint backend di-host di Vercel.</p>
     </div>
     <div class="bg-gray-900/60 px-6 py-4 flex justify-end items-center rounded-b-xl">
       <button class="about-close px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">Tutup</button>
