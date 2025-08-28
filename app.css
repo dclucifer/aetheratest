@@ -2398,3 +2398,11 @@ body.light-mode .variant-item p {
   background: linear-gradient(90deg,#f6d365,#fda085);
   border-radius:2px;
 }
+
+/* Matikan total underlay pada wrapper header */
+header { background: transparent !important; box-shadow: none !important; }
+.light-mode header, .dark-mode header { background: transparent !important; }
+header { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+
+/* (opsional) kalau kartu nggak perlu aksen garis emas, matikan ini */
+.header-card::before { content: none !important; }

@@ -184,8 +184,8 @@
     </div>
 
     <div id="app-container" class="hidden">
-      <header class="border-b sticky top-0 z-20 backdrop-blur-md">
-        <div class="container mx-auto px-3 sm:px-4 lg:px-6">
+      <header class="sticky top-0 z-30">
+        <div class="container mx-auto px-3 sm:px-4 lg:px-6 header-card rounded-2xl shadow-xl">
           <div class="flex items-center justify-between h-14 md:h-16">
             <div class="flex items-start">
               <img src="assets/images/logo-icon.png" alt="AS" class="w-8 h-8 mt-0.5">
@@ -1340,7 +1340,24 @@ if ('serviceWorker' in navigator) {
                             // inisialisasi awal
                             markRecommendations();
                           })();
-                        </script>                        
+                        </script>                
+                        
+                        <script>
+                          document.addEventListener('DOMContentLoaded', () => {
+                            const h = document.querySelector('header');
+                            if (!h) return;
+                            // buang kelas yang bikin underlay
+                            for (const c of [...h.classList]) {
+                              if (c === 'border-b' || c.startsWith('bg-') || c.startsWith('backdrop-')) {
+                                h.classList.remove(c);
+                              }
+                            }
+                            h.style.background = 'transparent';
+                            h.style.backdropFilter = 'none';
+                            h.style.webkitBackdropFilter = 'none';
+                            h.classList.add('z-30'); // sedikit lebih tinggi dari konten
+                          });
+                          </script>
 
 </body>
 </html>
