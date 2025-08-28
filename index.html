@@ -1050,6 +1050,17 @@
                         </div>
                       </div>
 
+                      <!-- Modal: How To Use -->
+                      <div id="howto-modal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none" role="dialog" aria-modal="true" aria-labelledby="howto-title">
+                        <div class="w-full max-w-xl max-h-[85vh] overflow-y-auto bg-gray-900 text-gray-100 rounded-xl border border-gray-700 p-6">
+                          <div class="flex items-center justify-between mb-3">
+                            <h3 id="howto-title" class="text-lg font-bold" data-lang-key="howto_title">Cara Pakai</h3>
+                            <button id="howto-close" class="p-2 rounded hover:bg-gray-800" aria-label="Close howto">✕</button>
+                          </div>
+                          <div id="howto-body" class="space-y-2 text-sm"></div>
+                        </div>
+                      </div>
+
                       <template id="micro-shot-template">
                       <div class="p-3 rounded bg-gray-900/50 border border-gray-700/50 space-y-2">
                         <p class="text-xs text-gray-400">
@@ -1061,18 +1072,24 @@
                             <strong class="text-gray-300" data-lang-key="t2i_prompt_label"></strong>
                             <span class="prompt-t2i-display"></span>
                           </p>
-                          <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
-                            <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
-                          </button>
+                          <div class="flex items-center gap-1">
+                            <button class="prompt-howto-btn flex-shrink-0" data-type="t2i" title="" data-tooltip><div class="icon icon-sm icon-help text-gray-500 hover:text-white"></div><span class="tooltip-hint" data-lang-key="t2i_tooltip_models">Gunakan di: Leonardo/Flux/Imagen/Gemini</span></button>
+                            <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
+                              <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
+                            </button>
+                          </div>
                         </div>
                         <div class="flex items-start space-x-2">
                           <p class="text-xs text-gray-400 flex-1">
                             <strong class="text-gray-300" data-lang-key="i2v_prompt_label"></strong>
                             <span class="prompt-i2v-display"></span>
                           </p>
-                          <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
-                            <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
-                          </button>
+                          <div class="flex items-center gap-1">
+                            <button class="prompt-howto-btn flex-shrink-0" data-type="i2v" title="" data-tooltip><div class="icon icon-sm icon-help text-gray-500 hover:text-white"></div><span class="tooltip-hint" data-lang-key="i2v_tooltip_models">Gunakan di: Pika/Runway/Veo</span></button>
+                            <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
+                              <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
+                            </button>
+                          </div>
                         </div>
                       </div>
                       </template>

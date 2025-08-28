@@ -1145,6 +1145,11 @@ export async function openScriptViewer(sourceCard, script){
       try { copyToClipboard(cleaned, copyBtn); } catch(_){ }
       return;
     }
+    const howtoBtn = e.target.closest('.prompt-howto-btn');
+    if (howtoBtn) {
+      openHowToModal(howtoBtn.dataset.type === 'i2v' ? 'i2v' : 't2i');
+      return;
+    }
     const genBtn = e.target.closest('.generate-assets-btn');
     if (genBtn) {
       try { const { handleGenerateAssets } = await import('./generator.js'); await handleGenerateAssets(content.closest('.result-card') || content); } catch(_){ }
@@ -1169,4 +1174,37 @@ export async function openScriptViewer(sourceCard, script){
     modal.addEventListener('click',(e)=>{ if(e.target===modal) modal.classList.add('opacity-0','pointer-events-none'); });
     window.addEventListener('keydown',(e)=>{ if(e.key==='Escape') modal.classList.add('opacity-0','pointer-events-none'); });
   }
+}
+
+function openHowToModal(mode) {
+  try {
+    const modal = document.getElementById('howto-modal');
+    const body = document.getElementById('howto-body');
+    if (!modal || !body) return;
+    const isT2I = mode !== 'i2v';
+    const chips = (labels) => `<div class="flex flex-wrap gap-2 mt-2">${labels.map(l=>`<span class=\"px-2 py-0.5 text-xs rounded bg-gray-700 text-white border border-gray-600\">${l}</span>`).join('')}</div>`;
+    const chipLabels = isT2I ? ['Leonardo','Flux','Imagen','Gemini'] : ['Pika','Runway','Veo'];
+    const step = (title, desc, extra='') => `
+      <div class=\"mb-4\">
+        <div class=\"text-sm font-semibold text-blue-300\">${title}</div>
+        <div class=\"text-sm text-gray-300\">${desc}</div>
+        ${extra}
+      </div>`;
+    const html = [
+      step(t('howto_step1_title')||'Open the App', isT2I ? (t('howto_step1_desc_t2i')||'Open Leonardo, Flux, Imagen, or Gemini Image.') : (t('howto_step1_desc_i2v')||'Open Pika, Runway, or Google Veo.'), chips(chipLabels)),
+      step(t('howto_step2_title')||'Paste the Prompt', isT2I ? (t('howto_step2_desc_t2i')||'Paste the Image Prompt. Keep <char-desc> tags for physical details.') : (t('howto_step2_desc_i2v')||'Paste the Video Prompt. Do NOT include <char-desc> tags.')),
+      step(t('howto_step3_title')||'Set Parameters', isT2I ? (t('howto_params_t2i')||'Steps 28–40, CFG 6–9, 9:16, DPM++, random seed.') : (t('howto_params_i2v')||'Duration 3–5s, FPS 24–30, Motion medium, 9:16.'))
+    ].join('');
+    body.innerHTML = `
+      <div class=\"mb-3 text-sm font-semibold\">${isT2I ? (t('howto_t2i')||'Use the Image Prompt') : (t('howto_i2v')||'Use the Video Prompt')}</div>
+      ${html}`;
+    modal.classList.remove('opacity-0','pointer-events-none');
+    if (!modal.__bound) {
+      modal.__bound = true;
+      const closeBtn = document.getElementById('howto-close');
+      closeBtn?.addEventListener('click',()=>{ modal.classList.add('opacity-0','pointer-events-none'); });
+      modal.addEventListener('click',(e)=>{ if(e.target===modal) modal.classList.add('opacity-0','pointer-events-none'); });
+      window.addEventListener('keydown',(e)=>{ if(e.key==='Escape') modal.classList.add('opacity-0','pointer-events-none'); });
+    }
+  } catch(_) {}
 }
