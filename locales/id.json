@@ -26,6 +26,8 @@
   "send_password_reset": "Kirim Link Reset Password",
   "security_note": "Untuk keamanan, perubahan password dan email dilakukan via tautan yang dikirim ke email Anda saat ini.",
   "session_conflict": "Akun Anda sedang login di tempat lain. Anda akan keluar dari sesi ini.",
+  "set_new_password_title": "Setel Password Baru",
+  "set_new_password_desc": "Masukkan password baru untuk menyelesaikan proses pemulihan.",
   "new_script_title": "Buat Skrip Baru",
   "content_mode_label": "Mode Konten",
   "mode_post": "Post",

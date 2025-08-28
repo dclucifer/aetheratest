@@ -9,7 +9,8 @@ import { handleImageUpload, handleRemoveImage, handleGenerate, handleRegenerate,
 import { saveApiKeyFromModal, saveSettings, loadSettings } from './settings.js';
 import { handleSavePersona, handleDeletePersona, openPersonaModal, handleAddDefaultPersona, closePersonaModal } from './persona.js';
 import { downloadAllScripts } from './download.js';
-import { elements, closeConfirmModal, closeEditModal, showNotification, openConfirmModal, copyToClipboard, confirmCallback, tempGeneratedPart, languageState, setLoadingState } from './utils.js';
+import { elements, closeConfirmModal, closeEditModal, showNotification, openConfirmModal, copyToClipboard, confirmCallback, tempGeneratedPart, languageState, setLoadingState, openInputModal } from './utils.js';
+import { supabaseClient } from './supabase.js';
 import { translations, t } from './i18n.js';
 import { deleteFromHistory, nextPage, prevPage, setSearchQuery, setSortOrder, selectAllHistory, updateDeleteSelectedButton, setPostTypeFilter, toggleGroupByProduct, updateSelectAllCheckbox } from './history.js';
 import { updateSingleScript, clearScripts } from './state.js';
@@ -469,6 +470,36 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (elements.mobileLangIdBtn) elements.mobileLangIdBtn.addEventListener('click', async () => await switchLanguage('id'));
     if (elements.mobileLangEnBtn) elements.mobileLangEnBtn.addEventListener('click', async () => await switchLanguage('en'));
+
+    // Handle Supabase auth redirect (password recovery / email confirm)
+    try {
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get('code');
+        // message may be in query or hash
+        const message = url.searchParams.get('message') || (url.hash.includes('message=') ? decodeURIComponent(url.hash.split('message=')[1]) : '');
+        if (code) {
+            try { await supabaseClient.auth.exchangeCodeForSession(code); } catch (_) {}
+            openInputModal(
+              t('set_new_password_title') || 'Set New Password',
+              t('set_new_password_desc') || 'Enter your new password to complete recovery.',
+              t('new_password') || 'New Password',
+              async (pwd) => {
+                if (!pwd || pwd.length < 6) { showNotification(t('password_too_short') || 'Password minimal 6 karakter', 'warning'); return; }
+                try {
+                  const { error } = await supabaseClient.auth.updateUser({ password: pwd });
+                  if (error) throw error;
+                  showNotification(t('password_updated') || 'Password updated', 'success');
+                } catch (e) {
+                  showNotification(e.message || 'Failed to set password', 'error');
+                }
+              }
+            );
+            history.replaceState({}, '', location.pathname);
+        } else if (message) {
+            showNotification(message, 'success');
+            history.replaceState({}, '', location.pathname);
+        }
+    } catch (_) {}
 
     // === Bulk history actions ===
     const deleteAllBtn = document.getElementById('delete-all-btn');

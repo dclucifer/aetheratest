@@ -48,6 +48,8 @@
   "send_password_reset": "Send Password Reset Link",
   "security_note": "For security, password and email changes are handled via links sent to your current email.",
   "session_conflict": "Your account is signed in elsewhere. You will be signed out here.",
+  "set_new_password_title": "Set New Password",
+  "set_new_password_desc": "Enter a new password to complete the recovery flow.",
   "new_script_title": "Create New Script",
   "content_mode_label": "Content Mode",
   "mode_post": "Post",
