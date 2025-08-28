@@ -2360,3 +2360,28 @@ header { background: transparent; } /* wrapper stays transparent */
 .header-underlay, .top-backdrop { display: none !important; }
 
 /* === END AUTO-APPEND [card-header] === */
+
+
+
+/* === FIX: remove legacy header underlay bands completely === */
+header::before,
+header::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Defensive: possible wrapper elements */
+.header-underlay,
+.top-backdrop,
+.top-accent,
+.bottom-accent,
+.header-wrap::before,
+.header-wrap::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+

@@ -531,3 +531,7 @@
 .light-mode header { background: transparent !important; }
 
 /* === END AUTO-APPEND [card-header-light-override] === */
+
+
+/* Keep wrapper transparent in theme B as well */
+.light-mode header::before, .light-mode header::after{ content:none !important; display:none !important; }
