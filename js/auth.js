@@ -32,7 +32,7 @@ async function ensureSingleSessionGuard() {
             localStorage.setItem('aethera_session_id', localId);
         }
         // Set as the current active session on login/refresh
-        await supabaseClient.from('profiles').upsert({ id: userId, last_session_id: localId });
+        await supabaseClient.from('profiles').upsert({ id: userId, last_session_id: localId, email: session.user.email });
 
         // Verification function
         const verify = async () => {
@@ -121,7 +121,7 @@ export async function handleLogin() {
             localStorage.setItem('aethera_session_id', localId);
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session?.user?.id) {
-                await supabaseClient.from('profiles').upsert({ id: session.user.id, last_session_id: localId });
+                await supabaseClient.from('profiles').upsert({ id: session.user.id, last_session_id: localId, email: session.user.email });
             }
         } catch(_) {}
         await checkLogin();

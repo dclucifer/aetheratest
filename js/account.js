@@ -78,6 +78,8 @@ export function initAccountHandlers() {
       const { error } = await supabaseClient.auth.updateUser({ email: newEmail }, { emailRedirectTo: redirectTo });
       if (error) throw error;
       showNotification(t('email_update_sent') || 'Email konfirmasi dikirim. Cek inbox Anda.', 'success');
+      // Mirror ke profiles agar terlihat pending di UI (opsional: field email_pending)
+      try { await supabaseClient.from('profiles').upsert({ id: session.user.id, email_pending: newEmail }); } catch(_) {}
     } catch (e) {
       showNotification(e.message || 'Gagal mengirim konfirmasi perubahan email', 'error');
     } finally { setLoadingState(false, updEmail); }

@@ -479,6 +479,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const message = url.searchParams.get('message') || (url.hash.includes('message=') ? decodeURIComponent(url.hash.split('message=')[1]) : '');
         if (code) {
             try { await supabaseClient.auth.exchangeCodeForSession(code); } catch (_) {}
+            // After successful exchange, mirror current email to profiles
+            try {
+              const { data: { session } } = await supabaseClient.auth.getSession();
+              if (session?.user?.id) {
+                await supabaseClient.from('profiles').upsert({ id: session.user.id, email: session.user.email, email_pending: null });
+              }
+            } catch(_) {}
             openInputModal(
               t('set_new_password_title') || 'Set New Password',
               t('set_new_password_desc') || 'Enter your new password to complete recovery.',
