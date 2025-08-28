@@ -754,3 +754,29 @@ header.sticky.is-scrolled {
   backdrop-filter: none !important;
   box-shadow: none !important;
 }
+
+/* === AUTO-APPEND: kill-underlay (other css) === */
+
+/* === KILL GLOBAL UNDERLAY ACCENTS (auto-appended) === */
+body::before, body::after,
+html::before, html::after,
+#app::before, #app::after,
+#app-container::before, #app-container::after,
+.app-shell::before, .app-shell::after,
+.page::before, .page::after,
+.top-accent, .bottom-accent {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Header wrapper should be transparent (Card Header style) */
+header {
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* === END AUTO-APPEND: kill-underlay (other css) === */

@@ -536,3 +536,8 @@
 }
 
 /* === END AUTO-APPEND: compact-header-light === */
+
+
+/* === AUTO-APPEND: kill-header-pseudos-in-themes === */
+.light-mode header::before, .light-mode header::after, .dark-mode header::before, .dark-mode header::after{content:none!important;display:none!important;}
+/* === END AUTO-APPEND: kill-header-pseudos-in-themes === */
