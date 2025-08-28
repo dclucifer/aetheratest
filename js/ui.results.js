@@ -1006,8 +1006,18 @@ export async function openScriptViewer(sourceCard, script){
       shots.forEach((shot,i)=>{
         s+=`<div class=\"p-3 rounded bg-gray-900/40 border border-gray-700/40\">`+
             `<div class=\"text-xs text-gray-300\"><strong>${t('visual_idea_label')||'Ide Visual'} ${i+1}:</strong> ${safe(shot.visual_idea)}</div>`+
-            `<div class=\"text-xs text-gray-400 mt-1 flex items-center gap-2\"><strong>${t('t2i_prompt_label')||'T2I'}:</strong> <span class=\"prompt-t2i-display\">${safe(shot.text_to_image_prompt)}</span> <button class=\"prompt-copy-btn flex-shrink-0\" data-prompt=\"${safe(shot.text_to_image_prompt).replace(/\\/g,'\\\\').replace(/"/g,'&quot;')}\"><div class=\"icon icon-sm icon-copy text-gray-500 hover:text-white\"></div></button></div>`+
-            `<div class=\"text-xs text-gray-400 mt-1 flex items-center gap-2\"><strong>${t('i2v_prompt_label')||'I2V'}:</strong> <span class=\"prompt-i2v-display\">${safe(shot.image_to_video_prompt)}</span> <button class=\"prompt-copy-btn flex-shrink-0\" data-prompt=\"${safe(shot.image_to_video_prompt).replace(/\\/g,'\\\\').replace(/"/g,'&quot;')}\"><div class=\"icon icon-sm icon-copy text-gray-500 hover:text-white\"></div></button></div>`+
+            `<div class=\"text-xs text-gray-400 mt-1 flex items-center gap-2\">`+
+              `<strong>${t('t2i_prompt_label')||'Image Prompt'}:</strong>`+
+              `<span class=\"prompt-t2i-display\">${safe(shot.text_to_image_prompt)}</span>`+
+              `<button class=\"prompt-howto-btn flex-shrink-0\" data-type=\"t2i\" data-tooltip><div class=\"icon icon-sm icon-info text-gray-500 hover:text-white\"></div><span class=\"tooltip-hint\">${t('t2i_tooltip_models')||''}</span></button>`+
+              `<button class=\"prompt-copy-btn flex-shrink-0\" data-prompt=\"${safe(shot.text_to_image_prompt).replace(/\\/g,'\\\\').replace(/\"/g,'&quot;')}\"><div class=\"icon icon-sm icon-copy text-gray-500 hover:text-white\"></div></button>`+
+            `</div>`+
+            `<div class=\"text-xs text-gray-400 mt-1 flex items-center gap-2\">`+
+              `<strong>${t('i2v_prompt_label')||'Video Prompt'}:</strong>`+
+              `<span class=\"prompt-i2v-display\">${safe(shot.image_to_video_prompt)}</span>`+
+              `<button class=\"prompt-howto-btn flex-shrink-0\" data-type=\"i2v\" data-tooltip><div class=\"icon icon-sm icon-info text-gray-500 hover:text-white\"></div><span class=\"tooltip-hint\">${t('i2v_tooltip_models')||''}</span></button>`+
+              `<button class=\"prompt-copy-btn flex-shrink-0\" data-prompt=\"${safe(shot.image_to_video_prompt).replace(/\\/g,'\\\\').replace(/\"/g,'&quot;')}\"><div class=\"icon icon-sm icon-copy text-gray-500 hover:text-white\"></div></button>`+
+            `</div>`+
             `</div>`;
       });
       s+=`</div>`;
