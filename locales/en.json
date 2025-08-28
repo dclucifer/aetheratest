@@ -4,6 +4,7 @@
   "email_label": "Email",
   "password_label": "Password",
   "login_button": "Login",
+  "forgot_password": "Forgot password?",
   "settings_title": "Settings",
   "api_settings_title": "API Settings",
   "gemini_api_key_label": "Your Google Gemini API Key",

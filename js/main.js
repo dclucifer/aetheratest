@@ -1,5 +1,5 @@
 // js/main.js
-import { checkLogin, handleLogin, handleLogout } from './auth.js';
+import { checkLogin, handleLogin, handleLogout, handleForgotPassword } from './auth.js';
 import { switchTheme, switchLanguage, applyTheme, applyLanguage, updateLanguageButtons, translateUI } from './ui.js';
 import { switchMode, switchVisualStrategy, switchAspectRatio } from './ui.generator.js';
 import { renderCharacterSheet, handleCharacterModeChange, handleCategoryChange } from './ui.character.js';
@@ -280,6 +280,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // --- Listener untuk Navigasi & Kontrol Lainnya ---
     elements.loginBtn.addEventListener('click', handleLogin);
+    document.getElementById('forgot-password-btn')?.addEventListener('click', handleForgotPassword);
     document.getElementById('login-password').addEventListener('keyup', (e) => e.key === 'Enter' && handleLogin());
     document.getElementById('login-email').addEventListener('keyup', (e) => e.key === 'Enter' && handleLogin());
     elements.logoutBtn.addEventListener('click', handleLogout);

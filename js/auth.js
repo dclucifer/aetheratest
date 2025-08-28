@@ -128,6 +128,20 @@ export async function handleLogin() {
     }
 }
 
+// Forgot password: send reset link to entered email
+export async function handleForgotPassword() {
+    try {
+        const email = document.getElementById('login-email')?.value?.trim();
+        if (!email) { showNotification(t('email_label') || 'Email', 'warning'); return; }
+        const redirectTo = window.location.origin;
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+        if (error) throw error;
+        showNotification(t('password_reset_sent') || 'Password reset link sent to your email.', 'success');
+    } catch (e) {
+        showNotification(e.message || 'Failed to send reset link', 'error');
+    }
+}
+
 export async function handleLogout() {
     try {
         // Try to sign out from Supabase, but don't wait for network response
