@@ -9,19 +9,32 @@ async function loadJSON(url) {
 export const HooksCtaRegistry = {
   hooksConfig: null,
   ctaMapping: null,
+  hookInstructions: null,
+  ctaInstructions: null,
+
   async init() {
-    // RELATIVE dari file ini: js/hooks-cta-loader.js → js/constants/...
     const hooks = (await import('./constants/hooks_config.json')).default;
     const ctas  = (await import('./constants/cta_mapping.json')).default;
-    this.hooksConfig = hooks;
-    this.ctaMapping  = ctas;
+    const hIns  = (await import('./constants/instructions.hooks.json')).default;
+    const cIns  = (await import('./constants/instructions.cta.json')).default;
+    this.hooksConfig      = hooks;
+    this.ctaMapping       = ctas;
+    this.hookInstructions = hIns;
+    this.ctaInstructions  = cIns;
   },
-  suggestCtas(p, h) { return this.ctaMapping?.[p]?.[h] || []; },
-  listFormats() { return this.hooksConfig?.formats || []; }
-};
 
-export function validateFirstFrame(text) {
-  const maxChars = 42;
-  const ok = (text || '').trim().length > 0 && text.length <= maxChars;
-  return { ok, maxChars, length: (text || '').length };
+  suggestCtas(platform, hook) {
+    return this.ctaMapping?.[platform]?.[hook] || [];
+  },
+
+  getHookInstruction(hookKey, lang='id') {
+    return this.hookInstructions?.[hookKey]?.[lang] || null;
+  },
+
+  getCtaInstruction(ctaKey, lang='id') {
+    return this.ctaInstructions?.[ctaKey]?.[lang] || null;
+  },
+
+  listHookGroups() { return this.hooksConfig?.categories || []; },
+  listFormats()    { return this.hooksConfig?.formats || []; }
 }

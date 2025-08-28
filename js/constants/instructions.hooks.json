@@ -1,0 +1,158 @@
+{
+  "hook_problem": {
+    "en": "Start by identifying specific problems your target audience faces. Use relatable and emotional language. Examples: \"Are you tired of...\" or \"Have you ever experienced...\"",
+    "id": "Mulai dengan mengidentifikasi masalah spesifik yang dialami target audiens. Gunakan bahasa yang relatable dan emosional. Contoh: \"Capek gak sih kalau...\" atau \"Pernah nggak ngalamin...\""
+  },
+  "hook_target_call": {
+    "en": "Call out your target audience directly and specifically. Make them feel personally addressed. Examples: \"For those of you who often...\" or \"Specifically for...\"",
+    "id": "Panggil target audiens secara langsung dan spesifik. Buat mereka merasa dipanggil secara personal. Contoh: \"Buat kamu yang sering...\" atau \"Khusus untuk para...\""
+  },
+  "hook_bold_claim": {
+    "en": "Make bold and surprising claims about your product. Must be provable and not exaggerated. Examples: \"This is the only product that...\" or \"Guaranteed 100%...\"",
+    "id": "Buat klaim yang berani dan mengejutkan tentang produk. Harus bisa dibuktikan dan tidak berlebihan. Contoh: \"Ini satu-satunya produk yang...\" atau \"Dijamin 100%...\""
+  },
+  "hook_curiosity": {
+    "en": "Spark curiosity with incomplete information. Make the audience want to know more. Examples: \"The secret that was never told...\" or \"It turns out all this time...\"",
+    "id": "Bangkitkan rasa penasaran dengan informasi yang tidak lengkap. Buat audiens ingin tahu lebih. Contoh: \"Rahasia yang gak pernah diceritain...\" atau \"Ternyata selama ini...\""
+  },
+  "hook_social_proof": {
+    "en": "Use testimonials, numbers, or strong social proof. Show that many people have experienced the benefits. Examples: \"Over 10,000+ people have...\" or \"Viral on TikTok because...\"",
+    "id": "Gunakan testimoni, angka, atau bukti sosial yang kuat. Tunjukkan bahwa banyak orang sudah merasakan manfaatnya. Contoh: \"Udah 10.000+ orang yang...\" atau \"Viral di TikTok karena...\""
+  },
+  "hook_negativity_bias": {
+    "en": "Focus on negative consequences of not using the product. Use fear of missing out. Examples: \"Don't regret not...\" or \"It's dangerous if you don't...\"",
+    "id": "Fokus pada konsekuensi negatif jika tidak menggunakan produk. Gunakan fear of missing out. Contoh: \"Jangan sampai nyesal karena...\" atau \"Bahaya kalau kamu gak...\""
+  },
+  "hook_future_pacing": {
+    "en": "Invite audience to imagine the future with AI technology and sustainability. Use strong visualization about 2025 trends. Examples: \"Imagine if AI could help you...\" or \"What would zero waste life feel like in 2025...\"",
+    "id": "Ajak audiens membayangkan masa depan dengan teknologi AI dan sustainability. Gunakan visualisasi yang kuat tentang tren 2025. Contoh: \"Bayangin kalau AI bisa bantu kamu...\" atau \"Gimana rasanya hidup zero waste di 2025...\""
+  },
+  "hook_question": {
+    "en": "Start with questions about 2025 digital trends, mental health, or sustainability. Must be relevant to current issues. Examples: \"Why does Gen Alpha prefer sustainable products?\" or \"Do you know why AI can now...?\"",
+    "id": "Mulai dengan pertanyaan tentang tren digital 2025, mental health, atau sustainability. Harus relevan dengan isu terkini. Contoh: \"Kenapa Gen Alpha lebih pilih produk sustainable?\" atau \"Tau gak kenapa AI sekarang bisa...?\""
+  },
+  "hook_solution": {
+    "en": "Offer solutions for modern 2025 problems: burnout, digital detox, climate anxiety, or AI integration. Examples: \"The easiest way to digital detox...\" or \"Anti-burnout solution that went viral in 2025...\"",
+    "id": "Tawarkan solusi untuk masalah modern 2025: burnout, digital detox, climate anxiety, atau AI integration. Contoh: \"Cara termudah untuk digital detox...\" atau \"Solusi anti-burnout yang viral di 2025...\""
+  },
+  "hook_statistic": {
+    "en": "Use latest 2025 data about AI adoption, sustainability, mental health awareness, or Gen Alpha behavior. Examples: \"Turns out 95% of Gen Alpha care more about environment...\" or \"2025 research proves AI can...\"",
+    "id": "Gunakan data terbaru 2025 tentang AI adoption, sustainability, mental health awareness, atau Gen Alpha behavior. Contoh: \"Ternyata 95% Gen Alpha lebih peduli lingkungan...\" atau \"Penelitian 2025 buktikan AI bisa...\""
+  },
+  "hook_experimental": {
+    "en": "Invite audience to join viral 2025 challenges: sustainability challenge, AI productivity test, or mindfulness experiment. Examples: \"Try this 30-day sustainability challenge...\" or \"Test how productive you are with AI...\"",
+    "id": "Ajak audiens ikut challenge viral 2025: sustainability challenge, AI productivity test, atau mindfulness experiment. Contoh: \"Coba deh 30-day sustainability challenge...\" atau \"Test seberapa produktif kamu dengan AI...\""
+  },
+  "hook_tension": {
+    "en": "Build tension about 2025 issues: climate crisis, AI replacement anxiety, or digital overwhelm. Examples: \"Almost lost my job because of AI...\" or \"Tense moments during climate change...\"",
+    "id": "Bangun ketegangan tentang isu 2025: climate crisis, AI replacement anxiety, atau digital overwhelm. Contoh: \"Hampir aja kehilangan pekerjaan karena AI...\" atau \"Detik-detik menegangkan saat climate change...\""
+  },
+  "hook_surprise": {
+    "en": "Plot twist about 2025 misconceptions: AI myths, sustainability facts, or Gen Alpha behavior. Examples: \"What you think is dangerous about AI, turns out...\" or \"Plot twist: Gen Alpha is actually wiser...\"",
+    "id": "Plot twist tentang misconception 2025: AI myths, sustainability facts, atau Gen Alpha behavior. Contoh: \"Yang kamu pikir AI berbahaya, ternyata...\" atau \"Plot twist: Gen Alpha ternyata lebih wise...\""
+  },
+  "hook_list": {
+    "en": "Use list format about 2025 trends, AI tools, sustainable living, or mental health tips. Examples: \"5 AI tools you must try in 2025...\" or \"3 sustainable habits that went viral...\"",
+    "id": "Gunakan format daftar tentang tren 2025, AI tools, sustainable living, atau mental health tips. Contoh: \"5 AI tools yang wajib kamu coba 2025...\" atau \"3 sustainable habits yang viral...\""
+  },
+  "hook_story": {
+    "en": "Start with personal story about 2025 technology adaptation, mental health journey, or sustainable lifestyle. Examples: \"I used to be skeptical about AI, but...\" or \"My burnout story in the digital era...\"",
+    "id": "Mulai dengan cerita personal tentang adaptasi teknologi 2025, mental health journey, atau sustainable lifestyle. Contoh: \"Dulu aku skeptis sama AI, tapi...\" atau \"Cerita burnout aku di era digital...\""
+  },
+  "hook_comparison": {
+    "en": "Compare pre-AI vs post-AI life, traditional vs sustainable living, or Gen Z vs Gen Alpha mindset. Examples: \"The difference between life before and after AI...\" or \"Gen Z vs Gen Alpha: who is wiser?\"",
+    "id": "Bandingkan life pre-AI vs post-AI, traditional vs sustainable living, atau Gen Z vs Gen Alpha mindset. Contoh: \"Bedanya hidup sebelum dan sesudah AI...\" atau \"Gen Z vs Gen Alpha: siapa yang lebih wise?\""
+  },
+  "hook_mistake": {
+    "en": "Admit mistakes in technology adoption, sustainability journey, or mental health. Examples: \"Fatal mistake when first using AI...\" or \"Don't be like me: burnout because...\"",
+    "id": "Akui kesalahan dalam adopsi teknologi, sustainability journey, atau mental health. Contoh: \"Kesalahan fatal saat pertama pakai AI...\" atau \"Jangan sampai kayak aku dulu: burnout karena...\""
+  },
+  "hook_secret": {
+    "en": "Reveal insider knowledge about AI industry, sustainability tips, or Gen Alpha insights. Examples: \"AI secrets only known by tech insiders...\" or \"Sustainability hacks never shared...\"",
+    "id": "Reveal insider knowledge tentang AI industry, sustainability tips, atau Gen Alpha insights. Contoh: \"Rahasia AI yang cuma diketahui tech insider...\" atau \"Sustainability hacks yang gak pernah dibagi...\""
+  },
+  "hook_transformation": {
+    "en": "Show transformation with AI tools, sustainable living, or mental health improvement. Examples: \"From tech-phobic to AI expert...\" or \"Mental health transformation in 30 days...\"",
+    "id": "Tunjukkan transformasi dengan AI tools, sustainable living, atau mental health improvement. Contoh: \"Dari tech-phobic jadi AI expert...\" atau \"Transformasi mental health dalam 30 hari...\""
+  },
+  "hook_pattern_interrupt": {
+    "en": "Use a pattern interrupt in the first 1-2 seconds: unexpected motion, jump cut, visual glitch, or bold text overlay to force attention. Immediately tie it to the core benefit.",
+    "id": "Gunakan pattern interrupt di 1-2 detik pertama: gerakan tak terduga, jump cut, visual glitch, atau teks tebal untuk memaksa perhatian. Segera hubungkan ke manfaat utama."
+  },
+  "hook_unpopular_opinion": {
+    "en": "Start with a bold, polarizing statement (unpopular opinion) that challenges common beliefs; keep it respectful and data-backed.",
+    "id": "Mulai dengan pernyataan tegas yang memicu perdebatan (unpopular opinion) yang menantang keyakinan umum; tetap hormat dan didukung data."
+  },
+  "hook_myth_busting": {
+    "en": "Bust a common myth with a surprising fact or demo. Lead with the myth, then immediately reveal the truth.",
+    "id": "Bongkar mitos umum dengan fakta atau demo mengejutkan. Mulai dari mitos, lalu segera ungkap kebenarannya."
+  },
+  "hook_before_after": {
+    "en": "Show an eye-catching BEFORE vs AFTER in the first frame. Make the transformation obvious and high-contrast.",
+    "id": "Tampilkan BEFORE vs AFTER yang mencolok pada frame pertama. Buat transformasinya jelas dan kontras tinggi."
+  },
+  "hook_speedrun_demo": {
+    "en": "Do a speedrun demo: \"Watch me do X in 10 seconds\". Use fast pacing and timers to build retention.",
+    "id": "Lakukan speedrun demo: \"Lihat aku lakukan X dalam 10 detik\". Gunakan pacing cepat dan timer untuk menjaga retensi."
+  },
+  "hook_stitch_duet_react": {
+    "en": "Open by reacting to a trending clip (stitch/duet). Provide a punchy take in 1 sentence, then add your unique angle.",
+    "id": "Buka dengan reaksi ke klip trending (stitch/duet). Berikan opini tajam dalam 1 kalimat, lalu tambahkan sudut pandang unik Anda."
+  },
+  "hook_no_face_asmr": {
+    "en": "Use faceless/ASMR-style visuals with satisfying sounds; overlay a concise voice/text hook to anchor the benefit.",
+    "id": "Gunakan visual faceless/ASMR dengan suara memuaskan; tambahkan voice/text hook singkat untuk menambatkan manfaat."
+  },
+  "hook_testing_for_you": {
+    "en": "\"I tested X so you don’t have to\" format. Summarize the result upfront, then micro-proof in 2-3 beats.",
+    "id": "Format \"Aku sudah mencoba X jadi kamu tidak perlu\". Ringkas hasil di depan, lalu bukti singkat 2-3 poin."
+  },
+  "hook_price_anchor": {
+    "en": "Lead with a price/value anchor: \"People pay $299 for this… here’s a $29 alternative\". Keep comparisons fair and honest.",
+    "id": "Mulai dengan anchor harga/nilai: \"Orang bayar Rp4,5jt untuk ini… ini alternatif Rp450rb\". Jaga perbandingan tetap adil dan jujur."
+  },
+  "hook_deal_bonus": {
+    "en": "Lead with an irresistible deal/bonus in the first line (price slash, bundle, extra perks). Be concrete with numbers and time limits. Ex: \"Today only: Buy 1 get 2 bonus presets.\"",
+    "id": "Buka dengan penawaran/bonus yang menggoda di kalimat pertama (potongan harga, bundling, bonus). Sertakan angka & batas waktu. Contoh: \"Hanya hari ini: Beli 1 bonus 2 preset.\""
+  },
+  "hook_scarcity_urgency": {
+    "en": "Create urgency with real scarcity: limited stock/time window. Use specifics (\"Last 12 units\", \"Ends in 24h\").",
+    "id": "Bangun urgensi dengan kelangkaan nyata: stok/masa promo terbatas. Pakai spesifik (\"Sisa 12 unit\", \"Berakhir 24 jam\")."
+  },
+  "hook_risk_reversal": {
+    "en": "Remove risk upfront: free trial, money-back guarantee, warranty. Make the audience feel safe to act.",
+    "id": "Hilangkan risiko di awal: uji coba gratis, garansi uang kembali, garansi servis. Buat audiens merasa aman untuk bertindak."
+  },
+  "hook_objection_buster": {
+    "en": "Call out the top 1–2 objections (price/complexity/time) and flip them into benefits immediately.",
+    "id": "Sebutkan 1–2 keberatan utama (harga/rumit/waktu) lalu balikan jadi manfaat secara langsung."
+  },
+  "hook_unboxing": {
+    "en": "Start with a tactile unboxing/reveal. Use sensory verbs and quick cuts; show \"what’s inside\" in the first seconds.",
+    "id": "Mulai dengan unboxing/reveal yang taktil. Gunakan kata kerja sensorik & cut cepat; tunjukkan \"isi di dalam\" dalam detik pertama."
+  },
+  "hook_authority_expert": {
+    "en": "Lead with credentials/data: years of experience, certifications, “as seen in”, or benchmarks to establish trust.",
+    "id": "Buka dengan kredensial/data: lama pengalaman, sertifikasi, “telah diliput”, atau benchmark untuk membangun trust."
+  },
+  "hook_offer_first_line": {
+    "en": "Put the offer in line one. Use a crisp promise and bullets of what they get next.",
+    "id": "Taruh OFFER di kalimat pertama. Janji yang tajam, lanjut poin ringkas soal apa yang mereka dapat."
+  },
+  "hook_ai_cocreate": {
+    "en": "Invite the audience to co-create with AI: comment a keyword, upload a photo, or pick a style—then show the AI result.",
+    "id": "Ajak audiens co-create dengan AI: komentar kata kunci, unggah foto, atau pilih gaya—lalu tampilkan hasil AI-nya."
+  },
+  "hook_search_intent": {
+    "en": "Match search intent with clear keywords: “Best X for Y 2025”, “How to…”, “Top 5…”. Promise a quick, skimmable answer.",
+    "id": "Selaraskan dengan niat pencarian & kata kunci jelas: “Rekomendasi X buat Y 2025”, “Cara…”, “Top 5…”. Janjikan jawaban cepat & mudah discan."
+  },
+  "hook_community_callout": {
+    "en": "Call a tribe by name (creators, students, new moms, gamers). Make them feel seen, then deliver a tailored benefit.",
+    "id": "Panggil komunitas secara spesifik (creator, mahasiswa, new mom, gamer). Buat mereka merasa “diwakili”, lalu beri manfaat yang relevan."
+  },
+  "hook_authenticity_proof": {
+    "en": "Lead with raw proof: live screen-recording, no filters, one-take demo. Transparency as the hook.",
+    "id": "Buka dengan bukti mentah: rekam layar live, tanpa filter, one-take demo. Transparansi sebagai hook."
+  }
+}

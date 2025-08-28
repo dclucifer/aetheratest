@@ -8,6 +8,7 @@ import { renderResults, renderError } from './ui.results.js';
 import { DEFAULT_SYSTEM_PROMPT, ENGLISH_SYSTEM_PROMPT } from './settings.js';
 import { setScripts } from './state.js';
 import { getAdditionalAssetsResponseSchema } from './generator.schema.js';
+import { HooksCtaRegistry } from './hooks-cta-loader.js';
 
 export let visualStrategy = localStorage.getItem('visualStrategy') || 'default';
 export let aspectRatio = localStorage.getItem('aspectRatio') || '9:16';
@@ -17,191 +18,23 @@ let imageAnalysisRunId = 0;
 
 // Hook Strategy Functions
 export function getHookInstructions(hookType) {
-    const isEnglish = languageState.current === 'en';
-    
-    const hookStrategies = {
-        'hook_problem': isEnglish ? 
-            'Start by identifying specific problems your target audience faces. Use relatable and emotional language. Examples: "Are you tired of..." or "Have you ever experienced..."' :
-            'Mulai dengan mengidentifikasi masalah spesifik yang dialami target audiens. Gunakan bahasa yang relatable dan emosional. Contoh: "Capek gak sih kalau..." atau "Pernah nggak ngalamin..."',
-        'hook_target_call': isEnglish ?
-            'Call out your target audience directly and specifically. Make them feel personally addressed. Examples: "For those of you who often..." or "Specifically for..."' :
-            'Panggil target audiens secara langsung dan spesifik. Buat mereka merasa dipanggil secara personal. Contoh: "Buat kamu yang sering..." atau "Khusus untuk para..."',
-        'hook_bold_claim': isEnglish ?
-            'Make bold and surprising claims about your product. Must be provable and not exaggerated. Examples: "This is the only product that..." or "Guaranteed 100%..."' :
-            'Buat klaim yang berani dan mengejutkan tentang produk. Harus bisa dibuktikan dan tidak berlebihan. Contoh: "Ini satu-satunya produk yang..." atau "Dijamin 100%..."',
-        'hook_curiosity': isEnglish ?
-            'Spark curiosity with incomplete information. Make the audience want to know more. Examples: "The secret that was never told..." or "It turns out all this time..."' :
-            'Bangkitkan rasa penasaran dengan informasi yang tidak lengkap. Buat audiens ingin tahu lebih. Contoh: "Rahasia yang gak pernah diceritain..." atau "Ternyata selama ini..."',
-        'hook_social_proof': isEnglish ?
-            'Use testimonials, numbers, or strong social proof. Show that many people have experienced the benefits. Examples: "Over 10,000+ people have..." or "Viral on TikTok because..."' :
-            'Gunakan testimoni, angka, atau bukti sosial yang kuat. Tunjukkan bahwa banyak orang sudah merasakan manfaatnya. Contoh: "Udah 10.000+ orang yang..." atau "Viral di TikTok karena..."',
-        'hook_negativity_bias': isEnglish ?
-            'Focus on negative consequences of not using the product. Use fear of missing out. Examples: "Don\'t regret not..." or "It\'s dangerous if you don\'t..."' :
-            'Fokus pada konsekuensi negatif jika tidak menggunakan produk. Gunakan fear of missing out. Contoh: "Jangan sampai nyesal karena..." atau "Bahaya kalau kamu gak..."',
-        'hook_future_pacing': isEnglish ?
-            'Invite audience to imagine the future with AI technology and sustainability. Use strong visualization about 2025 trends. Examples: "Imagine if AI could help you..." or "What would zero waste life feel like in 2025..."' :
-            'Ajak audiens membayangkan masa depan dengan teknologi AI dan sustainability. Gunakan visualisasi yang kuat tentang tren 2025. Contoh: "Bayangin kalau AI bisa bantu kamu..." atau "Gimana rasanya hidup zero waste di 2025..."',
-        'hook_question': isEnglish ?
-            'Start with questions about 2025 digital trends, mental health, or sustainability. Must be relevant to current issues. Examples: "Why does Gen Alpha prefer sustainable products?" or "Do you know why AI can now...?"' :
-            'Mulai dengan pertanyaan tentang tren digital 2025, mental health, atau sustainability. Harus relevan dengan isu terkini. Contoh: "Kenapa Gen Alpha lebih pilih produk sustainable?" atau "Tau gak kenapa AI sekarang bisa...?"',
-        'hook_solution': isEnglish ?
-            'Offer solutions for modern 2025 problems: burnout, digital detox, climate anxiety, or AI integration. Examples: "The easiest way to digital detox..." or "Anti-burnout solution that went viral in 2025..."' :
-            'Tawarkan solusi untuk masalah modern 2025: burnout, digital detox, climate anxiety, atau AI integration. Contoh: "Cara termudah untuk digital detox..." atau "Solusi anti-burnout yang viral di 2025..."',
-        'hook_statistic': isEnglish ?
-            'Use latest 2025 data about AI adoption, sustainability, mental health awareness, or Gen Alpha behavior. Examples: "Turns out 95% of Gen Alpha care more about environment..." or "2025 research proves AI can..."' :
-            'Gunakan data terbaru 2025 tentang AI adoption, sustainability, mental health awareness, atau Gen Alpha behavior. Contoh: "Ternyata 95% Gen Alpha lebih peduli lingkungan..." atau "Penelitian 2025 buktikan AI bisa..."',
-        'hook_experimental': isEnglish ?
-            'Invite audience to join viral 2025 challenges: sustainability challenge, AI productivity test, or mindfulness experiment. Examples: "Try this 30-day sustainability challenge..." or "Test how productive you are with AI..."' :
-            'Ajak audiens ikut challenge viral 2025: sustainability challenge, AI productivity test, atau mindfulness experiment. Contoh: "Coba deh 30-day sustainability challenge..." atau "Test seberapa produktif kamu dengan AI..."',
-        'hook_tension': isEnglish ?
-            'Build tension about 2025 issues: climate crisis, AI replacement anxiety, or digital overwhelm. Examples: "Almost lost my job because of AI..." or "Tense moments during climate change..."' :
-            'Bangun ketegangan tentang isu 2025: climate crisis, AI replacement anxiety, atau digital overwhelm. Contoh: "Hampir aja kehilangan pekerjaan karena AI..." atau "Detik-detik menegangkan saat climate change..."',
-        'hook_surprise': isEnglish ?
-            'Plot twist about 2025 misconceptions: AI myths, sustainability facts, or Gen Alpha behavior. Examples: "What you think is dangerous about AI, turns out..." or "Plot twist: Gen Alpha is actually wiser..."' :
-            'Plot twist tentang misconception 2025: AI myths, sustainability facts, atau Gen Alpha behavior. Contoh: "Yang kamu pikir AI berbahaya, ternyata..." atau "Plot twist: Gen Alpha ternyata lebih wise..."',
-        'hook_list': isEnglish ?
-            'Use list format about 2025 trends, AI tools, sustainable living, or mental health tips. Examples: "5 AI tools you must try in 2025..." or "3 sustainable habits that went viral..."' :
-            'Gunakan format daftar tentang tren 2025, AI tools, sustainable living, atau mental health tips. Contoh: "5 AI tools yang wajib kamu coba 2025..." atau "3 sustainable habits yang viral..."',
-        'hook_story': isEnglish ?
-            'Start with personal story about 2025 technology adaptation, mental health journey, or sustainable lifestyle. Examples: "I used to be skeptical about AI, but..." or "My burnout story in the digital era..."' :
-            'Mulai dengan cerita personal tentang adaptasi teknologi 2025, mental health journey, atau sustainable lifestyle. Contoh: "Dulu aku skeptis sama AI, tapi..." atau "Cerita burnout aku di era digital..."',
-        'hook_comparison': isEnglish ?
-            'Compare pre-AI vs post-AI life, traditional vs sustainable living, or Gen Z vs Gen Alpha mindset. Examples: "The difference between life before and after AI..." or "Gen Z vs Gen Alpha: who is wiser?"' :
-            'Bandingkan life pre-AI vs post-AI, traditional vs sustainable living, atau Gen Z vs Gen Alpha mindset. Contoh: "Bedanya hidup sebelum dan sesudah AI..." atau "Gen Z vs Gen Alpha: siapa yang lebih wise?"',
-        'hook_mistake': isEnglish ?
-            'Admit mistakes in technology adoption, sustainability journey, or mental health. Examples: "Fatal mistake when first using AI..." or "Don\'t be like me: burnout because..."' :
-            'Akui kesalahan dalam adopsi teknologi, sustainability journey, atau mental health. Contoh: "Kesalahan fatal saat pertama pakai AI..." atau "Jangan sampai kayak aku dulu: burnout karena..."',
-        'hook_secret': isEnglish ?
-            'Reveal insider knowledge about AI industry, sustainability tips, or Gen Alpha insights. Examples: "AI secrets only known by tech insiders..." or "Sustainability hacks never shared..."' :
-            'Reveal insider knowledge tentang AI industry, sustainability tips, atau Gen Alpha insights. Contoh: "Rahasia AI yang cuma diketahui tech insider..." atau "Sustainability hacks yang gak pernah dibagi..."',
-        'hook_transformation': isEnglish ?
-            'Show transformation with AI tools, sustainable living, or mental health improvement. Examples: "From tech-phobic to AI expert..." or "Mental health transformation in 30 days..."' :
-            'Tunjukkan transformasi dengan AI tools, sustainable living, atau mental health improvement. Contoh: "Dari tech-phobic jadi AI expert..." atau "Transformasi mental health dalam 30 hari..."',
-        'hook_pattern_interrupt': isEnglish ?
-            'Use a pattern interrupt in the first 1-2 seconds: unexpected motion, jump cut, visual glitch, or bold text overlay to force attention. Immediately tie it to the core benefit.' :
-            'Gunakan pattern interrupt di 1-2 detik pertama: gerakan tak terduga, jump cut, visual glitch, atau teks tebal untuk memaksa perhatian. Segera hubungkan ke manfaat utama.',
-        'hook_unpopular_opinion': isEnglish ?
-            'Start with a bold, polarizing statement (unpopular opinion) that challenges common beliefs; keep it respectful and data-backed.' :
-            'Mulai dengan pernyataan tegas yang memicu perdebatan (unpopular opinion) yang menantang keyakinan umum; tetap hormat dan didukung data.',
-        'hook_myth_busting': isEnglish ?
-            'Bust a common myth with a surprising fact or demo. Lead with the myth, then immediately reveal the truth.' :
-            'Bongkar mitos umum dengan fakta atau demo mengejutkan. Mulai dari mitos, lalu segera ungkap kebenarannya.',
-        'hook_before_after': isEnglish ?
-            'Show an eye-catching BEFORE vs AFTER in the first frame. Make the transformation obvious and high-contrast.' :
-            'Tampilkan BEFORE vs AFTER yang mencolok pada frame pertama. Buat transformasinya jelas dan kontras tinggi.',
-        'hook_speedrun_demo': isEnglish ?
-            'Do a speedrun demo: “Watch me do X in 10 seconds”. Use fast pacing and timers to build retention.' :
-            'Lakukan speedrun demo: “Lihat aku lakukan X dalam 10 detik”. Gunakan pacing cepat dan timer untuk menjaga retensi.',
-        'hook_stitch_duet_react': isEnglish ?
-            'Open by reacting to a trending clip (stitch/duet). Provide a punchy take in 1 sentence, then add your unique angle.' :
-            'Buka dengan reaksi ke klip trending (stitch/duet). Berikan opini tajam dalam 1 kalimat, lalu tambahkan sudut pandang unik Anda.',
-        'hook_no_face_asmr': isEnglish ?
-            'Use faceless/ASMR-style visuals with satisfying sounds; overlay a concise voice/text hook to anchor the benefit.' :
-            'Gunakan visual faceless/ASMR dengan suara memuaskan; tambahkan voice/text hook singkat untuk menambatkan manfaat.',
-        'hook_testing_for_you': isEnglish ?
-            '“I tested X so you don’t have to” format. Summarize the result upfront, then micro-proof in 2-3 beats.' :
-            'Format “Aku sudah mencoba X jadi kamu tidak perlu”. Ringkas hasil di depan, lalu bukti singkat 2-3 poin.',
-        'hook_price_anchor': isEnglish ?
-            'Lead with a price/value anchor: “People pay $299 for this… here’s a $29 alternative”. Keep comparisons fair and honest.' :
-            'Mulai dengan anchor harga/nilai: “Orang bayar Rp4,5jt untuk ini… ini alternatif Rp450rb”. Jaga perbandingan tetap adil dan jujur.'
-    };
-    
-    const defaultInstruction = isEnglish ? 
-        'Create an engaging hook that captures attention in the first 3 seconds.' :
-        'Buat hook yang menarik perhatian dalam 3 detik pertama.';
-        
-    return hookStrategies[hookType] || defaultInstruction;
+    const lang = (languageState.current === 'en') ? 'en' : 'id';
+  const txt  = HooksCtaRegistry.getHookInstruction(hookType, lang);
+  if (txt) return txt;
+  console.warn('[HookInstructions] Missing for:', hookType);
+  return lang === 'en'
+    ? 'Create a strong scrol-stopping hook in the first 3 seconds. Keep it concrete and audience-specific.'
+    : 'Buat hook kuat yang menghentikan scroll dalam 3 detik pertama. Harus konkret dan spesifik untuk audiens.';
 }
 
 export function getCTAInstructions(ctaType) {
-    const isEnglish = languageState.current === 'en';
-    
-    const ctaStrategies = {
-        'cta_general': isEnglish ?
-            'Use clear and direct CTA. Focus on the action you want them to take. Examples: "Order now" or "Get it now"' :
-            'Gunakan CTA yang jelas dan direct. Fokus pada action yang ingin dilakukan. Contoh: "Pesan sekarang" atau "Dapatkan sekarang"',
-        'cta_tiktok': isEnglish ?
-            'Use Gen Alpha language and 2025 trending terms. Focus on sustainability and AI features. Examples: "Check yellow cart for eco-friendly products!" or "AI-powered solution link in bio!"' :
-            'Gunakan bahasa Gen Alpha dan trending 2025. Fokus pada sustainability dan AI features. Contoh: "Cek keranjang kuning untuk produk eco-friendly!" atau "Link AI-powered solution di bio!"',
-        'cta_shopee': isEnglish ?
-            'Highlight eco-friendly shipping and AI recommendations. Mention carbon-neutral delivery. Examples: "Shopee now offers carbon-neutral delivery!" or "AI recommends the best products for you!"' :
-            'Highlight eco-friendly shipping dan AI recommendations. Mention carbon-neutral delivery. Contoh: "Shopee sekarang carbon-neutral delivery!" atau "AI rekomendasiin produk terbaik buat kamu!"',
-        'cta_instagram': isEnglish ?
-            'Direct to sustainable content and AI tools. Use mindful language. Examples: "Sustainable living tips in bio!" or "AI productivity hacks, swipe up!"' :
-            'Arahkan ke sustainable content dan AI tools. Gunakan mindful language. Contoh: "Sustainable living tips di bio!" atau "AI productivity hacks, swipe up!"',
-        'cta_youtube': isEnglish ?
-            'Invite to subscribe for AI tutorials and sustainability content. Examples: "Subscribe for latest AI tips!" or "Turn on notifications for sustainable living hacks!"' :
-            'Ajak subscribe untuk AI tutorials dan sustainability content. Contoh: "Subscribe untuk AI tips terbaru!" atau "Nyalakan notif untuk sustainable living hacks!"',
-        'cta_comment': isEnglish ?
-            'Invite discussion about AI, sustainability, or mental health. Examples: "Share your AI experience in comments!" or "Tag a friend who needs digital detox!"' :
-            'Ajak diskusi tentang AI, sustainability, atau mental health. Contoh: "Share pengalaman AI kamu di komen!" atau "Tag teman yang butuh digital detox!"',
-        'cta_urgency': isEnglish ?
-            'Create urgency about climate action or AI adoption. Examples: "Before it\'s too late for our planet!" or "Before AI replaces your skills!"' :
-            'Urgency tentang climate action atau AI adoption. Contoh: "Sebelum terlambat untuk planet kita!" atau "Sebelum AI gantikan skill kamu!"',
-        'cta_scarcity': isEnglish ?
-            'Emphasize limited edition sustainable products or early access AI tools. Examples: "Limited edition eco-friendly!" or "Early access AI beta for only 100 people!"' :
-            'Tekankan limited edition sustainable products atau early access AI tools. Contoh: "Limited edition eco-friendly!" atau "Early access AI beta cuma 100 orang!"',
-        'cta_social_proof_cta': isEnglish ?
-            'Use AI adoption data or sustainability movement statistics. Examples: "Join 1M+ who went green!" or "Like 500K+ AI early adopters..."' :
-            'Gunakan data adopsi AI atau sustainability movement. Contoh: "Join 1M+ yang udah go green!" atau "Seperti 500K+ AI early adopters..."',
-        'cta_benefit_focused': isEnglish ?
-            'Focus on AI productivity or sustainable living benefits. Examples: "10x productivity with AI!" or "Save 70% carbon footprint!"' :
-            'Fokus pada benefit AI productivity atau sustainable living. Contoh: "10x produktivitas dengan AI!" atau "Hemat 70% carbon footprint!"',
-        'cta_risk_reversal': isEnglish ?
-            'Guarantee for AI tools or eco products. Examples: "AI doesn\'t work? 100% refund!" or "Not satisfied with eco-product? Free exchange!"' :
-            'Garansi untuk AI tools atau eco products. Contoh: "AI gak cocok? Refund 100%!" atau "Gak puas dengan eco-product? Tukar gratis!"',
-        'cta_curiosity_gap': isEnglish ?
-            'Create curiosity about AI secrets or sustainability hacks. Examples: "AI secret never shared before..." or "Sustainability hack that went viral..."' :
-            'Buat penasaran tentang AI secrets atau sustainability hacks. Contoh: "AI secret yang gak pernah dibagi..." atau "Sustainability hack yang viral..."',
-        'cta_exclusive': isEnglish ?
-            'Exclusive access to AI community or sustainability program. Examples: "Exclusive AI mastermind!" or "VIP sustainable living program!"' :
-            'Akses eksklusif ke AI community atau sustainability program. Contoh: "Exclusive AI mastermind!" atau "VIP sustainable living program!"',
-        'cta_interactive': isEnglish ?
-            'Invite to participate in AI experiment or eco challenge. Examples: "Test AI with us!" or "Join 30-day sustainability challenge!"' :
-            'Ajak participate dalam AI experiment atau eco challenge. Contoh: "Test AI bareng kita!" atau "Join 30-day sustainability challenge!"',
-        'cta_storytelling': isEnglish ?
-            'Continue AI journey or sustainability transformation story. Examples: "AI journey continuation at..." or "Complete transformation story at..."' :
-            'Lanjutkan AI journey atau sustainability transformation story. Contoh: "Kelanjutan AI journey di..." atau "Transformation story lengkap di..."',
-        'cta_challenge': isEnglish ?
-            'Challenge related to AI skills or sustainable habits. Examples: "7-day AI productivity challenge!" or "#SustainableLifestyle challenge!"' :
-            'Challenge terkait AI skills atau sustainable habits. Contoh: "Challenge AI productivity 7 hari!" atau "#SustainableLifestyle challenge!"',
-        'cta_add_to_cart': isEnglish ?
-            'Direct add-to-cart CTA tailored to commerce flows. Examples: "Tap the cart now" / "Add to cart, checkout later".' :
-            'CTA langsung tambah ke keranjang yang sesuai alur commerce. Contoh: "Tap keranjang sekarang" / "Tambah ke keranjang, checkout nanti".',
-        'cta_claim_voucher': isEnglish ?
-            'Claim time-bound voucher/coupon. Examples: "Claim 20% voucher today" / "Claim coins before midnight".' :
-            'Klaim voucher/kupon berbatas waktu. Contoh: "Klaim voucher 20% hari ini" / "Klaim koin sebelum tengah malam".',
-        'cta_chat_seller': isEnglish ?
-            'Prompt to chat seller for bundle, sizing, or custom deals. Examples: "Chat seller for bundle price".' :
-            'Ajak chat penjual untuk bundling, ukuran, atau deal khusus. Contoh: "Chat penjual untuk harga bundling".',
-        'cta_follow_shop': isEnglish ?
-            'Ask to follow the shop/brand for exclusive drops and vouchers.' :
-            'Ajak follow toko/brand untuk eksklusif drop dan voucher.',
-        'cta_join_live': isEnglish ?
-            'Invite to join live shopping/AMA session. Examples: "Join our live at 7PM for extra voucher".' :
-            'Ajak bergabung ke live shopping/AMA. Contoh: "Join live jam 19.00 untuk voucher ekstra".',
-        'cta_reply_keyword': isEnglish ?
-            'Comment a keyword to get link/template. Examples: "Comment LINK to get it" / "Reply: GUIDE".' :
-            'Komentar keyword untuk dapat link/template. Contoh: "Komen LINK untuk dapat" / "Reply: PANDUAN".',
-        'cta_pinned_comment': isEnglish ?
-            'Point to pinned comment (Shorts/Reels). Example: "Link in pinned comment".' :
-            'Arahkan ke komentar tersemat (Shorts/Reels). Contoh: "Link di komentar teratas".',
-        'cta_save_share': isEnglish ?
-            'Ask to save and share for algorithm lift. Example: "Save and share to help more people".' :
-            'Ajak simpan dan bagikan untuk dorong algoritma. Contoh: "Simpan & share biar lebih banyak yang kebantu".',
-        'cta_dm_keyword': isEnglish ?
-            'DM a keyword to receive a resource. Example: "DM ‘CHECKLIST’ to get the PDF".' :
-            'DM keyword untuk menerima resource. Contoh: "DM ‘CHECKLIST’ untuk terima PDF".',
-        'cta_join_broadcast': isEnglish ?
-            'Invite to join IG broadcast channel for drops and codes.' :
-            'Ajak join broadcast channel IG untuk drop dan kode.'
-    };
-    
-    const defaultInstruction = isEnglish ?
-        'Create clear and actionable CTA.' :
-        'Buat CTA yang jelas dan actionable.';
-        
-    return ctaStrategies[ctaType] || defaultInstruction;
+    const lang = (languageState.current === 'en') ? 'en' : 'id';
+  const txt  = HooksCtaRegistry.getCtaInstruction(ctaType, lang);
+  if (txt) return txt;
+  console.warn('[CTAInstructions] Missing for:', ctaType);
+  return lang === 'en'
+    ? 'Use a clear, actionable CTA that tells exactly what to do next.'
+    : 'Gunakan CTA yang jelas dan langsung mengarahkan langkah berikutnya.';
 }
 
 export function validateInputs() {

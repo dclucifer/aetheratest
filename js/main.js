@@ -24,6 +24,7 @@ import { initSyncIndicator } from './sync-ui.js';
 import { initUXImprovements } from './ux-improvements.js';
 import { initResultsExportToolbar } from './ux/exportZip.js';
 import { initRankAll } from './ux/rank.js';
+import { HooksCtaRegistry } from './hooks-cta-loader.js';
 
 function pathSafeConsoleLogTranslations() {
     // helpful debug log that won't break when translations missing
@@ -73,6 +74,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkLogin(); // Ini akan memanggil loadSettings di dalamnya
     showPage('generator');
     switchMode(localStorage.getItem('currentMode') || 'single');
+
+    await loadTranslations();
+    await HooksCtaRegistry.init();
 
     // Inisialisasi dropdowns dan muat pengaturan terakhir
     try {
