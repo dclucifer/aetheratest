@@ -747,3 +747,10 @@ body.light-mode #edit-modal .section-checkbox:checked::after {
 }
 body.light-mode .tooltip-hint { background: rgba(15,23,42,.95); }
 [data-tooltip]:hover .tooltip-hint, [data-tooltip]:focus-within .tooltip-hint { display: block; }
+
+header.sticky,
+header.sticky.is-scrolled {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
