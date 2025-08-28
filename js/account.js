@@ -11,9 +11,9 @@ export async function loadAccountPage() {
       return;
     }
     const user = session.user;
-    // Prefill Email
-    const emailEl = document.getElementById('acc-email');
-    if (emailEl) emailEl.value = user.email || '';
+    // Prefill current email
+    const emailCurrent = document.getElementById('acc-email-current');
+    if (emailCurrent) emailCurrent.value = user.email || '';
 
     // Load profile from table profiles
     const { data: profile } = await supabaseClient
@@ -71,7 +71,7 @@ export function initAccountHandlers() {
     try {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session?.user?.email) throw new Error('Not authenticated');
-      const newEmail = (document.getElementById('acc-email')?.value || '').trim();
+      const newEmail = (document.getElementById('acc-email-new')?.value || '').trim();
       if (!newEmail) return;
       // Supabase will send a confirmation email to both addresses depending on project config
       const redirectTo = window.location.origin;
