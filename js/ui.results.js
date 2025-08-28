@@ -388,7 +388,8 @@ export async function createResultCard(script, index) {
     });
     
     // Export dropdown listeners
-    attachExportListeners(card);
+    // List view no longer shows per-card export dropdown. Export is available inside overlay only.
+    try { const exportBtn = card.querySelector('.export-btn'); const exportMenu = card.querySelector('.export-menu'); if (exportBtn||exportMenu) { exportBtn?.remove(); exportMenu?.remove(); } } catch(_) {}
     
     // Tidak menambahkan listeners A/B pada tampilan list
 
