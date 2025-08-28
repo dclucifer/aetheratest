@@ -2331,70 +2331,32 @@ body.light-mode .variant-item p {
 }
 
 
-/* === AUTO-APPEND: compact-header-root+dark+brand-credit === */
+/* === AUTO-APPEND [card-header] === */
 
-:root { --header-h: 56px; }
-@media (min-width: 768px) {
-  :root { --header-h: 64px; }
+/* === CARD HEADER (no underlay) === */
+header { background: transparent; } /* wrapper stays transparent */
+.light-mode .header-card { background: #ffffff; }
+.dark-mode  .header-card { background: rgba(10,16,25,.92); }
+
+.header-card {
+  position: relative;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+.dark-mode .header-card {
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
 }
 
-/* Dark mode header – lighter, translucent */
-.dark-mode header {
-  background: rgba(17, 24, 39, .60);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border-bottom-color: rgba(75, 85, 99, .45);
+/* top accent (subtle) */
+.header-card::before{
+  content: ""; position: absolute; top: 0; left: 10px; right: 10px; height: 2px;
+  background: linear-gradient(90deg,#F6D365,#FDA085);
+  border-top-left-radius: inherit; border-top-right-radius: inherit;
+  pointer-events: none;
 }
+@media (max-width:640px){ .header-card::before{ left:8px; right:8px; height: 1.5px; } }
 
-/* Brand credit cleanup */
-.brand-credit {
-  font-size: 12px;
-  line-height: 1;
-  color: var(--muted, #9aa3ad);
-  margin-top: 2px !important; /* override any previous negative margins */
-}
+/* kill any accidental underlay/backdrop layers */
+.header-underlay, .top-backdrop { display: none !important; }
 
-/* === END AUTO-APPEND: compact-header-root+dark+brand-credit === */
-
-/* Tinggi header responsif */
-:root { --header-h: 56px; }
-@media (min-width: 768px){ :root { --header-h: 64px; } }
-.is-scrolled { --header-h: 52px; }
-
-/* Light header (ringan) */
-.light-mode header {
-  background: rgba(255,255,255,.72);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 1px 0 var(--stroke, rgba(0,0,0,.08)); /* divider halus */
-}
-
-/* Dark header (ringan) */
-.dark-mode header {
-  background: rgba(10,16,25,.50);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 1px 0 rgba(255,255,255,.06);
-}
-
-/* Judul + badge kredit satu baris di desktop */
-.header-brand { display:flex; align-items:center; gap:.5rem; }
-.header-brand .credit {
-  font-size:12px; letter-spacing:.02em; opacity:.8;
-}
-@media (max-width: 767px){ .header-brand .credit { display:none; } }
-
-/* Kapsul kontrol lebih ramping */
-.header-controls .pill { padding:6px 10px; border-radius:999px; }
-.header-controls .pill .label { display:none; }            /* icon-only mobile */
-@media (min-width:768px){ .header-controls .pill .label { display:inline } }
-.header-controls { gap:.5rem; }
-
-/* Underline menu elegan */
-.nav-link { position:relative; }
-.nav-link.is-active::after{
-  content:""; position:absolute; left:0; right:0; margin:auto;
-  height:2px; width: calc(100% - 8px); bottom: -10px;
-  background: linear-gradient(90deg,#f6d365,#fda085);
-  border-radius:2px;
-}
+/* === END AUTO-APPEND [card-header] === */
