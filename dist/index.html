@@ -35,14 +35,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
 <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
-  <script type="module" crossorigin src="/assets/main-DXelPbee.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/main-DQnS_eBA.css">
+  <script type="module" crossorigin src="/assets/main-DQnGeyZC.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-DTFGcZ5x.css">
 </head>
 <body class="light-mode antialiased">
 
@@ -946,15 +946,15 @@
                         <div id="image-cropper-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
                           <div class="modal-content w-full max-w-3xl bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95">
                             <div class="p-4 md:p-6">
-                              <h3 class="text-lg font-bold text-white mb-3">Sesuaikan area produk</h3>
+                              <h3 class="text-lg font-bold text-white mb-3" data-lang-key="cropper_title">Sesuaikan area produk</h3>
                               <div class="bg-gray-900/50 rounded-md border border-gray-700 overflow-hidden flex items-center justify-center max-h-[70vh]">
                                 <img id="cropper-target" src="" alt="Crop target" class="max-h-[70vh] w-full object-contain select-none">
                               </div>
-                              <p class="text-xs text-gray-400 mt-2">Geser dan ubah ukuran kotak crop. Klik "Gunakan Crop" untuk menganalisis area ini.</p>
+                              <p class="text-xs text-gray-400 mt-2" data-lang-key="cropper_hint">Geser dan ubah ukuran kotak crop. Klik "Gunakan Crop" untuk menganalisis area ini.</p>
                             </div>
                             <div class="bg-gray-800/50 px-6 py-4 flex justify-end items-center space-x-3 rounded-b-xl">
-                              <button id="cropper-skip-btn" class="px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">Lanjutkan tanpa crop</button>
-                              <button id="cropper-use-btn" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors">Gunakan Crop</button>
+                              <button id="cropper-skip-btn" class="px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors" data-lang-key="cropper_skip">Lanjutkan tanpa crop</button>
+                              <button id="cropper-use-btn" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors" data-lang-key="cropper_use">Gunakan Crop</button>
                               <button id="cropper-cancel-btn" class="hidden px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">Batal</button>
                             </div>
                           </div>

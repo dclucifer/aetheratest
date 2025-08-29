@@ -649,5 +649,9 @@
   "asset_titles_label": "Opsi Judul/Caption",
   "asset_hashtags_label": "Rekomendasi Hashtag",
   "asset_thumbnail_label": "Ide Teks Thumbnail",
-  "password_too_short": "Password minimal 6 karakter"
+  "password_too_short": "Password minimal 6 karakter",
+  "cropper_title": "Sesuaikan area produk",
+  "cropper_hint": "Geser dan ubah ukuran kotak crop. Klik \"Gunakan Crop\" untuk menganalisis area ini.",
+  "cropper_skip": "Lanjutkan tanpa crop",
+  "cropper_use": "Gunakan Crop"
 }

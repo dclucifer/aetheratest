@@ -89,7 +89,16 @@ export async function handleImageUpload(event) {
             modal.querySelector('.modal-content')?.classList.remove('scale-95');
 
             await new Promise((resolve) => setTimeout(resolve, 50));
-            cropper = new window.Cropper(imgEl, { viewMode: 1, movable: true, zoomable: true, autoCropArea: 0.9, background: false });
+            try { cropper?.destroy(); } catch(_) {}
+            cropper = new window.Cropper(imgEl, {
+                viewMode: 1,
+                movable: true,
+                zoomable: true,
+                dragMode: 'move',
+                autoCropArea: 0.88,
+                background: false,
+                responsive: true
+            });
 
             const finalize = async (useCrop) => {
                 try {
@@ -102,15 +111,26 @@ export async function handleImageUpload(event) {
                     try { cropper?.destroy(); } catch(_) {}
                     cropper = null;
                     modal.classList.add('opacity-0', 'pointer-events-none');
-                    modal.querySelector('.modal-content')?.classList.add('scale-95');
+                    try { modal.querySelector('.modal-content').classList.add('scale-95'); } catch(_) {}
                 }
             };
 
             await new Promise((resolve) => {
-                const onUse = async () => { useBtn.removeEventListener('click', onUse); skipBtn.removeEventListener('click', onSkip); await finalize(true); resolve(); };
-                const onSkip = async () => { useBtn.removeEventListener('click', onUse); skipBtn.removeEventListener('click', onSkip); await finalize(false); resolve(); };
-                useBtn.addEventListener('click', onUse, { once: true });
-                skipBtn.addEventListener('click', onSkip, { once: true });
+                const onUse = async () => { 
+                    useBtn.removeEventListener('click', onUse);
+                    skipBtn.removeEventListener('click', onSkip);
+                    await finalize(true); 
+                    resolve(); 
+                };
+                const onSkip = async () => { 
+                    useBtn.removeEventListener('click', onUse);
+                    skipBtn.removeEventListener('click', onSkip);
+                    await finalize(false); 
+                    resolve(); 
+                };
+                // Pastikan tombol tersedia
+                if (useBtn) useBtn.addEventListener('click', onUse, { once: true });
+                if (skipBtn) skipBtn.addEventListener('click', onSkip, { once: true });
             });
         }
 
