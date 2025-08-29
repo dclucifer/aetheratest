@@ -2055,7 +2055,7 @@ body:not(.light-mode) header.sticky.is-scrolled {
 }
 
 /* === Brand credit under title === */
-.brand-credit{ font-size:14px !important; line-height:1; color:#9aa3ad; font-weight:normal; margin-top:-20px; }
+.brand-credit{ font-size:14px !important; line-height:1; color:#9aa3ad; font-weight:normal; margin-top:-28px; }
 .brand-credit .dims{ font-size:14px !important; color:#e5e7eb; text-decoration: none; border-bottom:1px dashed rgba(229,231,235,.55); font-weight:normal; }
 .brand-credit .dims:hover{ color:#ffffff; border-bottom-color:#ffffff; }
 body.light-mode .brand-credit{ color:#6b7280; } /* better contrast on white */

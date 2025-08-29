@@ -476,6 +476,7 @@ h2[data-lang-key="new_script_title"] {
 .brand-credit {
   font-size: 14px !important;
   line-height: 1 !important;
+  margin-top: -18px; /* tighter gap under title */
 }
 
 .brand-credit .by,
