@@ -1,5 +1,5 @@
 /**
- * Cloud Storage Service for Aethera Studio
+ * Cloud Storage Service for Direktiva Studio
  * Handles synchronization between localStorage and Supabase
  * Implements offline-first strategy with automatic sync
  */
@@ -23,10 +23,10 @@ let isAutoSyncEnabled = true;
 
 // Local storage keys
 const STORAGE_KEYS = {
-    SYNC_STATUS: 'aethera_sync_status',
-    LAST_SYNC: 'aethera_last_sync',
-    PENDING_SYNC: 'aethera_pending_sync',
-    OFFLINE_CHANGES: 'aethera_offline_changes'
+    SYNC_STATUS: 'direktiva_sync_status',
+    LAST_SYNC: 'direktiva_last_sync',
+    PENDING_SYNC: 'direktiva_pending_sync',
+    OFFLINE_CHANGES: 'direktiva_offline_changes'
 };
 
 class CloudStorageService {
@@ -197,9 +197,9 @@ class CloudStorageService {
             const user = session.user;
 
             const localSettings = {
-                theme: localStorage.getItem('aethera_theme') || 'dark',
-                language: localStorage.getItem('aethera_language') || 'id',
-                system_prompt: localStorage.getItem('aethera_system_prompt'),
+                theme: localStorage.getItem('direktiva_theme') || localStorage.getItem('aethera_theme') || 'dark',
+                language: localStorage.getItem('direktiva_language') || localStorage.getItem('aethera_language') || 'id',
+                system_prompt: localStorage.getItem('direktiva_system_prompt') || localStorage.getItem('aethera_system_prompt'),
             };
 
             // Get cloud settings

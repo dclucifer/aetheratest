@@ -39,7 +39,7 @@ export async function loadTranslations() {
 }
 
 export function t(key, params = {}) {
-  const lang = (typeof localStorage !== 'undefined' && localStorage.getItem('aethera_language'))
+  const lang = (typeof localStorage !== 'undefined' && (localStorage.getItem('direktiva_language') || localStorage.getItem('aethera_language')))
     || (typeof document !== 'undefined' && document.documentElement.lang)
     || 'id';
   
@@ -62,13 +62,14 @@ export function t(key, params = {}) {
 
 export function setLanguage(lang) {
   try { localStorage.setItem('aethera_language', lang); } catch {}
+  try { localStorage.setItem('direktiva_language', lang); } catch {}
   if (typeof document !== 'undefined') {
     try { document.documentElement.lang = lang; } catch {}
   }
 }
 
 export function getLanguage() {
-  return (typeof localStorage !== 'undefined' && localStorage.getItem('aethera_language')) || 'id';
+  return (typeof localStorage !== 'undefined' && (localStorage.getItem('direktiva_language') || localStorage.getItem('aethera_language'))) || 'id';
 }
 
 // Export translations for backward compatibility
