@@ -655,16 +655,16 @@ export function constructPrompt() {
 
     
     // Generate negative prompts based on model target
-    let negativePromptInstruction = '';
-    if (modelTarget === 'flux') {
-        negativePromptInstruction = currentLanguage === 'en' 
-            ? `\n- **NEGATIVE PROMPT (REQUIRED):** blurry, watermark, text artifacts, lowres, pixelated, deformed, extra fingers`
-            : `\n- **NEGATIVE PROMPT (WAJIB):** blurry, watermark, text artifacts, lowres, pixelated, deformed, extra fingers`;
-    } else if (modelTarget === 'leonardo') {
-        negativePromptInstruction = currentLanguage === 'en'
-            ? `\n- **NEGATIVE PROMPT (REQUIRED):** blurry, watermark, text artifacts, lowres, pixelated, deformed, extra fingers, bad proportions`
-            : `\n- **NEGATIVE PROMPT (WAJIB):** blurry, watermark, text artifacts, lowres, pixelated, deformed, extra fingers, bad proportions`;
-    }
+    const NEGATIVE_BASE = [
+        'low quality','blurry','pixelated','watermark','text','logo','signature',
+        'overexposed highlights','underexposed shadows',
+        'deformed hands','extra fingers','missing fingers','melted skin','asymmetrical eyes',
+        'uncanny valley','plastic skin','wax texture','doll-like','mannequin face'
+      ];
+      
+      let negativePromptInstruction = currentLanguage === 'en'
+        ? `\n- **NEGATIVE PROMPT (REQUIRED):** ${NEGATIVE_BASE.join(', ')}`
+        : `\n- **NEGATIVE PROMPT (WAJIB):** ${NEGATIVE_BASE.join(', ')}`;
     
     // A/B Variants instruction
     const AB_VARIANT_COUNT = parseInt(localStorage.getItem('ab_variant_count') || '3', 10);
