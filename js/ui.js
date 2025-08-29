@@ -12,6 +12,21 @@ export function applyTheme(theme) {
     document.body.classList.toggle('dark-mode', !isLight);
     // Toggle juga data attribute untuk hook CSS berbasis attribute
     document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
+    // Swap brand assets (icons/logos) based on theme
+    try {
+        const icon = document.getElementById('app-logo-icon');
+        const loginFull = document.getElementById('login-logo-full');
+        if (icon) {
+            const src = isLight ? (icon.getAttribute('data-logo-light') || icon.getAttribute('data-logo-dark'))
+                                : (icon.getAttribute('data-logo-dark') || icon.getAttribute('data-logo-light'));
+            if (src) icon.setAttribute('src', src);
+        }
+        if (loginFull) {
+            const src = isLight ? (loginFull.getAttribute('data-logo-light') || loginFull.getAttribute('data-logo-dark'))
+                                : (loginFull.getAttribute('data-logo-dark') || loginFull.getAttribute('data-logo-light'));
+            if (src) loginFull.setAttribute('src', src);
+        }
+    } catch {}
     // Persist & state
     try { 
         localStorage.setItem('direktiva_theme', isLight ? 'light' : 'dark');
