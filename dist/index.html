@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="x-build" content="1755081200">
-<title>Aethera Studio - AI Virtual Director</title>
-<link rel="icon" type="image/png" href="/assets/favicon-BY2PYC56.png">
+<title>Direktiva Studio - AI Virtual Director</title>
+<link rel="icon" type="image/png" href="/images/favicon.png">
 
 <script>
   window.tailwind = window.tailwind || {};
@@ -36,10 +36,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script type="module" crossorigin src="/assets/index--jWJ1OC3.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-Gw1MnTyP.css">
+
+  <script type="module" crossorigin src="/assets/main-BccmRzxA.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-X-0SMz6X.css">
 </head>
 <body class="light-mode antialiased">
 
@@ -49,7 +50,7 @@
     <div class="bg-glass border border-accent rounded-2xl p-8 max-w-2xl w-full backdrop-blur-20 shadow-premium">
       <div class="text-center mb-6">
         <div class="text-6xl mb-4">🎬</div>
-        <h2 class="text-3xl font-bold text-primary mb-2" data-lang-key="onboarding_welcome">Selamat Datang di Aethera Studio!</h2>
+        <h2 class="text-3xl font-bold text-primary mb-2" data-lang-key="onboarding_welcome">Selamat Datang di Direktiva Studio!</h2>
         <p class="text-secondary" data-lang-key="onboarding_subtitle">Mari kita pelajari cara membuat konten viral dengan AI</p>
       </div>
       
@@ -57,14 +58,15 @@
         <!-- Step 1: Introduction -->
         <div class="onboarding-step" data-step="1">
           <h3 class="text-xl font-semibold mb-4 text-accent" data-lang-key="onboarding_step1_title">🚀 Langkah 1: Pengenalan</h3>
-          <p class="text-secondary mb-4" data-lang-key="onboarding_step1_desc">Aethera Studio adalah AI Virtual Director yang membantu Anda membuat skrip konten viral untuk berbagai platform seperti TikTok, Instagram, YouTube, dan Shopee.</p>
+          <p class="text-secondary mb-4" data-lang-key="onboarding_step1_desc">Direktiva Studio adalah AI Virtual Director untuk membuat skrip Hook–Body–CTA + ide visual sinematik (Prompt Gambar/Prompt Video) dengan cepat.</p>
           <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
             <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_key_features">✨ Fitur Utama:</h4>
             <ul class="text-sm text-secondary space-y-1">
-              <li data-lang-key="onboarding_feature1">• Hook viral terbaru dari berbagai platform</li>
-              <li data-lang-key="onboarding_feature2">• CTA yang terbukti meningkatkan konversi</li>
-              <li data-lang-key="onboarding_feature3">• Character sheet untuk konsistensi karakter</li>
-              <li data-lang-key="onboarding_feature4">• Template siap pakai untuk pemula</li>
+              <li>• Tampilan kartu hasil + Overlay detail, A/B variants, “Best of All”</li>
+              <li>• Platform selector terpisah dari CTA; CTA cerdas per platform</li>
+              <li>• Generate Additional Assets: judul/caption, hashtag platform, thumbnail text</li>
+              <li>• VO Preview (Gemini/API) + fallback Browser TTS, unduh VO pack</li>
+              <li>• Keamanan akun: konfirmasi email, reset password via email, single-session</li>
             </ul>
           </div>
         </div>
@@ -76,11 +78,11 @@
           <div class="space-y-3">
             <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
               <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_platform_title">1. Pilih Platform Target</h4>
-              <p class="text-sm text-secondary" data-lang-key="onboarding_platform_desc">Setiap platform memiliki karakteristik unik. Pilih platform utama Anda untuk mendapatkan rekomendasi yang tepat.</p>
+              <p class="text-sm text-secondary" data-lang-key="onboarding_platform_desc">Setiap platform punya gaya sendiri (hashtag, durasi, CTA). Pilih platform agar prompt & assets jadi relevan.</p>
             </div>
             <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
-              <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_audience_title">2. Tentukan Target Audiens</h4>
-              <p class="text-sm text-secondary" data-lang-key="onboarding_audience_desc">Semakin spesifik target audiens, semakin efektif konten yang dihasilkan.</p>
+              <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_audience_title">2. Tentukan Target Audiens & CTA</h4>
+              <p class="text-sm text-secondary" data-lang-key="onboarding_audience_desc">Pilih audiens & CTA. CTA mendukung platform (contoh: keranjang kuning TikTok, Shopee live voucher).</p>
             </div>
           </div>
         </div>
@@ -99,7 +101,7 @@
             </div>
             <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
               <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_cta_title">📢 CTA (Call to Action)</h4>
-              <p class="text-sm text-secondary mb-2" data-lang-key="onboarding_cta_desc">Mengarahkan audiens untuk bertindak</p>
+              <p class="text-sm text-secondary mb-2" data-lang-key="onboarding_cta_desc">CTA sinkron dengan platform (add-to-cart, live voucher, pinned comment, dll.).</p>
               <div class="text-xs text-muted">
                 <strong data-lang-key="onboarding_example_label">Contoh:</strong> <span data-lang-key="onboarding_cta_example">"Klik link di bio untuk diskon 50%!"</span>
               </div>
@@ -110,7 +112,7 @@
         <!-- Step 4: Character Sheet -->
         <div class="onboarding-step hidden" data-step="4">
           <h3 class="text-xl font-semibold mb-4 text-accent" data-lang-key="onboarding_step4_title">👤 Langkah 4: Character Sheet</h3>
-          <p class="text-secondary mb-4" data-lang-key="onboarding_step4_desc">Untuk konsistensi karakter di semua konten Anda:</p>
+          <p class="text-secondary mb-4" data-lang-key="onboarding_step4_desc">Untuk konsistensi karakter di semua konten Anda. T2I gunakan tag &lt;char-desc&gt; untuk deskripsi fisik, I2V tidak.</p>
           <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
             <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_why_important">Mengapa Penting?</h4>
             <ul class="text-sm text-secondary space-y-1">
@@ -120,6 +122,26 @@
               <li data-lang-key="onboarding_benefit4">• Meningkatkan engagement dan loyalitas</li>
             </ul>
           </div>
+        </div>
+
+        <!-- Step 5: Akun & Keamanan -->
+        <div class="onboarding-step hidden" data-step="5">
+          <h3 class="text-xl font-semibold mb-4 text-accent">🔐 Akun & Keamanan</h3>
+          <ul class="text-sm text-secondary space-y-2">
+            <li>• Update Email/Password via konfirmasi email (dua langkah jika “Double confirm” aktif).</li>
+            <li>• Lupa Password: kirim link reset dari halaman login.</li>
+            <li>• Single Session: akun hanya aktif di satu perangkat. Jika terdeteksi di tempat lain, sesi ini akan keluar otomatis.</li>
+          </ul>
+        </div>
+
+        <!-- Step 6: Tips -->
+        <div class="onboarding-step hidden" data-step="6">
+          <h3 class="text-xl font-semibold mb-4 text-accent">💡 Tips</h3>
+          <ul class="text-sm text-secondary space-y-2">
+            <li>• Atur API Key di Pengaturan untuk performa stabil dan timeout lebih tinggi.</li>
+            <li>• Gunakan Rank All untuk memilih hasil terbaik saat generate multi opsi.</li>
+            <li>• Simpan preset/karakter untuk reuse; sinkron otomatis via cloud.</li>
+          </ul>
         </div>
         
         <!-- Step 5: Ready to Start -->
@@ -154,10 +176,10 @@
 <div id="login-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/80 backdrop-blur-sm hidden">
   <div class="w-full max-w-sm bg-gray-800 rounded-xl shadow-2xl border border-gray-700 p-8">
     <div class="text-center mb-4">
-      <img src="/assets/logo-full-B9mH9pcD.png" alt="Aethera Studio" class="w-24 h-24 mx-auto mb-2">
+      <img id="login-logo-full" src="/images/logo-full.png" data-logo-dark="/images/logo-full.png" data-logo-light="/images/logo-full-light.png" alt="Direktiva Studio" class="w-24 h-24 mx-auto mb-2">
       <h3 class="text-2xl font-bold text-white" data-lang-key="welcome_title">Selamat Datang</h3>
     </div>
-    <p class="text-gray-400 mb-6 text-sm" data-lang-key="login_message">Silakan masuk untuk menggunakan Aethera Studio</p>
+    <p class="text-gray-400 mb-6 text-sm" data-lang-key="login_message">Silakan masuk untuk menggunakan Direktiva Studio</p>
     <div class="space-y-4">
       <div>
         <label for="login-email" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="email_label">Email</label>
@@ -168,21 +190,25 @@
           <input type="password" id="login-password" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-white">
           </div>
         </div>
-        <div class="mt-8">
+        <div class="flex items-center justify-between mt-2">
+          <button id="forgot-password-btn" class="text-xs text-blue-400 hover:text-blue-300 underline" data-lang-key="forgot_password">Lupa password?</button>
+          <span></span>
+        </div>
+        <div class="mt-6">
           <button id="login-btn" class="w-full btn-primary text-black font-bold py-3 px-4 rounded-lg" data-lang-key="login_button">Masuk</button>
         </div>
       </div>
     </div>
 
     <div id="app-container" class="hidden">
-      <header class="bg-gray-900/70 backdrop-blur-sm border-b border-gray-700/50 sticky top-0 z-20">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between h-16">
+      <header class="sticky top-0 z-30">
+        <div class="container mx-auto px-3 sm:px-4 lg:px-6 header-card rounded-2xl shadow-xl">
+          <div class="flex items-center justify-between h-14 md:h-16">
             <div class="flex items-start">
-              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAFrmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSfvu78nIGlkPSdXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQnPz4KPHg6eG1wbWV0YSB4bWxuczp4PSdhZG9iZTpuczptZXRhLyc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpBdHRyaWI9J2h0dHA6Ly9ucy5hdHRyaWJ1dGlvbi5jb20vYWRzLzEuMC8nPgogIDxBdHRyaWI6QWRzPgogICA8cmRmOlNlcT4KICAgIDxyZGY6bGkgcmRmOnBhcnNlVHlwZT0nUmVzb3VyY2UnPgogICAgIDxBdHRyaWI6Q3JlYXRlZD4yMDI1LTA4LTE1PC9BdHRyaWI6Q3JlYXRlZD4KICAgICA8QXR0cmliOkV4dElkPjY0NzFiOGUyLWVmMTctNDY4NC1hNjAyLWNmNjBhZDI0NmNiMDwvQXR0cmliOkV4dElkPgogICAgIDxBdHRyaWI6RmJJZD41MjUyNjU5MTQxNzk1ODA8L0F0dHJpYjpGYklkPgogICAgIDxBdHRyaWI6VG91Y2hUeXBlPjI8L0F0dHJpYjpUb3VjaFR5cGU+CiAgICA8L3JkZjpsaT4KICAgPC9yZGY6U2VxPgogIDwvQXR0cmliOkFkcz4KIDwvcmRmOkRlc2NyaXB0aW9uPgoKIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PScnCiAgeG1sbnM6Q29udGFpbnNBaUdlbmVyYXRlZENvbnRlbnQ9J2h0dHBzOi8vY2FudmEuY29tL2V4cG9ydCc+CiAgPENvbnRhaW5zQWlHZW5lcmF0ZWRDb250ZW50OkNvbnRhaW5zQWlHZW5lcmF0ZWRDb250ZW50PlllczwvQ29udGFpbnNBaUdlbmVyYXRlZENvbnRlbnQ6Q29udGFpbnNBaUdlbmVyYXRlZENvbnRlbnQ+CiA8L3JkZjpEZXNjcmlwdGlvbj4K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" alt="AS" class="w-8 h-8 mt-0.5">
+              <img id="app-logo-icon" src="/images/logo-icon.png" data-logo-dark="/images/logo-icon.png" data-logo-light="/images/logo-icon-light.png" alt="AS" class="w-8 h-8 mt-0.5">
             <div class="ml-3 leading-tight">
-              <h1 id="app-title" class="text-xl font-bold">Aethera Studio</h1>
-            <div class="brand-credit">
+              <h1 id="app-title" class="text-xl font-bold">Direktiva Studio</h1>
+            <div class="brand-credit hidden md:block">
               built by <a href="https://www.threads.com/@dimslabs" target="_blank" rel="noopener" class="dims">DIMSLABS</a>
             </div>
           </div>
@@ -200,6 +226,7 @@
               <a href="#" id="nav-generator" class="nav-link" data-lang-key="nav_generator">Generator</a>
               <a href="#" id="nav-history" class="nav-link" data-lang-key="nav_history">Riwayat</a>
               <a href="#" id="nav-settings" class="nav-link" data-lang-key="nav_settings">Pengaturan</a>
+              <a href="#" id="nav-account" class="nav-link" data-lang-key="nav_account">Akun</a>
               <a href="#" id="nav-manual" class="nav-link" data-lang-key="nav_manual">Manual</a>
               <button id="logout-btn" class="text-sm" data-lang-key="logout_button">Keluar</button>
             </nav>
@@ -216,6 +243,7 @@
           <a href="#" id="mobile-nav-generator" class="block nav-link text-base font-medium px-4 py-2 rounded-md mx-2 active" data-lang-key="nav_generator">Generator</a>
           <a href="#" id="mobile-nav-history" class="block nav-link text-base font-medium text-gray-400 hover:text-white px-4 py-2 rounded-md mx-2" data-lang-key="nav_history">Riwayat</a>
           <a href="#" id="mobile-nav-settings" class="block nav-link text-base font-medium text-gray-400 hover:text-white px-4 py-2 rounded-md mx-2" data-lang-key="nav_settings">Pengaturan</a>
+          <a href="#" id="mobile-nav-account" class="block nav-link text-base font-medium text-gray-400 hover:text-white px-4 py-2 rounded-md mx-2" data-lang-key="nav_account">Akun</a>
           <a href="#" id="mobile-nav-manual" class="block nav-link px-4 py-2 rounded-md mx-2" data-lang-key="nav_manual">Manual</a>
           
           <!-- Mobile Theme Toggle -->
@@ -243,7 +271,7 @@
       </header>
       <div id="main-content" class="main-container">
         <main id="generator-page">
-          <div class="lg:grid lg:grid-cols-10 lg:h-[calc(100vh-64px)]">
+          <div class="lg:grid lg:grid-cols-10 lg:h-[calc(100vh-var(--header-h))]">
             <div class="lg:col-span-4 bg-gray-900/50 lg:border-r lg:border-gray-800/50 p-6 lg:overflow-y-auto">
               <div class="flex flex-col h-full">
                 <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white" data-lang-key="new_script_title">Create New Script</h2>
@@ -459,50 +487,45 @@
                           <option value="shorts" data-lang-key="platform_shorts">YouTube Shorts</option>
                         </select></div>
                         <div class="form-group"><label for="hook-type" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="hook_type_label">Jenis Kail (Hook)</label><select id="hook-type" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
-                          <optgroup label="🔥 Hook Klasik">
+                          <optgroup label="🔥Core Hook">
                             <option value="hook_problem" data-lang-key="hook_problem">Pancingan Masalah (Problem Hook)</option>
                             <option value="hook_target_call" data-lang-key="hook_target_call">Panggilan Target (Target Call Out)</option>
                             <option value="hook_bold_claim" data-lang-key="hook_bold_claim">Klaim Berani (Bold Claim)</option>
                             <option value="hook_curiosity" data-lang-key="hook_curiosity">Rasa Penasaran (Curiosity)</option>
-                            <option value="hook_social_proof" data-lang-key="hook_social_proof">Bukti Sosial (Social Proof)</option>
-                            <option value="hook_negativity_bias" data-lang-key="hook_negativity_bias">Negativity Bias</option>
-                          </optgroup>
-                          <optgroup label="⚡ Hook Viral 2025">
-                            <option value="hook_future_pacing" data-lang-key="hook_future_pacing">Future Pacing (Bayangkan Masa Depan)</option>
-                            <option value="hook_question" data-lang-key="hook_question">Pertanyaan Menggelitik</option>
+                            <option value="hook_social_proof" data-lang-key="hook_social_proof">Bukti Sosial (Testimoni/UGC/Statistik)</option>
                             <option value="hook_solution" data-lang-key="hook_solution">Solusi Instan</option>
-                            <option value="hook_statistic" data-lang-key="hook_statistic">Statistik Mengejutkan</option>
-                            <option value="hook_experimental" data-lang-key="hook_experimental">Eksperimen/Challenge</option>
-                            <option value="hook_tension" data-lang-key="hook_tension">Berbasis Ketegangan</option>
-                            <option value="hook_surprise" data-lang-key="hook_surprise">Kejutan/Plot Twist</option>
-                            <option value="hook_list" data-lang-key="hook_list">Daftar/Listicle</option>
-                            <option value="hook_pattern_interrupt" data-lang-key="hook_pattern_interrupt">Pattern Interrupt (1-2s)</option>
-                            <option value="hook_unpopular_opinion" data-lang-key="hook_unpopular_opinion">Unpopular Opinion</option>
-                            <option value="hook_myth_busting" data-lang-key="hook_myth_busting">Myth Busting</option>
                             <option value="hook_before_after" data-lang-key="hook_before_after">Before vs After</option>
-                            <option value="hook_speedrun_demo" data-lang-key="hook_speedrun_demo">Speedrun Demo</option>
-                            <option value="hook_stitch_duet_react" data-lang-key="hook_stitch_duet_react">Stitch/Duet React</option>
-                            <option value="hook_no_face_asmr" data-lang-key="hook_no_face_asmr">No-Face / ASMR</option>
-                            <option value="hook_testing_for_you" data-lang-key="hook_testing_for_you">I Tested For You</option>
-                            <option value="hook_price_anchor" data-lang-key="hook_price_anchor">Price Anchor</option>
+                            <option value="hook_myth_busting" data-lang-key="hook_myth_busting">Myth Busting</option>
+                            <option value="hook_question" data-lang-key="hook_question">Pertanyaan Menggelitik</option>
+                            <option value="hook_list" data-lang-key="hook_list">Daftar/Listicle</option>
+                            <option value="hook_future_pacing" data-lang-key="hook_future_pacing">Future Pacing (Bayangkan Masa Depan)</option>
+                            <option value="hook_negativity_bias" data-lang-key="hook_negativity_bias">Negativity Bias</option>
+                            <option value="hook_testing_for_you" data-lang-key="hook_testing_for_you">Aku Sudah Coba Untukmu</option>
+                            <option value="hook_tension" data-lang-key="hook_tension">Kejutan/Plot Twist</option>
                           </optgroup>
-                          <optgroup label="💎 Hook Premium">
-                            <option value="hook_story" data-lang-key="hook_story">Cerita Personal</option>
-                            <option value="hook_comparison" data-lang-key="hook_comparison">Perbandingan Dramatis</option>
+                          <optgroup label="⚡Commerce & Affiliate">
+                            <option value="hook_price_anchor" data-lang-key="hook_price_anchor">Acuan Harga</option>
+                            <option value="hook_deal_bonus" data-lang-key="hook_deal_bonus">Deal/Bonus Reveal</option>
+                            <option value="hook_scarcity_urgency" data-lang-key="hook_scarcity_urgency">Stok Terbatas & Urgensi</option>
+                            <option value="hook_risk_reversal" data-lang-key="hook_risk_reversal">Risk Reversal (Garansi)</option>
+                            <option value="hook_objection_buster" data-lang-key="hook_objection_buster">Objection Buster/FAQ (“Mahal?” “Cocok buat kulit berminyak?”)</option>
+                            <option value="hook_unboxing" data-lang-key="hook_unboxing">Unboxing / First-Impression</option>
+                            <option value="hook_comparison" data-lang-key="hook_comparison">Perbandingan/Versus</option>
                             <option value="hook_mistake" data-lang-key="hook_mistake">Kesalahan Fatal</option>
                             <option value="hook_secret" data-lang-key="hook_secret">Rahasia Terungkap</option>
-                            <option value="hook_transformation" data-lang-key="hook_transformation">Transformasi Luar Biasa</option>
+                            <option value="hook_story" data-lang-key="hook_story">Cerita Personal</option>
+                            <option value="hook_authority_expert" data-lang-key="hook_authority_expert">Otoritas / Ahli</option>
+                            <option value="hook_offer_first_line" data-lang-key="hook_offer_first_line">Offer di Kalimat Pertama</option>
+                            <option value="hook_pattern_interrupt" data-lang-key="hook_pattern_interrupt">Pattern Interrupt (1-2s)</option>
+                          </optgroup>
+                          <optgroup label="💎 Hook Premium">
+                            <option value="hook_ai_cocreate" data-lang-key="hook_ai_cocreate">AI Co-Create / Avatar</option>
+                            <option value="hook_search_intent" data-lang-key="hook_search_intent">Search-Intent Hook (SEO TikTok: “Cara…”, “Terbaik untuk…”)</option>
+                            <option value="hook_community_callout" data-lang-key="hook_community_callout">Panggilan Komunitas Niche</option>
+                            <option value="hook_authenticity_proof" data-lang-key="hook_authenticity_proof">Bukti Keaslian (Real-not-AI)</option>
                           </optgroup>
                         </select></div>
                         <div class="form-group"><label for="cta-type" class="block text-sm font-medium text-gray-300 mb-1" data-lang-key="cta_type_label">Jenis CTA (Call-to-Action)</label><select id="cta-type" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white transition">
-                          <optgroup label="📱 Platform Spesifik">
-                            <option value="cta_general" data-lang-key="cta_general">Umum</option>
-                            <option value="cta_tiktok" data-lang-key="cta_tiktok">TikTok (Keranjang Kuning)</option>
-                            <option value="cta_shopee" data-lang-key="cta_shopee">Shopee (Keranjang Oren)</option>
-                            <option value="cta_instagram" data-lang-key="cta_instagram">Instagram/Threads (Link di Bio)</option>
-                            <option value="cta_youtube" data-lang-key="cta_youtube">YouTube (Subscribe & Tonton Video Lain)</option>
-                            <option value="cta_comment" data-lang-key="cta_comment">Mengarahkan ke Komentar</option>
-                          </optgroup>
                           <optgroup label="🚀 CTA High-Converting">
                             <option value="cta_urgency" data-lang-key="cta_urgency">Urgensi & FOMO</option>
                             <option value="cta_scarcity" data-lang-key="cta_scarcity">Kelangkaan Terbatas</option>
@@ -526,6 +549,18 @@
                             <option value="cta_interactive" data-lang-key="cta_interactive">Interaktif & Engaging</option>
                             <option value="cta_storytelling" data-lang-key="cta_storytelling">Berbasis Cerita</option>
                             <option value="cta_challenge" data-lang-key="cta_challenge">Tantangan/Challenge</option>
+                          </optgroup>
+                          <optgroup label="🧭 CTA Platform">
+                            <option value="cta_click_link_bio" data-lang-key="cta_click_link_bio">Buka Link di Bio</option>
+                            <option value="cta_tap_product_tag" data-lang-key="cta_tap_product_tag">Tap Product Tag</option>
+                            <option value="cta_tap_product_sticker" data-lang-key="cta_tap_product_sticker">Tap Product Sticker</option>
+                            <option value="cta_collect_live_voucher" data-lang-key="cta_collect_live_voucher">Klaim Voucher LIVE</option>
+                            <option value="cta_set_live_reminder" data-lang-key="cta_set_live_reminder">Set Pengingat Live</option>
+                            <option value="cta_save_for_later" data-lang-key="cta_save_for_later">Simpan untuk Nanti</option>
+                            <option value="cta_share_with_friends" data-lang-key="cta_share_with_friends">Bagikan ke Teman</option>
+                            <option value="cta_watch_full_review" data-lang-key="cta_watch_full_review">Tonton Review Lengkap</option>
+                            <option value="cta_subscribe" data-lang-key="cta_subscribe">Subscribe</option>
+                            <option value="cta_comment_questions" data-lang-key="cta_comment_questions">Tulis Pertanyaan di Komentar</option>
                           </optgroup>
                         </select></div>
                       </div>
@@ -555,6 +590,47 @@
                     </div>
                   </div>
                 </div>
+              </main>
+              <main id="account-page" class="hidden p-6 md:p-10 max-w-3xl mx-auto w-full">
+                <h2 class="text-3xl font-bold mb-6" data-lang-key="account_settings">Pengaturan Akun</h2>
+                <section class="bg-gray-900/50 p-6 rounded-lg border border-gray-700/50 mb-6">
+                  <h3 class="text-xl font-semibold mb-4" data-lang-key="profile_info">Profil</h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm text-gray-300 mb-1" data-lang-key="full_name">Nama Lengkap</label>
+                      <input id="acc-fullname" type="text" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white" />
+                    </div>
+                    <div>
+                      <label class="block text-sm text-gray-300 mb-1">Username</label>
+                      <input id="acc-username" type="text" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white" />
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="block text-sm text-gray-300 mb-1" data-lang-key="bio_label">Bio</label>
+                      <textarea id="acc-bio" rows="3" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white"></textarea>
+                    </div>
+                  </div>
+                  <div class="mt-4">
+                    <button id="acc-save-profile" class="btn-secondary px-4 py-2 rounded-md" data-lang-key="save_changes">Simpan Perubahan</button>
+                  </div>
+                </section>
+                <section class="bg-gray-900/50 p-6 rounded-lg border border-gray-700/50">
+                  <h3 class="text-xl font-semibold mb-4" data-lang-key="security">Keamanan</h3>
+                  <p class="text-sm text-gray-400 mb-5" data-lang-key="security_note">Untuk keamanan, perubahan password dan email dilakukan via tautan yang dikirim ke email Anda saat ini.</p>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm text-gray-300 mb-1" data-lang-key="current_email">Email Saat Ini</label>
+                      <input id="acc-email-current" type="email" class="w-full bg-gray-800/60 border border-gray-700 rounded-md p-2.5 text-white opacity-80" disabled />
+                    </div>
+                    <div>
+                      <label class="block text-sm text-gray-300 mb-1" data-lang-key="new_email">Email Baru</label>
+                      <input id="acc-email-new" type="email" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-white" placeholder="you@example.com" />
+                    </div>
+                  </div>
+                  <div class="mt-5 flex flex-col sm:flex-row gap-2">
+                    <button id="acc-update-email" class="btn-secondary px-4 py-2 rounded-md" data-lang-key="send_email_confirmation">Kirim Konfirmasi Email</button>
+                    <button id="acc-update-password" class="btn-secondary px-4 py-2 rounded-md" data-lang-key="send_password_reset">Kirim Link Reset Password</button>
+                  </div>
+                </section>
               </main>
               <main id="history-page" class="hidden p-6 md:p-10 max-w-4xl mx-auto w-full">
                 <div class="flex justify-between items-center mb-4">
@@ -891,23 +967,15 @@
                         <div id="visual-dna-storage" style="display: none;"></div>
                       </div>
 
-                      <!-- Modal: Tentang Aethera Studio -->
+                      <!-- Modal: Tentang Direktiva Studio -->
 <div id="about-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
   <div class="modal-content w-full max-w-xl bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95 max-h-[90vh] flex flex-col">
     <div class="p-6 md:p-8 overflow-y-auto">
-      <h3 class="text-xl font-bold text-[#eee] mb-3" data-lang-key="about_title">Tentang Aethera Studio</h3>
-      <p class="text-sm text-gray-300 leading-relaxed mb-3" data-lang-key="about_p1">
-        Aethera Studio adalah asisten kreatif untuk membuat naskah <b>Hook–Body–CTA</b> lengkap dengan ide visual sinematik dan
-        <b>prompt T2I/I2V</b> — dirancang untuk konten pendek, iklan, dan kampanye afiliasi.
-      </p>
-      <p class="text-sm text-gray-300 leading-relaxed mb-3" data-lang-key="about_p2">
-        Fitur utama: <b>Generator skrip multi-opsi</b>, <b>Visual DNA (Analyze Image)</b> berbasis Gemini,
-        <b>Persona</b> & preset, <b>Riwayat</b>, serta ekspor <b>PDF/XLSX/DOCX</b>. Tersedia <b>mode terang/gelap</b> dan <b>bahasa ID/EN</b>.
-      </p>
-      <p class="text-sm text-gray-300 leading-relaxed" data-lang-key="about_p3">
-        Cara kerja: data disusun di browser, lalu permintaan AI dikirim aman ke endpoint <b>/api</b> milik Anda di Vercel.
-        Jika memasukkan <b>Gemini API key</b>, kunci disimpan lokal (Local Storage) dan hanya dipakai saat memanggil endpoint Anda melalui HTTPS.
-      </p>
+      <h3 class="text-xl font-bold text-[#eee] mb-3" data-lang-key="about_title">Tentang Direktiva Studio</h3>
+      <p class="text-sm text-gray-300 leading-relaxed mb-3" data-lang-key="about_story_p1">Direktiva Studio adalah AI Content Director yang mengubah konteks produk Anda menjadi skrip siap platform. Aplikasi menulis Hook–Body–CTA lengkap dengan ide visual sinematik dan prompt Gambar/Video yang bersih.</p>
+      <p class="text-sm text-gray-300 leading-relaxed mb-3" data-lang-key="about_story_p2">Dibuat untuk kreator, penjual, dan tim yang butuh kualitas konsisten: kartu hasil ringkas, overlay lengkap untuk review, A/B variants dengan skor, serta CTA dan aset yang paham platform.</p>
+      <p class="text-sm text-gray-300 leading-relaxed mb-3" data-lang-key="about_story_p3">Di balik layar, semua berjalan di browser Anda. Kami menyusun input, membuat prompt cerdas, mendeteksi duplikasi hasil, dan melakukan cache preview suara—sembari menjaga kendali data tetap di tangan Anda.</p>
+      <p class="text-sm text-gray-400" data-lang-key="about_privacy_p1">Privasi sejak desain: kunci API Gemini disimpan di Local Storage dan hanya dipakai melalui HTTPS ke endpoint /api milik Anda di Vercel. Mode offline dan error sinkron ditangani dengan mulus.</p>
     </div>
     <div class="bg-gray-900/60 px-6 py-4 flex justify-end items-center rounded-b-xl">
       <button class="about-close px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">Tutup</button>
@@ -920,7 +988,7 @@
 <div id="manual-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
   <div class="modal-content w-full max-w-5xl h-[85vh] bg-gray-900 rounded-xl shadow-2xl border border-gray-700 transform scale-95 flex flex-col overflow-hidden">
     <div class="px-6 py-4 bg-gray-900/60 border-b border-gray-700 flex items-center justify-between">
-      <h3 class="text-lg font-semibold text-[#eee]">Aethera Studio — Manual</h3>
+      <h3 class="text-lg font-semibold text-[#eee]">Direktiva Studio — Manual</h3>
       <div class="flex items-center gap-2">
         <a href="manual.html" target="_blank" class="px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 rounded-md">Buka di Tab Baru</a>
         <button class="manual-close px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 rounded-md">Tutup</button>
@@ -935,19 +1003,6 @@
                         <div class="flex justify-between items-start mb-4">
                           <h4 class="result-title text-xl font-semibold tracking-tight flex-1 pr-4"></h4>
                           <div class="flex space-x-2">
-                            <div class="relative export-dropdown">
-                              <button class="export-btn p-2 text-zinc-500 hover:text-zinc-700 rounded-full transition" title="Export Siap Eksekusi">
-                                <div class="icon icon-md icon-download"></div>
-                              </button>
-                              <div class="export-menu absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48 hidden">
-                                <button class="export-prompt-json w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg">📦 Prompt Pack (JSON)</button>
-                                <button class="export-prompt-csv w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">📊 Prompt Pack (CSV)</button>
-                                <button class="export-capcut-srt w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">🎬 CapCut (SRT)</button>
-                                <button class="export-capcut-csv w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">⏱️ CapCut (CSV)</button>
-                                <div class="border-t border-gray-100 my-1"></div>
-                                <button class="export-all-zip-item w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg">🗜️ Export This (ZIP)</button>
-                              </div>
-                            </div>
                             <button class="edit-btn p-2 text-zinc-500 hover:text-zinc-700 rounded-full transition" title="Edit & Regenerate">
                               <div class="icon icon-md icon-edit"></div>
                             </button>
@@ -974,6 +1029,17 @@
                         </div>
                       </div>
 
+                      <!-- Modal: How To Use -->
+                      <div id="howto-modal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none" role="dialog" aria-modal="true" aria-labelledby="howto-title">
+                        <div class="w-full max-w-xl max-h-[85vh] overflow-y-auto bg-gray-900 text-gray-100 rounded-xl border border-gray-700 p-6">
+                          <div class="flex items-center justify-between mb-3">
+                            <h3 id="howto-title" class="text-lg font-bold" data-lang-key="howto_title">Cara Pakai</h3>
+                            <button id="howto-close" class="p-2 rounded hover:bg-gray-800" aria-label="Close howto">✕</button>
+                          </div>
+                          <div id="howto-body" class="space-y-2 text-sm"></div>
+                        </div>
+                      </div>
+
                       <template id="micro-shot-template">
                       <div class="p-3 rounded bg-gray-900/50 border border-gray-700/50 space-y-2">
                         <p class="text-xs text-gray-400">
@@ -985,18 +1051,24 @@
                             <strong class="text-gray-300" data-lang-key="t2i_prompt_label"></strong>
                             <span class="prompt-t2i-display"></span>
                           </p>
-                          <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
-                            <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
-                          </button>
+                          <div class="flex items-center gap-1">
+                            <button class="prompt-howto-btn flex-shrink-0" data-type="t2i" title="" data-tooltip><div class="icon icon-sm icon-info text-gray-500 hover:text-white"></div><span class="tooltip-hint" data-lang-key="t2i_tooltip_models">Gunakan di: Leonardo/Flux/Imagen/Gemini</span></button>
+                            <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
+                              <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
+                            </button>
+                          </div>
                         </div>
                         <div class="flex items-start space-x-2">
                           <p class="text-xs text-gray-400 flex-1">
                             <strong class="text-gray-300" data-lang-key="i2v_prompt_label"></strong>
                             <span class="prompt-i2v-display"></span>
                           </p>
-                          <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
-                            <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
-                          </button>
+                          <div class="flex items-center gap-1">
+                            <button class="prompt-howto-btn flex-shrink-0" data-type="i2v" title="" data-tooltip><div class="icon icon-sm icon-info text-gray-500 hover:text-white"></div><span class="tooltip-hint" data-lang-key="i2v_tooltip_models">Gunakan di: Pika/Runway/Veo</span></button>
+                            <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
+                              <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
+                            </button>
+                          </div>
                         </div>
                       </div>
                       </template>
@@ -1013,9 +1085,12 @@
                               <strong class="text-gray-300" data-lang-key="t2i_prompt_label"></strong>
                               <span class="prompt-t2i-display"></span>
                             </p>
-                            <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
-                              <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
-                            </button>
+                            <div class="flex items-center gap-1">
+                              <button class="prompt-howto-btn flex-shrink-0" data-type="t2i" title="" data-tooltip><div class="icon icon-sm icon-info text-gray-500 hover:text-white"></div><span class="tooltip-hint" data-lang-key="t2i_tooltip_models">Gunakan di: Leonardo/Flux/Imagen/Gemini</span></button>
+                              <button class="prompt-copy-btn flex-shrink-0" data-prompt="">
+                                <div class="icon icon-sm icon-copy text-gray-500 hover:text-white"></div>
+                              </button>
+                            </div>
                           </div>
                           <div class="suggestions-container mt-4 pt-3 border-t border-gray-600/50 space-y-2 text-xs" style="display: none;">
                             <p class="layout-suggestion-p" style="display: none;">
@@ -1214,7 +1289,7 @@
                           💾 Simpan Karakter Saat Ini
                         </button>
                         </template>
-
+
                         <script>
 if ('serviceWorker' in navigator) {
   const isLocalhost = ['localhost', '127.0.0.1'].includes(location.hostname) || location.hostname.startsWith('192.168.') || location.hostname.startsWith('10.');
@@ -1260,6 +1335,24 @@ if ('serviceWorker' in navigator) {
                             </div>
                           </div>
                         </div>
+                
+                        
+                        <script>
+                          document.addEventListener('DOMContentLoaded', () => {
+                            const h = document.querySelector('header');
+                            if (!h) return;
+                            // buang kelas yang bikin underlay
+                            for (const c of [...h.classList]) {
+                              if (c === 'border-b' || c.startsWith('bg-') || c.startsWith('backdrop-')) {
+                                h.classList.remove(c);
+                              }
+                            }
+                            h.style.background = 'transparent';
+                            h.style.backdropFilter = 'none';
+                            h.style.webkitBackdropFilter = 'none';
+                            h.classList.add('z-30'); // sedikit lebih tinggi dari konten
+                          });
+                          </script>
 
 </body>
 </html>

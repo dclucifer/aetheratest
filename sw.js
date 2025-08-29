@@ -7,7 +7,9 @@ const ASSETS = [
   './locales/id.json',
   './locales/en.json',
   './assets/images/logo-full.png',
+  './assets/images/logo-full-light.png',
   './assets/images/logo-icon.png',
+  './assets/images/logo-icon-light.png',
   './assets/images/favicon.png',
   // catatan: URL cross-origin di bawah ini akan DIABAIKAN saat install, aman.
   'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap',

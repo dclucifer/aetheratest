@@ -4,6 +4,9 @@ import { resolve } from 'path';
 
 export default defineConfig({
   root: '.',
+  // Serve/copy everything under ./assets as static files so runtime paths like
+  // assets/images/logo-*.png resolve both in dev and production builds.
+  publicDir: 'assets',
   build: {
     outDir: 'dist',
     emptyOutDir: true,

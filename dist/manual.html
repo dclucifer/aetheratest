@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="id">
+<meta charset="utf-8"/>
+<title>Direktiva Studio — Buku Manual Pengguna (ID/EN)</title>
+
+<style>
+  :root { --bg:#0b0f14; --card:#111827; --border:#1f2937; --ink:#e5e7eb; --muted:#9ca3af; }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#ffffff; --card:#f8fafc; --border:#e5e7eb; --ink:#1f2937; --muted:#4b5563; }
+  }
+  html,body{ background:var(--bg); color:var(--ink); font:16px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; margin:0; }
+  .wrap{ max-width:900px; margin:40px auto; padding:0 20px 40px; }
+  .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:28px; box-shadow:0 6px 24px rgba(0,0,0,.25); }
+  h1{ font-size:28px; margin:0 0 8px; }
+  h2{ font-size:20px; margin:26px 0 10px; }
+  h3{ font-size:16px; margin:18px 0 8px; }
+  p,li{ color:var(--ink); }
+  code,kbd{ background:rgba(125,125,125,.15); border:1px solid rgba(125,125,125,.25); border-radius:6px; padding:.1em .4em; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  details{ background:rgba(125,125,125,.07); border:1px dashed var(--border); padding:12px; border-radius:10px; margin:8px 0; }
+  details > summary{ cursor:pointer; }
+  .lang{ margin-top:28px; }
+  hr{ border:0; border-top:1px solid var(--border); margin:30px 0; }
+  @media print {
+    body{ background:#fff; color:#111; }
+    .card{ box-shadow:none; border:1px solid #ccc; }
+    a[href]:after{ content:""; }
+  }
+</style>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Direktiva Studio — Buku Manual Pengguna (ID/EN)</h1>
+      <p class="muted">Versi 2025-08-28</p>
+      <div class="lang" id="id">
+        
+<h1>Direktiva Studio — Buku Manual Pengguna</h1>
+<p><strong>Versi:</strong> 2025-08-28</p>
+
+<h2>1. Ringkasan</h2>
+<p><strong>Direktiva Studio</strong> adalah tool web untuk membuat naskah <em>Hook–Body–CTA</em> beserta ide visual sinematik dan
+prompt T2I/I2V. Cocok untuk konten pendek, iklan, dan kampanye afiliasi. Aplikasi bersifat SPA, ringan, dan mendukung mode terang/gelap serta bahasa Indonesia/Inggris.</p>
+
+<h2>2. Persiapan</h2>
+<ol>
+  <li><strong>Login:</strong> Masuk menggunakan akun Anda (bila diaktifkan oleh admin).</li>
+  <li><strong>Kunci API Gemini (opsional tetapi direkomendasikan):</strong> Buka <em>Pengaturan</em> → masukkan <code>Gemini API Key</code>.<br/>
+      Kunci disimpan di <em>Local Storage</em> perangkat Anda dan digunakan saat memanggil endpoint <code>/api</code> milik Anda melalui HTTPS.</li>
+  <li><strong>Bahasa & Tema:</strong> Atur bahasa (ID/EN) dan mode (Terang/Gelap) dari header.</li>
+</ol>
+
+<h2>3. Alur Cepat (±2 menit)</h2>
+<ol>
+  <li>Buka tab <strong>Generator</strong> → isi <em>Product Name</em> & <em>Product Description</em>.</li>
+  <li>Pilih <em>Visual Strategy</em> & <em>Aspect Ratio</em>.</li>
+  <li>(Opsional) Gunakan <strong>Analyze Image</strong> untuk menghasilkan <em>Visual DNA</em> dari gambar referensi.</li>
+  <li>Klik <strong>Generate</strong> → tunggu hasil skrip & ide visual tiap scene.</li>
+  <li>Gunakan <strong>Additional Assets</strong> untuk judul, thumbnail, dan pendukung lain.</li>
+  <li><strong>Copy Full Script</strong> atau <strong>Download All</strong> (PDF/XLSX/DOCX).</li>
+</ol>
+
+<h2>4. Fitur Utama</h2>
+<h3>4.1 Generator Naskah</h3>
+<ul>
+  <li>Struktur <em>Hook–Body–CTA</em> dengan opsi gaya (tone persona, target audiens).</li>
+  <li>Rasio: 9:16, 1:1, 16:9; serta strategi visual (mis. luxury, tech, lifestyle).</li>
+  <li>Hasil menyertakan teks scene + ide visual sinematik + prompt T2I/I2V.</li>
+</ul>
+
+<h3>4.2 Analyze Image (Visual DNA)</h3>
+<ul>
+  <li>Unggah gambar referensi untuk menganalisis lighting, color palette, lens/angle, ambience—sebagai panduan gaya visual.</li>
+  <li>Hasil analisis dapat langsung memengaruhi gaya prompt yang dihasilkan.</li>
+</ul>
+
+<h3>4.3 Additional Assets</h3>
+<ul>
+  <li>Judul video, ide thumbnail, deskripsi singkat, dan elemen pendukung lainnya.</li>
+</ul>
+
+<h3>4.4 Persona & Preset</h3>
+<ul>
+  <li>Kelola <strong>Persona</strong> (tone/target) dan preset strategi—mempercepat konsistensi gaya konten.</li>
+</ul>
+
+<h3>4.5 History</h3>
+<ul>
+  <li>Simpan dan kelola hasil yang pernah dibuat. Anda dapat membuka kembali, menyalin, atau mengunduh ulang.</li>
+</ul>
+
+<h3>4.6 Ekspor</h3>
+<ul>
+  <li><strong>Copy Full Script</strong> ke clipboard.</li>
+  <li><strong>Download All:</strong> ekspor ke PDF, XLSX, DOCX (menggunakan Web Worker agar tetap responsif).</li>
+</ul>
+
+<h3>4.7 Pengaturan</h3>
+<ul>
+  <li>Masukkan/kelola <strong>Gemini API Key</strong>.</li>
+  <li>Atur bahasa (ID/EN) dan tema (Terang/Gelap).</li>
+</ul>
+
+<h3>4.8 UI Hasil: Kartu & Overlay</h3>
+<ul>
+  <li>Hasil ditampilkan sebagai <strong>kartu ringkas</strong> di panel kanan.</li>
+  <li>Klik kartu untuk membuka <strong>Overlay</strong> berisi Hook/Body/CTA, A/B variants, ide visual, dan aset.</li>
+  <li>Tersedia tombol <strong>Copy</strong> untuk Hook, Body, CTA, serta prompt T2I/I2V.</li>
+  <li>Badge <strong>Score</strong> dan <strong>Best of All</strong> tampil proporsional di mode terang/gelap.</li>
+</ul>
+
+<h3>4.9 Rank All & Skoring</h3>
+<ul>
+  <li>Jika Anda generate ≥ 2 skrip, toolbar <strong>Rank All</strong> muncul.</li>
+  <li>Skor 60–98 dengan variasi berbasis konten + <em>content hashing</em> untuk tie-break.</li>
+  <li>Duplikasi dideteksi dan sistem melakukan <em>top-up</em> untuk keragaman.</li>
+</ul>
+
+<h3>4.10 Additional Assets</h3>
+<ul>
+  <li>Generate judul/caption, hashtag per platform (mis. TikTok, Shopee), dan ide thumbnail.</li>
+  <li>Hasil aset <strong>tersimpan</strong> pada skrip dan akan muncul kembali saat overlay dibuka ulang.</li>
+</ul>
+
+<h3>4.11 VO Preview (Gemini/API)</h3>
+<ul>
+  <li>Preview suara dengan cache agar <strong>tidak regenerate</strong> berulang untuk konten yang sama.</li>
+  <li>Tombol <strong>Stop</strong> menghentikan audio <em>HTML5</em> dan <em>speechSynthesis</em> (fallback).</li>
+  <li>Dukungan unduh VO pack dan salin SSML.</li>
+</ul>
+
+<h3>4.12 Akun & Keamanan</h3>
+<ul>
+  <li>Halaman <strong>Account</strong>: profil (nama, username, bio) dan keamanan.</li>
+  <li><strong>Update Email/Password</strong> melalui tautan konfirmasi email (bukan ganti langsung).</li>
+  <li><strong>Forgot Password</strong>: kirim tautan reset dari halaman login.</li>
+  <li><strong>Single Session</strong>: akun hanya aktif di satu perangkat; sesi lain akan keluar otomatis.</li>
+</ul>
+
+<h2>5. Keamanan & Privasi</h2>
+<ul>
+  <li><strong>API Key Lokal:</strong> disimpan di <em>Local Storage</em> dan hanya dipakai lewat HTTPS ke endpoint <code>/api</code> Anda.</li>
+  <li><strong>Email & Password:</strong> perubahan dilakukan via <em>email confirmation link</em>. Password reset juga via tautan email.</li>
+  <li><strong>Single Session Guard:</strong> aplikasi menyimpan <code>last_session_id</code> pada profil; jika berbeda, pengguna akan otomatis logout.</li>
+  <li><strong>Supabase RLS (rekomendasi):</strong> batasi baca/tulis tabel <code>profiles</code> hanya untuk <code>auth.uid()</code> terkait.</li>
+  <li>Konten yang Anda buat tetap milik Anda. Hormati hak cipta materi visual/audio pihak ketiga.</li>
+</ul>
+
+<h2>6. PWA & Offline</h2>
+<ul>
+  <li>Direktiva Studio mendukung <strong>Service Worker</strong> untuk cache aset dasar.</li>
+  <li>Anda dapat menambahkan aplikasi ke Home Screen (Add to Home Screen) pada perangkat yang mendukung.</li>
+</ul>
+
+<h2>7. Tips & Praktik Terbaik</h2>
+<ul>
+  <li>Mulai dari ide besar, lalu susun scene secara ringkas (1-2 kalimat per scene) agar fokus.</li>
+  <li>Gunakan <strong>Analyze Image</strong> untuk konsistensi gaya visual (lighting, lens, mood).</li>
+  <li>Uji beberapa variasi prompt untuk menemukan performa terbaik.</li>
+</ul>
+
+<h2>8. Troubleshooting</h2>
+<ul>
+  <li><strong>Toolbar Rank All tidak muncul:</strong> pastikan generate ≥ 2 skrip. Toolbar diposisikan di luar panel hasil; muat ulang bila perlu.</li>
+  <li><strong>Copy prompt menampilkan &lt;char-desc&gt;:</strong> tombol copy overlay otomatis menghapus tag tersebut dari T2I/I2V.</li>
+  <li><strong>Analyze Image gagal/JSON error:</strong> cek koneksi, kunci API, dan server <code>/api/analyzeImage</code>. Aplikasi menangani respons non‑JSON secara aman.</li>
+  <li><strong>Reset password kembali ke login:</strong> buka tautan di browser yang sama; aplikasi akan mendeteksi <code>?code=</code> dan menampilkan dialog setel password baru.</li>
+  <li><strong>Email berubah di auth.users tapi tidak di profiles:</strong> login ulang/refresh; aplikasi menyinkronkan <code>email</code> & <code>email_pending</code> ke tabel <code>profiles</code>.</li>
+  <li><strong>Hasil skrip identik:</strong> sistem melakukan deduplikasi dan <em>top‑up</em>. Coba ubah persona/target/platform untuk variasi lebih tinggi.</li>
+  <li><strong>VO Stop tidak bekerja:</strong> perbarui aplikasi; tombol Stop kini menghentikan audio <em>dan</em> <em>speechSynthesis</em>.</li>
+  <li><strong>Tooltip export tidak hilang:</strong> saat menu terbuka, tooltip otomatis disembunyikan.</li>
+  <li><strong>Mode Carousel kosong:</strong> buka kartu → overlay; slide dirender dengan Swiper dan muncul setelah init.</li>
+  <li><strong>Supabase “Failed to fetch”:</strong> saat offline, aplikasi beralih ke mode offline dan menunda sinkronisasi.</li>
+</ul>
+
+<h2>9. FAQ</h2>
+<details><summary>Apakah saya harus punya API key?</summary>
+  <p>Tidak wajib, namun sangat disarankan untuk hasil paling stabil dan cepat.</p>
+</details>
+<details><summary>Apakah data saya aman?</summary>
+  <p>Ya. Kunci API tersimpan lokal di perangkat Anda. Komunikasi berlangsung via HTTPS.</p>
+</details>
+<details><summary>Bisakah saya mengedit hasil?</summary>
+  <p>Tentu. Gunakan fitur History untuk membuka kembali hasil, lalu salin/unduh dan ubah sesuai kebutuhan.</p>
+</details>
+
+<h2>10. Kontak & Dukungan</h2>
+<p>Jika Anda mengalami kendala atau ingin memberikan masukan, hubungi tim Anda/administrator proyek.</p>
+
+      </div>
+      <hr/>
+      <div class="lang" id="en">
+        
+<h1>Direktiva Studio — User Manual</h1>
+<p><strong>Version:</strong> 2025-08-28</p>
+
+<h2>1. Overview</h2>
+<p><strong>Direktiva Studio</strong> is a web tool for generating <em>Hook–Body–CTA</em> scripts with cinematic visual ideas and
+T2I/I2V prompts. Great for short-form content, ads, and affiliate campaigns. It is a lightweight SPA with Light/Dark themes and English/Indonesian support.</p>
+
+<h2>2. Setup</h2>
+<ol>
+  <li><strong>Login:</strong> Sign in with your account (if enabled by your admin).</li>
+  <li><strong>Gemini API Key (optional but recommended):</strong> Open <em>Settings</em> → paste your <code>Gemini API Key</code>.<br/>
+      The key is stored in your device’s <em>Local Storage</em> and used when calling your <code>/api</code> endpoints over HTTPS.</li>
+  <li><strong>Language & Theme:</strong> Choose ID/EN and Light/Dark from the header.</li>
+</ol>
+
+<h2>3. Quick Start (~2 minutes)</h2>
+<ol>
+  <li>Open the <strong>Generator</strong> tab → fill in <em>Product Name</em> & <em>Product Description</em>.</li>
+  <li>Select <em>Visual Strategy</em> & <em>Aspect Ratio</em>.</li>
+  <li>(Optional) Use <strong>Analyze Image</strong> to extract <em>Visual DNA</em> from a reference image.</li>
+  <li>Click <strong>Generate</strong> → get script & per-scene visual ideas.</li>
+  <li>Use <strong>Additional Assets</strong> to create titles, thumbnail ideas, and more.</li>
+  <li><strong>Copy Full Script</strong> or <strong>Download All</strong> (PDF/XLSX/DOCX).</li>
+</ol>
+
+<h2>4. Key Features</h2>
+<h3>4.1 Script Generator</h3>
+<ul>
+  <li><em>Hook–Body–CTA</em> structure with persona tone and audience targeting.</li>
+  <li>Aspect ratios: 9:16, 1:1, 16:9; visual strategies (e.g., luxury, tech, lifestyle).</li>
+  <li>Outputs text per scene + cinematic visual ideas + T2I/I2V prompts.</li>
+</ul>
+
+<h3>4.2 Analyze Image (Visual DNA)</h3>
+<ul>
+  <li>Upload a reference image to analyze lighting, color palette, lens/angle, ambience.</li>
+  <li>Analysis can be applied to guide the generated prompts.</li>
+</ul>
+
+<h3>4.3 Additional Assets</h3>
+<ul>
+  <li>Titles, thumbnail ideas, short descriptions, and other supporting elements.</li>
+</ul>
+
+<h3>4.4 Personas & Presets</h3>
+<ul>
+  <li>Manage <strong>Personas</strong> (tone/audience) and strategy presets for consistent output.</li>
+</ul>
+
+<h3>4.5 History</h3>
+<ul>
+  <li>Save, reopen, copy, and re-download your previous results.</li>
+</ul>
+
+<h3>4.6 Export</h3>
+<ul>
+  <li><strong>Copy Full Script</strong> to clipboard.</li>
+  <li><strong>Download All:</strong> export to PDF, XLSX, DOCX (via Web Worker for responsiveness).</li>
+</ul>
+
+<h3>4.7 Settings</h3>
+<ul>
+  <li>Manage your <strong>Gemini API Key</strong>.</li>
+  <li>Switch language (ID/EN) and theme (Light/Dark).</li>
+</ul>
+
+<h3>4.8 Results UI: Cards & Overlay</h3>
+<ul>
+  <li>Results appear as <strong>compact cards</strong> on the right panel.</li>
+  <li>Click a card to open the <strong>Overlay</strong> with Hook/Body/CTA, A/B variants, visual ideas, and assets.</li>
+  <li><strong>Copy</strong> buttons exist for Hook, Body, CTA, and T2I/I2V prompts.</li>
+  <li><strong>Score</strong> and <strong>Best of All</strong> badges are sized for both light/dark modes.</li>
+</ul>
+
+<h3>4.9 Rank All & Scoring</h3>
+<ul>
+  <li>When generating ≥ 2 scripts, the <strong>Rank All</strong> toolbar appears.</li>
+  <li>Scores range 60–98 with content‑based variation and hashing for tie‑breaks.</li>
+  <li>Duplicates are detected and a <em>top‑up</em> pass improves diversity.</li>
+</ul>
+
+<h3>4.10 Additional Assets</h3>
+<ul>
+  <li>Generate titles/captions, platform‑specific hashtags (e.g., TikTok, Shopee), and thumbnail text.</li>
+  <li>Assets are <strong>persisted</strong> on the script and reappear when reopening the overlay.</li>
+</ul>
+
+<h3>4.11 VO Preview (Gemini/API)</h3>
+<ul>
+  <li>Audio is cached so repeated previews <strong>don’t re‑generate</strong>.</li>
+  <li><strong>Stop</strong> halts both HTML5 audio and the <em>speechSynthesis</em> fallback.</li>
+  <li>Download VO packs and copy SSML are supported.</li>
+</ul>
+
+<h3>4.12 Account & Security</h3>
+<ul>
+  <li><strong>Account</strong> page: profile (full name, username, bio) and security.</li>
+  <li><strong>Update Email/Password</strong> via confirmation links (not immediate changes).</li>
+  <li><strong>Forgot Password</strong>: send a reset link from the login page.</li>
+  <li><strong>Single Session</strong>: only one active device; others are signed out.</li>
+</ul>
+
+<h2>5. Security & Privacy</h2>
+<ul>
+  <li><strong>Local API Key:</strong> stored in <em>Local Storage</em>, used only via HTTPS against your <code>/api</code> endpoints.</li>
+  <li><strong>Email & Password:</strong> changes occur through email confirmation links. Password resets are link‑based.</li>
+  <li><strong>Single Session Guard:</strong> the app stores <code>last_session_id</code>; if it changes, the user is signed out.</li>
+  <li><strong>Supabase RLS (recommended):</strong> restrict <code>profiles</code> read/write to the matching <code>auth.uid()</code>.</li>
+  <li>You own your generated content. Respect third‑party visual/audio copyrights.</li>
+</ul>
+
+<h2>6. PWA & Offline</h2>
+<ul>
+  <li>Direktiva Studio uses a <strong>Service Worker</strong> to cache core assets.</li>
+  <li>You can add it to your Home Screen on supported devices.</li>
+</ul>
+
+<h2>7. Tips & Best Practices</h2>
+<ul>
+  <li>Start from the big idea, keep scenes short (1–2 lines each) for clarity.</li>
+  <li>Use <strong>Analyze Image</strong> for consistent visual style (lighting, lens, mood).</li>
+  <li>Try a few prompt variations to find the best performing output.</li>
+</ul>
+
+<h2>8. Troubleshooting</h2>
+<ul>
+  <li><strong>Rank All toolbar not visible:</strong> generate ≥ 2 scripts. The toolbar is placed outside the results panel; reload if needed.</li>
+  <li><strong>Copied prompt shows &lt;char-desc&gt;:</strong> overlay copy buttons strip those tags from T2I/I2V prompts.</li>
+  <li><strong>Analyze Image fails/JSON error:</strong> check connection, API key, and <code>/api/analyzeImage</code>. The app safely handles non‑JSON replies.</li>
+  <li><strong>Password reset returns to login:</strong> open the link in the same browser; the app detects <code>?code=</code> and shows the set‑new‑password dialog.</li>
+  <li><strong>Email changed in auth.users but not in profiles:</strong> re‑login/refresh; the app syncs <code>email</code> & <code>email_pending</code> into <code>profiles</code>.</li>
+  <li><strong>Identical scripts:</strong> de‑duplication and a diversity <em>top‑up</em> run are applied. Try different persona/target/platform.</li>
+  <li><strong>VO Stop doesn’t work:</strong> update the app; Stop now halts audio and <em>speechSynthesis</em>.</li>
+  <li><strong>Export tooltip sticks:</strong> opening the export menu hides the tooltip.</li>
+  <li><strong>Carousel mode empty:</strong> open the card → overlay; slides render via Swiper after init.</li>
+  <li><strong>Supabase “Failed to fetch”:</strong> when offline, the app switches to offline mode and delays sync.</li>
+</ul>
+
+<h2>9. FAQ</h2>
+<details><summary>Do I need an API key?</summary>
+  <p>Not mandatory, but recommended for best stability and speed.</p>
+</details>
+<details><summary>Is my data safe?</summary>
+  <p>Yes. Your API key is stored locally on your device. All communication is via HTTPS.</p>
+</details>
+<details><summary>Can I edit the outputs?</summary>
+  <p>Absolutely. Use History to reopen results, then copy/download and edit as you like.</p>
+</details>
+
+<h2>10. Contact & Support</h2>
+<p>If you experience issues or want to share feedback, contact your team/project administrator.</p>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
