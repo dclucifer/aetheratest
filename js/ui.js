@@ -14,18 +14,23 @@ export function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
     // Swap brand assets (icons/logos) based on theme
     try {
-        const icon = document.getElementById('app-logo-icon');
-        const loginFull = document.getElementById('login-logo-full');
-        if (icon) {
-            const src = isLight ? (icon.getAttribute('data-logo-light') || icon.getAttribute('data-logo-dark'))
-                                : (icon.getAttribute('data-logo-dark') || icon.getAttribute('data-logo-light'));
-            if (src) icon.setAttribute('src', src);
-        }
-        if (loginFull) {
-            const src = isLight ? (loginFull.getAttribute('data-logo-light') || loginFull.getAttribute('data-logo-dark'))
-                                : (loginFull.getAttribute('data-logo-dark') || loginFull.getAttribute('data-logo-light'));
-            if (src) loginFull.setAttribute('src', src);
-        }
+        const setLogo = (el) => {
+            if (!el) return;
+            const dark = el.getAttribute('data-logo-dark');
+            const light = el.getAttribute('data-logo-light');
+            const target = isLight ? (light || dark) : (dark || light);
+            if (!target) return;
+            // Fallback to alternate if target 404
+            el.onerror = () => {
+                const fallback = isLight ? dark : light;
+                if (fallback && el.src !== fallback) {
+                    el.src = fallback;
+                }
+            };
+            if (el.src !== target) el.src = target;
+        };
+        setLogo(document.getElementById('app-logo-icon'));
+        setLogo(document.getElementById('login-logo-full'));
     } catch {}
     // Persist & state
     try { 
