@@ -391,7 +391,10 @@ export async function handleGenerate() {
             } catch(_) {}
             const feats = dyn || featuresStr;
             const idBlock = `ID[${dna}${feats ? `; features=${feats}` : ''}]`;
-            return `${core} | ${idBlock}`;
+            // Guard: if visualIdea clearly negates the product presence (e.g., old/non-brand pan), drop ID block
+            const idea = (visualIdea||'').toLowerCase();
+            const negate = /(old|generic|non[-\s]?brand|non[-\s]?tifale)/.test(idea);
+            return negate ? core : `${core} | ${idBlock}`;
         };
         const ensureDnaInScript = (sc) => {
             try {

@@ -590,7 +590,7 @@ export function createCharacterEssence(character) {
     if (!character) return '';
     const name = character.name || 'Unnamed';
     const age = character.age ? `${character.age}-year-old` : '';
-    const ethnicity = character.ethnicity || '';
+    let ethnicity = character.ethnicity || '';
     const gender = character.gender || '';
     const face = [character.face_shape].filter(Boolean).join(' ');
     const eyes = character.eye_color ? `${character.eye_color} eyes` : '';
@@ -603,7 +603,19 @@ export function createCharacterEssence(character) {
     const physical = [face, eyes, hair, skin].filter(Boolean).join(', ');
     const clothing = outfit ? `wearing ${outfit}` : '';
     const extra = extras ? `notable features: ${extras}` : '';
-    return `${name}: ${parts}. ${physical}. ${clothing}. ${extra}. Natural micro-expressions, coherent facial proportions, consistent look across shots.`.replace(/\s+/g,' ').trim();
+    // Simple normalization to keep English phrasing
+    const normalize = (s) => {
+        return s
+          .replace(/indonesia\s*korea/gi, 'Indonesian-Korean')
+          .replace(/indonesia/gi, 'Indonesian')
+          .replace(/korea/gi, 'Korean')
+          .replace(/langsing/gi, 'slender')
+          .replace(/kulit\s*putih/gi, 'fair skin');
+    };
+    ethnicity = normalize(ethnicity);
+    const essence = `${name}: ${parts}. ${physical}. ${clothing}. ${extra}. Natural micro-expressions, coherent facial proportions, consistent look across shots.`
+      .replace(/\s+/g,' ').trim();
+    return normalize(essence);
 }
 
 export function chooseShotFeatures(visualIdea, allFeatures) {
