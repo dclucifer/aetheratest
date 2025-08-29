@@ -333,8 +333,43 @@ export async function handleGenerate() {
 
         // Finalize hasil sesuai requestedCount
         const finalized = Array.from(uniques.values()).slice(0, requestedCount);
-        // PERUBAHAN UTAMA DI SINI
-        const generatedScripts = finalized.map((script, index) => ({ ...script, visual_dna: elements.visualDnaStorage.textContent, id: `script-${Date.now()}-${index}` }));
+        // Sanitize and enforce DNA prefix in every T2I prompt
+        const visualDnaRaw = elements.visualDnaStorage.textContent || '';
+        const dna = (() => {
+            const brand = (visualDnaRaw.match(/brand\s*=\s*([^,;]+)/i)||[])[1] || '';
+            const model = (visualDnaRaw.match(/model\s*=\s*([^,;]+)/i)||[])[1] || '';
+            const colorsRaw = (visualDnaRaw.match(/must_keep_colors\s*=\s*([^,;]+)/i)||[])[1] || '';
+            const colors = colorsRaw.split(/[|,\s]+/).filter(s=>/^#?[0-9A-Fa-f]{3,6}$/.test(s)).slice(0,3);
+            const parts = [];
+            if (brand) parts.push(`brand=${brand}`);
+            if (model) parts.push(`model=${model}`);
+            if (colors.length) parts.push(`must_keep_colors=${colors.map(c=>c.startsWith('#')?c:'#'+c).join('|')}`);
+            return parts.join(', ');
+        })();
+        const dnaPrefix = dna ? `DNA: ${dna}; ` : '';
+        const stripTokens = (text) => {
+            if (!text) return '';
+            let s = String(text);
+            s = s.replace(/^\((?:brand|model|must_keep_colors)[^)]*\)\s*/i,'');
+            s = s.replace(/\bbrand\s*=\s*[^,;]+[;,]?\s*/gi,'');
+            s = s.replace(/\bmodel\s*=\s*[^,;]+[;,]?\s*/gi,'');
+            s = s.replace(/\bmust_keep_colors\s*=\s*[^,;]+[;,]?\s*/gi,'');
+            return s.trim();
+        };
+        const withDna = (text) => dnaPrefix + stripTokens(text);
+        const ensureDnaInScript = (sc) => {
+            try {
+                if (sc?.hook?.shots) sc.hook.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt); });
+                if (sc?.body?.shots) sc.body.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt); });
+                if (sc?.cta?.shots) sc.cta.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt); });
+                if (Array.isArray(sc?.slides)) sc.slides.forEach(sl=>{ if (sl.text_to_image_prompt) sl.text_to_image_prompt = withDna(sl.text_to_image_prompt); });
+            } catch(_) {}
+            return sc;
+        };
+        const generatedScripts = finalized.map((script, index) => {
+            const sanitized = ensureDnaInScript({ ...script });
+            return { ...sanitized, visual_dna: visualDnaRaw, id: `script-${Date.now()}-${index}` };
+        });
         
         // Gunakan state manager untuk menyimpan skrip dan riwayat
         const currentMode = localStorage.getItem('currentMode') || 'single';
