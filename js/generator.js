@@ -206,6 +206,9 @@ export async function handleImageUpload(event) {
                 colors: Array.isArray(analysisResult.palette) ? analysisResult.palette.slice(0,3) : []
             };
             localStorage.setItem('direktiva_visual_dna_tokens', JSON.stringify(canonicalTokens));
+            if (Array.isArray(analysisResult.distinctive_features)) {
+                localStorage.setItem('direktiva_visual_features', JSON.stringify(analysisResult.distinctive_features.slice(0,12)));
+            }
         } catch(_) {}
 
         const identityPrefix = [
@@ -361,7 +364,12 @@ export async function handleGenerate() {
             if (colors.length) parts.push(`must_keep_colors=${colors.map(c=>c.startsWith('#')?c:'#'+c).join('|')}`);
             return parts.join(', ');
         })();
-        const dnaPrefix = dna ? `DNA: ${dna}; ` : '';
+        // Build compact identity block for clarity; keep at most 4 features
+        let featuresStr = '';
+        try {
+            const f = JSON.parse(localStorage.getItem('direktiva_visual_features')||'[]');
+            if (Array.isArray(f) && f.length) featuresStr = f.slice(0,4).join(', ');
+        } catch(_) {}
         const stripTokens = (text) => {
             if (!text) return '';
             let s = String(text);
@@ -371,7 +379,13 @@ export async function handleGenerate() {
             s = s.replace(/\bmust_keep_colors\s*=\s*[^,;]+[;,]?\s*/gi,'');
             return s.trim();
         };
-        const withDna = (text) => dnaPrefix + stripTokens(text);
+        const withDna = (text) => {
+            const core = stripTokens(text);
+            if (!dna) return core;
+            const idBlock = `ID[${dna}${featuresStr ? `; features=${featuresStr}` : ''}]`;
+            // Append identity at the end to keep scene-first style
+            return `${core} | ${idBlock}`;
+        };
         const ensureDnaInScript = (sc) => {
             try {
                 if (sc?.hook?.shots) sc.hook.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt); });
