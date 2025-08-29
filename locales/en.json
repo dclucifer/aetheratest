@@ -1,6 +1,6 @@
 {
   "welcome_title": "Welcome",
-  "login_message": "Please log in to use Aethera Studio",
+  "login_message": "Please log in to use Direktiva Studio",
   "email_label": "Email",
   "password_label": "Password",
   "login_button": "Login",
@@ -189,7 +189,7 @@
   "about_p1": "This application helps you generate marketing scripts using AI. Simply describe your product, set your preferences, and get multiple script variations instantly.",
   "about_p2": "Perfect for social media content creators, marketers, and anyone who needs compelling product scripts quickly.",
   "about_p3": "How it works: data is structured in the browser, then AI requests are securely sent to your /api endpoints on Vercel. When you provide a Gemini API key, it's stored locally (Local Storage) and used only over HTTPS.",
-  "about_story_p1": "Aethera Studio is an AI Content Director that turns your product context into platform‑ready scripts. It writes Hook–Body–CTA with cinematic visual ideas and clean Image/Video prompts.",
+  "about_story_p1": "Direktiva Studio is an AI Content Director that turns your product context into platform‑ready scripts. It writes Hook–Body–CTA with cinematic visual ideas and clean Image/Video prompts.",
   "about_story_p2": "Built for creators, sellers, and teams who want repeatable quality: compact card results, a full overlay to review, A/B variants with scoring, and platform‑aware CTAs and assets.",
   "about_story_p3": "Behind the scenes, everything runs in your browser. We structure your inputs, generate smart prompts, deduplicate similar results, and cache voice previews—while keeping your data under your control.",
   "about_privacy_p1": "Privacy by design: your Gemini API key stays in Local Storage and is only used over HTTPS to your own /api endpoints on Vercel. Offline and sync errors are handled gracefully.",

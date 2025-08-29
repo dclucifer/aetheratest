@@ -2033,7 +2033,7 @@ body.light-mode label[for="product-image"]:hover {
   transform: translateY(1px);
 }
 
-/* === Header glass on scroll (Aethera) === */
+/* === Header glass on scroll (Direktiva) === */
 header.sticky {
   position: sticky;
   top: 0;

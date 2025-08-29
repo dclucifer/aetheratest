@@ -31,7 +31,7 @@ import { HooksCtaRegistry } from './hooks-cta-loader.js';
 function pathSafeConsoleLogTranslations() {
     // helpful debug log that won't break when translations missing
     try {
-        console.log('Language:', localStorage.getItem('aethera_language') || 'id');
+        console.log('Language:', localStorage.getItem('direktiva_language') || 'id');
         console.log('Has id.json:', !!(translations && Object.keys(translations.id || {}).length));
         console.log('Has en.json:', !!(translations && Object.keys(translations.en || {}).length));
         console.log('Sample t(light_mode_active):', t('light_mode_active'));
@@ -62,9 +62,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Clear old scripts to show effect of prompt fixes
     clearScripts();
     
-    applyTheme(localStorage.getItem('aethera_theme') || 'dark');
+    applyTheme(localStorage.getItem('direktiva_theme') || 'dark');
     // Apply language after translations are loaded
-    const savedLanguage = localStorage.getItem('aethera_language') || 'id';
+    const savedLanguage = localStorage.getItem('direktiva_language') || 'id';
     await applyLanguage(savedLanguage); // Use consistent language setup
     
     // Initialize UX improvements (mobile + desktop)
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadLastSettings();
 
     // Inisialisasi ikon tema
-    const initialTheme = localStorage.getItem('aethera_theme') || 'dark';
+    const initialTheme = localStorage.getItem('direktiva_theme') || 'dark';
     document.getElementById('theme-icon-sun').classList.toggle('hidden', initialTheme === 'dark');
     document.getElementById('theme-icon-moon').classList.toggle('hidden', initialTheme === 'light');
 

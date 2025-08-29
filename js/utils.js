@@ -107,10 +107,10 @@ export const elements = {
 };
 
 export const themeState = {
-  current: localStorage.getItem('aethera_theme') || 'dark'
+  current: localStorage.getItem('direktiva_theme') || 'dark'
 };
 export const languageState = {
-  current: localStorage.getItem('aethera_language') || 'id'
+  current: localStorage.getItem('direktiva_language') || 'id'
 };
 export let confirmCallback = null;
 export let tempGeneratedPart = null;

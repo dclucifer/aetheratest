@@ -26,10 +26,10 @@ async function ensureSingleSessionGuard() {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (!session?.user) return;
         const userId = session.user.id;
-        let localId = localStorage.getItem('aethera_session_id');
+        let localId = localStorage.getItem('direktiva_session_id');
         if (!localId) {
             localId = await generateSessionId();
-            localStorage.setItem('aethera_session_id', localId);
+            localStorage.setItem('direktiva_session_id', localId);
         }
         // Set as the current active session on login/refresh
         await supabaseClient.from('profiles').upsert({ id: userId, last_session_id: localId, email: session.user.email });
@@ -118,7 +118,7 @@ export async function handleLogin() {
         // Create & store local session id, and push to profiles
         try {
             let localId = await generateSessionId();
-            localStorage.setItem('aethera_session_id', localId);
+            localStorage.setItem('direktiva_session_id', localId);
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session?.user?.id) {
                 await supabaseClient.from('profiles').upsert({ id: session.user.id, last_session_id: localId, email: session.user.email });
@@ -154,7 +154,7 @@ export async function handleLogout() {
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key && key.startsWith('aethera_')) {
+            if (key && key.startsWith('direktiva_')) {
                 keysToRemove.push(key);
             }
         }

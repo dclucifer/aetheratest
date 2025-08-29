@@ -14,9 +14,9 @@ export function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
     // Persist & state
     try { 
-        localStorage.setItem('aethera_theme', isLight ? 'light' : 'dark');
+        localStorage.setItem('direktiva_theme', isLight ? 'light' : 'dark');
         // Set timestamp untuk tracking perubahan lokal untuk sinkronisasi
-        localStorage.setItem('aethera_settings_last_modified', new Date().toISOString());
+        localStorage.setItem('direktiva_settings_last_modified', new Date().toISOString());
     } catch {}
     themeState.current = isLight ? 'light' : 'dark';
     updateThemeToggleIcon(isLight ? 'light' : 'dark');
@@ -71,9 +71,9 @@ export function updateThemeToggleIcon(theme) {
 
 export async function applyLanguage(lang) {
     document.documentElement.lang = lang;
-    localStorage.setItem('aethera_language', lang);
+    localStorage.setItem('direktiva_language', lang);
     // Set timestamp untuk tracking perubahan lokal untuk sinkronisasi
-    localStorage.setItem('aethera_settings_last_modified', new Date().toISOString());
+    localStorage.setItem('direktiva_settings_last_modified', new Date().toISOString());
     languageState.current = lang;
     updateLanguageButtons();
     await translateUI();
@@ -83,14 +83,14 @@ export async function applyLanguage(lang) {
 async function updateSystemPromptForLanguage(lang) {
     // Import the prompts from settings
     const { DEFAULT_SYSTEM_PROMPT, ENGLISH_SYSTEM_PROMPT } = await import('./settings.js');
-    const currentCustomPrompt = localStorage.getItem('aethera_system_prompt');
+    const currentCustomPrompt = localStorage.getItem('direktiva_system_prompt');
     const newPrompt = lang === 'en' ? ENGLISH_SYSTEM_PROMPT : DEFAULT_SYSTEM_PROMPT;
     
     // Always update system prompt to match the selected language
     // This ensures content generation uses the correct language prompt
-    localStorage.setItem('aethera_system_prompt', newPrompt);
+    localStorage.setItem('direktiva_system_prompt', newPrompt);
     // Set timestamp untuk tracking perubahan lokal untuk sinkronisasi
-    localStorage.setItem('aethera_settings_last_modified', new Date().toISOString());
+    localStorage.setItem('direktiva_settings_last_modified', new Date().toISOString());
     
     // Update the textarea if it exists
     const systemPromptTextarea = document.getElementById('system-prompt');
@@ -117,7 +117,7 @@ export function updateLanguageButtons() {
     elements.langEnBtn.classList.remove('bg-blue-600', 'text-white');
     elements.langEnBtn.classList.add('text-gray-400', 'hover:bg-gray-700');
 
-    if (localStorage.getItem('aethera_language') === 'id') {
+    if (localStorage.getItem('direktiva_language') === 'id') {
         elements.langIdBtn.classList.add('bg-blue-600', 'text-white');
         elements.langIdBtn.classList.remove('text-gray-400', 'hover:bg-gray-700');
     } else {
@@ -135,7 +135,7 @@ export function updateLanguageButtons() {
         mobileLangEnBtn.classList.remove('bg-blue-600', 'text-white');
         mobileLangEnBtn.classList.add('text-gray-400', 'hover:bg-gray-700');
 
-        if (localStorage.getItem('aethera_language') === 'id') {
+        if (localStorage.getItem('direktiva_language') === 'id') {
             mobileLangIdBtn.classList.add('bg-blue-600', 'text-white');
             mobileLangIdBtn.classList.remove('text-gray-400', 'hover:bg-gray-700');
         } else {
@@ -150,16 +150,16 @@ if (typeof window !== 'undefined') {
     window.updateLanguageButtons = updateLanguageButtons;
 }
 export function updateApiStatus() {
-    const userApiKey = localStorage.getItem('aethera_user_api_key');
+    const userApiKey = localStorage.getItem('direktiva_user_api_key');
     if (userApiKey) {
         const key = 'api_status_user';
         const translated = t(key);
-        elements.apiStatus.textContent = (translated && translated !== key) ? translated : (localStorage.getItem('aethera_language') === 'en' ? 'Using your API Key' : 'Menggunakan API Key Anda');
+        elements.apiStatus.textContent = (translated && translated !== key) ? translated : (localStorage.getItem('direktiva_language') === 'en' ? 'Using your API Key' : 'Menggunakan API Key Anda');
         elements.apiStatus.className = 'text-xs font-semibold text-green-400';
     } else {
         const key = 'api_status_default';
         const translated = t(key);
-        elements.apiStatus.textContent = (translated && translated !== key) ? translated : (localStorage.getItem('aethera_language') === 'en' ? 'Using default API (limited)' : 'Menggunakan API default (terbatas)');
+        elements.apiStatus.textContent = (translated && translated !== key) ? translated : (localStorage.getItem('direktiva_language') === 'en' ? 'Using default API (limited)' : 'Menggunakan API default (terbatas)');
         elements.apiStatus.className = 'text-xs font-semibold text-yellow-400';
     }
 }

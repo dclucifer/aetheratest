@@ -28,7 +28,7 @@ export async function analyzeImageWithAI(base64Data, mimeType) {
         const { signal } = imageAnalysisController;
 
         // Cek apakah ada API key dari user di localStorage
-        const userApiKey = localStorage.getItem('aethera_user_api_key');
+        const userApiKey = localStorage.getItem('direktiva_user_api_key');
         
         const headers = {
             'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ export async function analyzeImageWithAI(base64Data, mimeType) {
     }
 }
 
-const DEFAULT_TIMEOUT_MS = Number(localStorage.getItem('aethera_timeout_ms')) || 120000;
+const DEFAULT_TIMEOUT_MS = Number(localStorage.getItem('direktiva_timeout_ms')) || 120000;
 export async function callGeminiAPI(prompt, schema, temperature, timeoutMs = DEFAULT_TIMEOUT_MS) {
     try {
         // Siapkan headers dasar
@@ -110,7 +110,7 @@ export async function callGeminiAPI(prompt, schema, temperature, timeoutMs = DEF
         }
 
         // Sertakan API key pengguna jika disetel di Settings
-        const userApiKey = localStorage.getItem('aethera_user_api_key');
+        const userApiKey = localStorage.getItem('direktiva_user_api_key');
         if (userApiKey) {
             headers['x-user-api-key'] = userApiKey;
         }

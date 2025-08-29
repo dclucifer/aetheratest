@@ -177,7 +177,7 @@ export async function handleGenerate() {
         if (progressFill) progressFill.style.width = '40%';
         
         // izinkan override timeout via localStorage, default 180s
-        const timeoutMs = Number(localStorage.getItem('aethera_timeout_ms')) || 180000;
+        const timeoutMs = Number(localStorage.getItem('direktiva_timeout_ms')) || 180000;
         let results = await callGeminiAPI(prompt, getResponseSchema(), temperature, timeoutMs);
         
         // Update progress: 80% - Processing results
@@ -364,7 +364,7 @@ export function getResponseSchema(count) {
 
 function getLanguageSpecificSystemPrompt() {
     const currentLanguage = languageState.current;
-    const storedPrompt = localStorage.getItem('aethera_system_prompt');
+    const storedPrompt = localStorage.getItem('direktiva_system_prompt');
     
     // Always use the stored prompt if it exists (it should be updated by language toggle)
     // If no stored prompt, fallback to language-appropriate default
@@ -759,7 +759,7 @@ WAJIB: Selain platform yang dipilih, SELALU sertakan juga daftar khusus untuk Sh
  ---
  `;
         // >>> pakai timeout lebih panjang khusus assets
-        const timeoutMs = Number(localStorage.getItem('aethera_timeout_ms')) || 120000;
+        const timeoutMs = Number(localStorage.getItem('direktiva_timeout_ms')) || 120000;
         assets = await callGeminiAPI(prompt, getAdditionalAssetsResponseSchema(), /*temperature*/0.7, timeoutMs);
 
         let assetsHTML = '<div class="space-y-4">';

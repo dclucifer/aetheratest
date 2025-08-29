@@ -1,4 +1,4 @@
-# Aethera ALL-IN (Reupload 2025-08-16)
+# Direktiva Studio ALL-IN (Reupload 2025-08-16)
 
 - Toolbar hasil: Rank All + Export All (ZIP) + Include Thumbnails
 - Global Score badge + label Best of All

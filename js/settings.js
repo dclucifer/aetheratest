@@ -4,7 +4,7 @@ import { t } from './i18n.js';
 import { applyTheme, applyLanguage, updateLanguageButtons, translateUI, updateApiStatus } from './ui.js';
 import { renderPersonas, renderDefaultPersonas, populatePersonaSelector, DEFAULT_PERSONAS } from './persona.js';
 
-export const ENGLISH_SYSTEM_PROMPT = `You are 'Aethera Studio AI', a Virtual Director & Content Strategist. Your mission is to transform product descriptions into dynamic, engaging, and production-ready short video storyboards.
+export const ENGLISH_SYSTEM_PROMPT = `You are 'Direktiva Studio AI', a Virtual Director & Content Strategist. Your mission is to transform product descriptions into dynamic, engaging, and production-ready short video storyboards.
 
 **YOUR CORE PHILOSOPHY:**
 Every script section (Hook, Body, CTA) must tell a **mini-story** through visuals. Don't just show the product, but demonstrate **action, emotion, and transformation**. Each 'shot' should be a different scene that builds the story.
@@ -41,7 +41,7 @@ Every script section (Hook, Body, CTA) must tell a **mini-story** through visual
 
 Analyze the user request below and generate your best cinematic storyboard.`;
 
-export const DEFAULT_SYSTEM_PROMPT = `Anda adalah 'Aethera Studio AI', seorang Sutradara Virtual & Ahli Strategi Konten. Misi Anda adalah mengubah deskripsi produk menjadi sebuah storyboard video pendek yang dinamis, menarik, dan siap produksi.
+export const DEFAULT_SYSTEM_PROMPT = `Anda adalah 'Direktiva Studio AI', seorang Sutradara Virtual & Ahli Strategi Konten. Misi Anda adalah mengubah deskripsi produk menjadi sebuah storyboard video pendek yang dinamis, menarik, dan siap produksi.
 
 **FILOSOFI UTAMA ANDA:**
 Setiap bagian skrip (Hook, Body, CTA) harus menceritakan sebuah **mini-story** melalui visual. Jangan hanya menampilkan produk, tapi tunjukkan **aksi, emosi, dan transformasi**. Setiap 'shot' harus merupakan adegan yang berbeda dan membangun cerita.
@@ -83,9 +83,9 @@ Analisis permintaan pengguna di bawah ini dan hasilkan storyboard sinematik terb
 export function saveApiKeyFromModal() {
     const apiKey = elements.apiKeyModal.input.value.trim();
     if (apiKey) {
-        localStorage.setItem('aethera_user_api_key', apiKey);
+        localStorage.setItem('direktiva_user_api_key', apiKey);
         // Set timestamp untuk tracking perubahan lokal untuk sinkronisasi
-        localStorage.setItem('aethera_settings_last_modified', new Date().toISOString());
+        localStorage.setItem('direktiva_settings_last_modified', new Date().toISOString());
         elements.customApiKeySettingsInput.value = apiKey;
         elements.apiKeyModal.el.classList.add('hidden');
         showNotification(t('notification_api_key_saved'));
@@ -96,19 +96,19 @@ export function saveApiKeyFromModal() {
 }
 
 export async function loadSettings() {
-    const apiKey = localStorage.getItem('aethera_user_api_key') || '';
-    const currentLanguage = localStorage.getItem('aethera_language') || 'id';
+    const apiKey = localStorage.getItem('direktiva_user_api_key') || '';
+    const currentLanguage = localStorage.getItem('direktiva_language') || 'id';
     
     // Always use appropriate system prompt based on current language
     // This ensures the prompt matches the selected language
     const systemPrompt = currentLanguage === 'en' ? ENGLISH_SYSTEM_PROMPT : DEFAULT_SYSTEM_PROMPT;
     
     // Update localStorage with the correct prompt for the current language
-    localStorage.setItem('aethera_system_prompt', systemPrompt);
+    localStorage.setItem('direktiva_system_prompt', systemPrompt);
     
     elements.customApiKeySettingsInput.value = apiKey;
     elements.systemPromptTextarea.value = systemPrompt;
-    applyTheme(localStorage.getItem('aethera_theme') || 'dark');
+    applyTheme(localStorage.getItem('direktiva_theme') || 'dark');
     // Don't call applyLanguage here to avoid race condition - it's already called in main.js
     // await applyLanguage(currentLanguage);
     updateApiStatus();
@@ -116,10 +116,10 @@ export async function loadSettings() {
 
 function validateAffiliateUrl(u){ if(!u) return ''; try{ const url=new URL(u.startsWith('http')?u:`https://${u}`); return url.href; }catch(e){ return ''; } }
 export function saveSettings() {
-    localStorage.setItem('aethera_user_api_key', elements.customApiKeySettingsInput.value);
-    localStorage.setItem('aethera_system_prompt', elements.systemPromptTextarea.value);
+    localStorage.setItem('direktiva_user_api_key', elements.customApiKeySettingsInput.value);
+    localStorage.setItem('direktiva_system_prompt', elements.systemPromptTextarea.value);
     // Set timestamp untuk tracking perubahan lokal untuk sinkronisasi
-    localStorage.setItem('aethera_settings_last_modified', new Date().toISOString());
+    localStorage.setItem('direktiva_settings_last_modified', new Date().toISOString());
     showNotification(t('notification_settings_saved'));
     updateApiStatus();
 }

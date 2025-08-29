@@ -300,7 +300,7 @@ export async function createResultCard(script, index) {
       const global = computeGlobalScoreFromArrays([hookBest], [bodyBest], [ctaBest], script);
       card.dataset.globalScore = String(global);
       const badge = document.createElement('span');
-      const theme = localStorage.getItem('aethera_theme') || 'dark';
+      const theme = localStorage.getItem('direktiva_theme') || 'dark';
       badge.textContent = `Score ${global}`;
       badge.style.marginLeft = '6px';
       badge.style.padding = '2px 8px';
@@ -403,7 +403,7 @@ export async function createABVariantsHTML(script) {
         return ''; // Tidak ada variants
     }
     
-    const theme = localStorage.getItem('aethera_theme') || 'dark';
+    const theme = localStorage.getItem('direktiva_theme') || 'dark';
     const bestWrapClass = theme === 'light' ? 'bg-emerald-50 border border-emerald-200' : 'bg-green-900/20 border border-green-700/30';
     const normalWrapClass = theme === 'light' ? 'bg-gray-100/80 border border-gray-200' : 'bg-gray-800/30';
 
@@ -595,10 +595,10 @@ export async function regenerateVisualPrompts(script, section, newText) {
         const productDescription = localStorage.getItem('productDescription') || 'Product description';
         const visualStrategy = localStorage.getItem('visualStrategy') || 'standard';
         const aspectRatio = localStorage.getItem('aspectRatio') || '9:16';
-        const currentLanguage = localStorage.getItem('aethera_language') || 'id';
+        const currentLanguage = localStorage.getItem('direktiva_language') || 'id';
         
         // Use the current system prompt (which should be updated based on language)
-        const systemPrompt = localStorage.getItem('aethera_system_prompt') || '';
+        const systemPrompt = localStorage.getItem('direktiva_system_prompt') || '';
         // Context karakter untuk menjaga konsistensi
         const characterSheetJson = JSON.stringify(script.character_sheet || [], null, 2);
         const originalDescs = Array.isArray(script.original_character_descriptions) ? script.original_character_descriptions.join('; ') : '';
@@ -673,7 +673,7 @@ Kembalikan JSON murni dengan struktur:
 }`}`;
 
         // Get API key from localStorage
-        const apiKey = localStorage.getItem('aethera_user_api_key');
+        const apiKey = localStorage.getItem('direktiva_user_api_key');
         const headers = { 'Content-Type': 'application/json' };
         if (apiKey) {
             headers['x-user-api-key'] = apiKey;
@@ -907,7 +907,7 @@ export function updateGlobalBestBadge(){
     cards.forEach(c=>c.querySelector('.best-of-all')?.remove());
     if(best){
       const tag=document.createElement('span');
-      const theme = localStorage.getItem('aethera_theme') || 'dark';
+      const theme = localStorage.getItem('direktiva_theme') || 'dark';
       tag.textContent = t('best_of_all') || 'Best of All';
       tag.className = 'best-of-all';
       tag.style.marginLeft = '6px';
@@ -963,7 +963,7 @@ export async function openScriptViewer(sourceCard, script){
     globalScore = computeGlobalScoreFromArrays(hookScores, bodyScores, ctaScores, script);
   }catch(_){globalScore=65;}
 
-  const isLight = (localStorage.getItem('aethera_theme')||'dark')==='light';
+  const isLight = (localStorage.getItem('direktiva_theme')||'dark')==='light';
   const scoreClass = isLight
     ? 'inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300'
     : 'inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-emerald-200 text-emerald-900 border border-emerald-300';

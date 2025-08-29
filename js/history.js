@@ -35,7 +35,7 @@ function __debounceSaveTags(entryId, tags) {
 
 
 export function saveToHistory(scripts, productName, mode) {
-    let history = JSON.parse(localStorage.getItem('aethera_history')) || [];
+    let history = JSON.parse(localStorage.getItem('direktiva_history')) || [];
     
     // Determine the correct mode - prioritize parameter, then detect from script structure, fallback to localStorage
     let actualMode = mode;
@@ -60,9 +60,9 @@ export function saveToHistory(scripts, productName, mode) {
     };
     history.unshift(newEntry);
     if (history.length > 50) history.pop();
-    localStorage.setItem('aethera_history', JSON.stringify(history));
+    localStorage.setItem('direktiva_history', JSON.stringify(history));
     // Set timestamp untuk tracking perubahan lokal untuk sinkronisasi
-    localStorage.setItem('aethera_history_last_modified', new Date().toISOString());
+    localStorage.setItem('direktiva_history_last_modified', new Date().toISOString());
 }
 
 export async function loadHistory() {
@@ -72,15 +72,15 @@ export async function loadHistory() {
             const serverTags = await cloudStorage.fetchHistoryTags();
             if (serverTags && Object.keys(serverTags).length) {
                 try {
-                    const localMap = JSON.parse(localStorage.getItem('aethera_history_tags')||'{}');
+                    const localMap = JSON.parse(localStorage.getItem('direktiva_history_tags')||'{}');
                     const merged = { ...serverTags, ...localMap };
-                    localStorage.setItem('aethera_history_tags', JSON.stringify(merged));
+                    localStorage.setItem('direktiva_history_tags', JSON.stringify(merged));
                 } catch(e){}
             }
         }
     } catch (e) { console.warn('Fetch server tags skipped', e); }
 
-    allHistory = JSON.parse(localStorage.getItem('aethera_history')) || [];
+    allHistory = JSON.parse(localStorage.getItem('direktiva_history')) || [];
     applyFiltersAndSort();
     renderHistoryPage();
     return allHistory;
@@ -203,20 +203,20 @@ function updatePaginationControls(totalPages) {
 }
 
 export async function deleteFromHistory(entryIds) {
-    let history = JSON.parse(localStorage.getItem('aethera_history')) || [];
+    let history = JSON.parse(localStorage.getItem('direktiva_history')) || [];
     // Pastikan entryIds adalah array
     const idsToDelete = Array.isArray(entryIds) ? entryIds.map(Number) : [Number(entryIds)];
     const updatedHistory = history.filter(entry => !idsToDelete.includes(entry.id));
-    localStorage.setItem('aethera_history', JSON.stringify(updatedHistory));
+    localStorage.setItem('direktiva_history', JSON.stringify(updatedHistory));
     // Set timestamp untuk tracking perubahan lokal untuk sinkronisasi
-    localStorage.setItem('aethera_history_last_modified', new Date().toISOString());
+    localStorage.setItem('direktiva_history_last_modified', new Date().toISOString());
     await loadHistory(); // Muat ulang tampilan
 }
 
 export async function deleteAllHistory() {
-    localStorage.removeItem('aethera_history');
+    localStorage.removeItem('direktiva_history');
     // Set timestamp untuk tracking perubahan lokal untuk sinkronisasi
-    localStorage.setItem('aethera_history_last_modified', new Date().toISOString());
+    localStorage.setItem('direktiva_history_last_modified', new Date().toISOString());
     
     // Also delete from cloud storage if available
     try {

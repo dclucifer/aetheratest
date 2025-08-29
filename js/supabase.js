@@ -15,7 +15,7 @@ export const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABAS
     },
     global: {
         headers: {
-            'X-Client-Info': 'aethera-studio@1.0.0'
+            'X-Client-Info': 'direktiva-studio@1.0.0'
         }
     }
 });
