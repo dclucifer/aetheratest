@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     document.getElementById('theme-toggle-btn').addEventListener('click', () => {
-        const currentTheme = localStorage.getItem('aethera_theme') || 'dark';
+        const currentTheme = localStorage.getItem('direktiva_theme') || localStorage.getItem('aethera_theme') || 'dark';
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         switchTheme(newTheme);
     });
@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const mobileThemeToggle = document.getElementById('mobile-theme-toggle-btn');
     if (mobileThemeToggle) {
         mobileThemeToggle.addEventListener('click', () => {
-            const currentTheme = localStorage.getItem('aethera_theme') || 'dark';
+            const currentTheme = localStorage.getItem('direktiva_theme') || localStorage.getItem('aethera_theme') || 'dark';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             switchTheme(newTheme);
         });
