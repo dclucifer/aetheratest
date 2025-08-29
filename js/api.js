@@ -20,7 +20,7 @@ async function parseJsonSafe(response) {
 // AbortController global untuk analisis gambar
 let imageAnalysisController = null;
 
-export async function analyzeImageWithAI(base64Data, mimeType) {
+export async function analyzeImageWithAI(base64Data, mimeType, focusLabel = '') {
     try {
         // Batalkan request sebelumnya jika masih berjalan
         try { imageAnalysisController?.abort(); } catch(_) {}
@@ -43,7 +43,7 @@ export async function analyzeImageWithAI(base64Data, mimeType) {
         const descriptionResponse = await fetch('/api/analyzeImage', {
             method: 'POST',
             headers: headers,
-            body: JSON.stringify({ base64Data, mimeType, mode: 'fullDescription' }),
+            body: JSON.stringify({ base64Data, mimeType, mode: 'fullDescription', focusLabel }),
             signal
         });
 
@@ -57,13 +57,13 @@ export async function analyzeImageWithAI(base64Data, mimeType) {
         if (!descData || !descData.description) {
             throw new Error(t('notification_image_analysis_error') || 'Image analysis error');
         }
-        const { description, palette } = descData;
+        const { description, palette, brand_guess, model_guess, ocr_text, distinctive_features } = descData;
 
         // --- TAHAP 2: Deskripsi -> Keywords ---
         const keywordsResponse = await fetch('/api/analyzeImage', {
             method: 'POST',
             headers: headers,
-            body: JSON.stringify({ textData: description, mode: 'extractKeywords' }),
+            body: JSON.stringify({ textData: { description, palette, brand_guess, model_guess, ocr_text, distinctive_features, focusLabel }, mode: 'extractKeywords', focusLabel }),
             signal
         });
 
@@ -80,7 +80,7 @@ export async function analyzeImageWithAI(base64Data, mimeType) {
         const { keywords } = kwData;
 
         // --- KEMBALIKAN HASIL GABUNGAN ---
-        return { description, palette, keywords };
+        return { description, palette, brand_guess, model_guess, ocr_text, distinctive_features, keywords };
 
     } catch (error) {
         if (error?.name === 'AbortError') {

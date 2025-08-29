@@ -26,7 +26,7 @@ export default async function handler(request, response) {
   }
 
   // Ambil mode dari body, default ke 'fullDescription' jika tidak ada
-  const { base64Data, mimeType, textData, mode = 'fullDescription' } = request.body;
+  const { base64Data, mimeType, textData, mode = 'fullDescription', focusLabel = '' } = request.body;
 
   const userApiKey = request.headers['x-user-api-key'];
   const apiKey = userApiKey || process.env.GEMINI_API_KEY;
@@ -48,25 +48,22 @@ export default async function handler(request, response) {
     payload = {
       contents: [{
         parts: [
-          // Prompt baru yang meminta output JSON
-          { text: `Analisis gambar produk ini secara mendalam. 
-            1. Berikan deskripsi visual yang sangat detail dalam Bahasa Inggris. Jelaskan bentuk, warna, material, tekstur, bagian penting, gaya desain, dan elemen unik lainnya. Fokus hanya pada deskripsi objek.
-            2. Identifikasi dan daftar 3-5 warna paling dominan dari produk dalam format HEX code.
-            PENTING: Output Anda harus dalam format JSON yang valid, tanpa tambahan teks apapun di luar JSON tersebut. Formatnya adalah: {"description": "...", "palette": ["#RRGGBB", "#RRGGBB", ...]}` 
-          },
+          { text: `Analyze this PRODUCT image in depth and return STRICT JSON only. Goals: ultra-specific identity for T2I/I2V prompts.
+If focus label provided, LIMIT analysis STRICTLY to the product matching that label, ignore model/body/background and unrelated clothing. Focus label: "${(focusLabel||'').toString().slice(0,80)}".
+1) description: Long, concrete visual description in English focusing ONLY on the product (not background).
+2) palette: 5 dominant colors in HEX.
+3) brand_guess: If any brand/label/logo is visible, guess the brand name; else empty string.
+4) model_guess: If any model/series/variant text is visible, guess; else empty string.
+5) ocr_text: Any readable packaging/label text (array of strings, best-effort OCR). If not present, empty array.
+6) distinctive_features: Array of 5-10 short bullet phrases capturing unique, non-generic identity traits (shape geometry, cuts, logo mark shape, accents, materials, finishes, stitch/pattern, ports/buttons layout, cap/nozzle type, etc.).
+
+STRICT OUTPUT SHAPE (JSON only, no extra text):
+{"description":"...","palette":["#RRGGBB",...],"brand_guess":"","model_guess":"","ocr_text":["..."],"distinctive_features":["..."]}` },
           { inline_data: { mime_type: mimeType, data: base64Data } }
         ]
       }],
       generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "OBJECT",
-          properties: {
-            "description": { "type": "STRING" },
-            "palette": { "type": "ARRAY", "items": { "type": "STRING" } }
-          },
-          required: ["description", "palette"]
-        }
+        responseMimeType: "application/json"
       }
     };
   } else if (mode === 'extractKeywords') {
@@ -76,10 +73,12 @@ export default async function handler(request, response) {
     payload = {
       contents: [{
         parts: [
-          // Prompt baru untuk ekstraksi keywords
-          { text: `From the following product description, extract a comma-separated list of highly specific, concrete visual keywords perfect for a text-to-image AI model. Focus on object, material, shape, texture, lighting, and unique details. Ignore marketing phrases and subjective words.
-            Description: "${textData}"`
-          }
+          { text: `You will receive DESCRIPTION/CONTEXT (may be plain text or JSON with description, palette, brand_guess, model_guess, ocr_text, distinctive_features). Optional focus label: "${(focusLabel||'').toString().slice(0,80)}".
+Return a single comma-separated KEYWORD STRING optimized for text-to-image models, with 40-60 tokens.
+- Start with identity lock tokens: brand=<brand_guess if any>, model=<model_guess if any>, logo_mark=<short shape/geometry>, must_keep_colors=<top 2-3 HEX>.
+- Then list ultra-specific nouns/adjectives: product type, materials, finish, geometry, edges, accents, texture, patterns, proportions, ports/buttons layout, packaging details, camera angle, lens, lighting style, environment (ONLY if essential), background color.
+- Prefer concrete terms, avoid subjective words; no sentences; no quotes.
+DESCRIPTION/CONTEXT:\n${typeof textData === 'string' ? textData : JSON.stringify(textData)}` }
         ]
       }]
     };

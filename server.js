@@ -115,7 +115,7 @@ const analyzeImageHandler = async (req, res) => {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { base64Data, mimeType, mode, textData } = req.body;
+  const { base64Data, mimeType, mode, textData, focusLabel = '' } = req.body;
   
   const userApiKey = req.headers['x-user-api-key'];
   const apiKey = userApiKey || process.env.GEMINI_API_KEY;
@@ -130,31 +130,19 @@ const analyzeImageHandler = async (req, res) => {
   let payload;
 
   if (mode === 'fullDescription') {
-    // Tahap 1: Analisis gambar untuk deskripsi dan palet warna
-    prompt = `Analisis gambar ini secara mendalam dan berikan:
+    // Tahap 1: Analisis gambar untuk deskripsi, palet, dan identitas produk yang ketat
+    prompt = `Analyze this PRODUCT image in depth and return STRICT JSON only. Goals: ultra-specific identity for T2I/I2V prompts.
+If focus label provided, LIMIT analysis STRICTLY to the product matching that label, ignore model/body/background and unrelated clothing. Focus label: "${(focusLabel||'').toString().slice(0,80)}".
+1) description: Long, concrete visual description in English focusing ONLY on the product (not background).
+2) palette: 5 dominant colors in HEX.
+3) brand_guess: If any brand/label/logo is visible, guess the brand name; else empty string.
+4) model_guess: If any model/series/variant text is visible, guess; else empty string.
+5) ocr_text: Any readable packaging/label text (array of strings, best-effort OCR). If not present, empty array.
+6) distinctive_features: Array of 5-10 short bullet phrases capturing unique, non-generic identity traits (shape geometry, cuts, logo mark shape, accents, materials, finishes, stitch/pattern, ports/buttons layout, cap/nozzle type, etc.).
 
-1. **DESKRIPSI VISUAL LENGKAP:**
-   - Objek utama dan detail spesifik (bentuk, tekstur, material)
-   - Komposisi dan tata letak (foreground, background, positioning)
-   - Pencahayaan dan bayangan (arah cahaya, mood lighting)
-   - Gaya fotografi/artistik (close-up, wide shot, angle, perspective)
-   - Konteks dan setting (indoor/outdoor, environment, atmosphere)
-   - Emosi dan mood yang terpancar dari gambar
-   - Elemen branding atau teks yang terlihat
-   - Kualitas dan style gambar (professional, casual, artistic, commercial)
+STRICT OUTPUT SHAPE (JSON only, no extra text):
+{"description":"...","palette":["#RRGGBB",...],"brand_guess":"","model_guess":"","ocr_text":["..."],"distinctive_features":["..."]}`;
 
-2. **ANALISIS WARNA DETAIL:**
-   - 5 warna dominan dalam format hex
-   - Skema warna yang digunakan (monochromatic, complementary, triadic, dll)
-   - Temperatur warna (warm/cool tones)
-   - Saturasi dan brightness level
-
-Format respons dalam JSON:
-{
-  "description": "deskripsi visual yang sangat detail dan komprehensif mencakup semua aspek di atas",
-  "palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"]
-}`;
-    
     payload = {
       contents: [{
         role: "user",
@@ -174,28 +162,15 @@ Format respons dalam JSON:
       }
     };
   } else if (mode === 'extractKeywords') {
-    // Tahap 2: Ekstrak keywords dari deskripsi
-    prompt = `Dari deskripsi visual berikut, ekstrak keywords yang sangat spesifik dan kaya untuk pembuatan konten kreatif:
+    // Tahap 2: Ekstrak keywords dari deskripsi/JSON identitas
+    const context = typeof textData === 'string' ? textData : JSON.stringify(textData);
+    prompt = `You will receive DESCRIPTION/CONTEXT (may be plain text or JSON with description, palette, brand_guess, model_guess, ocr_text, distinctive_features). Optional focus label: "${(focusLabel||'').toString().slice(0,80)}".
+Return a single comma-separated KEYWORD STRING optimized for text-to-image models, with 40-60 tokens.
+- Start with identity lock tokens: brand=<brand_guess if any>, model=<model_guess if any>, logo_mark=<short shape/geometry>, must_keep_colors=<top 2-3 HEX>.
+- Then list ultra-specific nouns/adjectives: product type, materials, finish, geometry, edges, accents, texture, patterns, proportions, ports/buttons layout, packaging details, camera angle, lens, lighting style, background color.
+- Prefer concrete terms, avoid subjective words; no sentences; no quotes.
+DESCRIPTION/CONTEXT:\n${context}`;
 
-"${textData}"
-
-Ekstrak 15-20 keywords yang mencakup:
-- **Objek & Produk:** nama spesifik item, brand, kategori
-- **Visual Style:** gaya fotografi, komposisi, angle, lighting
-- **Warna & Tekstur:** nama warna spesifik, material, finish
-- **Mood & Emosi:** perasaan, atmosfer, vibe
-- **Setting & Konteks:** lokasi, environment, situasi
-- **Kualitas & Karakteristik:** adjektiva deskriptif yang kuat
-- **Action & Movement:** gerakan, pose, dinamika
-- **Technical Aspects:** depth of field, focus, perspective
-
-Pisahkan dengan koma. Gunakan bahasa yang vivid dan spesifik, hindari kata-kata generik.
-
-Format respons dalam JSON:
-{
-  "keywords": "keyword1, keyword2, keyword3, keyword4, keyword5, keyword6, keyword7, keyword8, keyword9, keyword10, keyword11, keyword12, keyword13, keyword14, keyword15, ..."
-}`;
-    
     payload = {
       contents: [{
         role: "user",

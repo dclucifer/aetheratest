@@ -35,11 +35,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css"></script>
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
-  <script type="module" crossorigin src="/assets/main-D6n7ipBS.js"></script>
+  <script type="module" crossorigin src="/assets/main-DXelPbee.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/main-DQnS_eBA.css">
 </head>
 <body class="light-mode antialiased">
@@ -62,7 +64,7 @@
           <div class="bg-glass-hover rounded-lg p-4 border border-accent/30">
             <h4 class="font-semibold text-primary mb-2" data-lang-key="onboarding_key_features">✨ Fitur Utama:</h4>
             <ul class="text-sm text-secondary space-y-1">
-              <li>• Tampilan kartu hasil + Overlay detail, A/B variants, “Best of All”</li>
+              <li>• Tampilan kartu hasil + Overlay detail, A/B variants, "Best of All"</li>
               <li>• Platform selector terpisah dari CTA; CTA cerdas per platform</li>
               <li>• Generate Additional Assets: judul/caption, hashtag platform, thumbnail text</li>
               <li>• VO Preview (Gemini/API) + fallback Browser TTS, unduh VO pack</li>
@@ -128,7 +130,7 @@
         <div class="onboarding-step hidden" data-step="5">
           <h3 class="text-xl font-semibold mb-4 text-accent">🔐 Akun & Keamanan</h3>
           <ul class="text-sm text-secondary space-y-2">
-            <li>• Update Email/Password via konfirmasi email (dua langkah jika “Double confirm” aktif).</li>
+            <li>• Update Email/Password via konfirmasi email (dua langkah jika "Double confirm" aktif).</li>
             <li>• Lupa Password: kirim link reset dari halaman login.</li>
             <li>• Single Session: akun hanya aktif di satu perangkat. Jika terdeteksi di tempat lain, sesi ini akan keluar otomatis.</li>
           </ul>
@@ -508,7 +510,7 @@
                             <option value="hook_deal_bonus" data-lang-key="hook_deal_bonus">Deal/Bonus Reveal</option>
                             <option value="hook_scarcity_urgency" data-lang-key="hook_scarcity_urgency">Stok Terbatas & Urgensi</option>
                             <option value="hook_risk_reversal" data-lang-key="hook_risk_reversal">Risk Reversal (Garansi)</option>
-                            <option value="hook_objection_buster" data-lang-key="hook_objection_buster">Objection Buster/FAQ (“Mahal?” “Cocok buat kulit berminyak?”)</option>
+                            <option value="hook_objection_buster" data-lang-key="hook_objection_buster">Objection Buster/FAQ ("Mahal?" "Cocok buat kulit berminyak?")</option>
                             <option value="hook_unboxing" data-lang-key="hook_unboxing">Unboxing / First-Impression</option>
                             <option value="hook_comparison" data-lang-key="hook_comparison">Perbandingan/Versus</option>
                             <option value="hook_mistake" data-lang-key="hook_mistake">Kesalahan Fatal</option>
@@ -520,7 +522,7 @@
                           </optgroup>
                           <optgroup label="💎 Hook Premium">
                             <option value="hook_ai_cocreate" data-lang-key="hook_ai_cocreate">AI Co-Create / Avatar</option>
-                            <option value="hook_search_intent" data-lang-key="hook_search_intent">Search-Intent Hook (SEO TikTok: “Cara…”, “Terbaik untuk…”)</option>
+                            <option value="hook_search_intent" data-lang-key="hook_search_intent">Search-Intent Hook (SEO TikTok: "Cara…", "Terbaik untuk…")</option>
                             <option value="hook_community_callout" data-lang-key="hook_community_callout">Panggilan Komunitas Niche</option>
                             <option value="hook_authenticity_proof" data-lang-key="hook_authenticity_proof">Bukti Keaslian (Real-not-AI)</option>
                           </optgroup>
@@ -937,6 +939,23 @@
                             <div class="bg-gray-800/50 px-6 py-4 flex justify-end items-center space-x-3 rounded-b-xl">
                               <button id="input-modal-cancel-btn" class="px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">Batal</button>
                               <button id="input-modal-confirm-btn" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors">OK</button>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Image Cropper Modal -->
+                        <div id="image-cropper-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black bg-opacity-60 backdrop-blur-sm opacity-0 pointer-events-none">
+                          <div class="modal-content w-full max-w-3xl bg-gray-800 rounded-xl shadow-2xl border border-gray-700 transform scale-95">
+                            <div class="p-4 md:p-6">
+                              <h3 class="text-lg font-bold text-white mb-3">Sesuaikan area produk</h3>
+                              <div class="bg-gray-900/50 rounded-md border border-gray-700 overflow-hidden flex items-center justify-center max-h-[70vh]">
+                                <img id="cropper-target" src="" alt="Crop target" class="max-h-[70vh] w-full object-contain select-none">
+                              </div>
+                              <p class="text-xs text-gray-400 mt-2">Geser dan ubah ukuran kotak crop. Klik "Gunakan Crop" untuk menganalisis area ini.</p>
+                            </div>
+                            <div class="bg-gray-800/50 px-6 py-4 flex justify-end items-center space-x-3 rounded-b-xl">
+                              <button id="cropper-skip-btn" class="px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">Lanjutkan tanpa crop</button>
+                              <button id="cropper-use-btn" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors">Gunakan Crop</button>
+                              <button id="cropper-cancel-btn" class="hidden px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">Batal</button>
                             </div>
                           </div>
                         </div>

@@ -68,30 +68,81 @@ export async function handleImageUpload(event) {
     elements.imageHelper.textContent = t('analyzing_image') || 'Analyzing image...';
     elements.visualDnaStorage.textContent = '';
     elements.imagePreviewContainer.classList.add('hidden');
-    try { elements.generateBtn.disabled = true; } catch(_){ }
+    try { elements.generateBtn.disabled = true; } catch(_) { }
+
+    let usedBlob = file;
+    let objectUrl = '';
+    let cropper = null;
 
     try {
+        // Tampilkan modal cropper agar user bisa pilih area produk (opsional)
+        const modal = document.getElementById('image-cropper-modal');
+        const imgEl = document.getElementById('cropper-target');
+        const useBtn = document.getElementById('cropper-use-btn');
+        const skipBtn = document.getElementById('cropper-skip-btn');
+
+        if (modal && imgEl && window.Cropper) {
+            // Siapkan image untuk cropper
+            objectUrl = URL.createObjectURL(file);
+            imgEl.src = objectUrl;
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-content')?.classList.remove('scale-95');
+
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            cropper = new window.Cropper(imgEl, { viewMode: 1, movable: true, zoomable: true, autoCropArea: 0.9, background: false });
+
+            const finalize = async (useCrop) => {
+                try {
+                    if (useCrop && cropper) {
+                        const canvas = cropper.getCroppedCanvas({ imageSmoothingEnabled: true, imageSmoothingQuality: 'high' });
+                        const blob = await new Promise((res) => canvas.toBlob(res, file.type || 'image/jpeg', 0.92));
+                        if (blob) usedBlob = new File([blob], file.name, { type: file.type || 'image/jpeg' });
+                    }
+                } finally {
+                    try { cropper?.destroy(); } catch(_) {}
+                    cropper = null;
+                    modal.classList.add('opacity-0', 'pointer-events-none');
+                    modal.querySelector('.modal-content')?.classList.add('scale-95');
+                }
+            };
+
+            await new Promise((resolve) => {
+                const onUse = async () => { useBtn.removeEventListener('click', onUse); skipBtn.removeEventListener('click', onSkip); await finalize(true); resolve(); };
+                const onSkip = async () => { useBtn.removeEventListener('click', onUse); skipBtn.removeEventListener('click', onSkip); await finalize(false); resolve(); };
+                useBtn.addEventListener('click', onUse, { once: true });
+                skipBtn.addEventListener('click', onSkip, { once: true });
+            });
+        }
+
         const reader = new FileReader();
         reader.onload = (e) => {
             elements.imagePreview.src = e.target.result;
             elements.imagePreviewContainer.classList.remove('hidden');
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(usedBlob);
 
-        const base64Data = await fileToBase64(file);
-        
-        // Panggil fungsi orkestrasi yang baru
-        const analysisResult = await analyzeImageWithAI(base64Data, file.type);
+        const base64Data = await fileToBase64(usedBlob);
+        // Gunakan nama produk sebagai hint fokus (misal "crop tee", "saucepan", dsb.)
+        const focusLabel = (elements.inputs.productName.value || '').trim();
+        const analysisResult = await analyzeImageWithAI(base64Data, usedBlob.type, focusLabel);
 
         // Jika bukan run terbaru, abaikan hasil ini
         if (runId !== imageAnalysisRunId) return;
 
-        // Simpan hasil ke tempat yang benar (hanya untuk run terbaru)
-        elements.visualDnaStorage.textContent = analysisResult.keywords;
+        // Compose ultra-specific identity tokens to lock product identity in prompts
+        const identityPrefix = [
+            analysisResult.brand_guess ? `brand=${analysisResult.brand_guess}` : '',
+            analysisResult.model_guess ? `model=${analysisResult.model_guess}` : '',
+            Array.isArray(analysisResult.palette) && analysisResult.palette.length ? `must_keep_colors=${analysisResult.palette.slice(0,3).join('|')}` : ''
+        ].filter(Boolean).join(', ');
+        const distinctive = Array.isArray(analysisResult.distinctive_features) ? analysisResult.distinctive_features.join(', ') : '';
+        const ocr = Array.isArray(analysisResult.ocr_text) ? analysisResult.ocr_text.join(' ') : '';
+        const enrichedKeywords = [identityPrefix, analysisResult.keywords, distinctive, ocr].filter(Boolean).join(', ');
+        elements.visualDnaStorage.textContent = enrichedKeywords;
         localStorage.setItem('productColorPalette', JSON.stringify(analysisResult.palette));
 
         showNotification(t('notification_image_analysis_success') || 'Image analysis successful');
-        elements.imageHelper.textContent = `${file.name} ${t('analysis_complete') || 'analysis complete'}`;
+        elements.imageHelper.textContent = `${usedBlob.name} ${t('analysis_complete') || 'analysis complete'}`;
 
     } catch (error) {
         if (error?.name !== 'AbortError') {
@@ -103,10 +154,11 @@ export async function handleImageUpload(event) {
             }
         }
     } finally {
+        if (objectUrl) { try { URL.revokeObjectURL(objectUrl); } catch(_) {} }
         // Hanya run terbaru yang boleh mengubah state UI tombol dan loader
         if (runId === imageAnalysisRunId) {
             elements.imageLoader.classList.add('hidden');
-            try { elements.generateBtn.disabled = false; } catch(_){ }
+            try { elements.generateBtn.disabled = false; } catch(_) { }
         }
     }
 }
@@ -629,8 +681,8 @@ export function constructPrompt() {
 const visualDna = elements.visualDnaStorage.textContent;
     if (visualDna) {
         base += currentLanguage === 'en'
-            ? `\n- **PRODUCT VISUAL KEYWORDS (MUST BE USED):**\n${visualDna}`
-            : `\n- **VISUAL KEYWORDS PRODUK (WAJIB DIGUNAKAN):**\n${visualDna}`;
+            ? `\n- **PRODUCT VISUAL DNA (STRICT IDENTITY LOCK):** ${visualDna}`
+            : `\n- **VISUAL DNA PRODUK (KUNCI IDENTITAS KETAT):** ${visualDna}`;
     }
 
     if (currentMode === 'carousel') {
