@@ -178,11 +178,13 @@ export async function handleImageUpload(event) {
                     modal2.querySelector('.modal-content')?.classList.add('scale-95');
                     const base64Second = dataUrl2.split(',')[1];
                     const analysis2 = await analyzeImageWithAI(base64Second, usedBlob.type, focusLabel);
-                    // Merge: palette union, keywords concat, features union
+                    // Merge: palette union, keywords concat, features union, prefer brand/model if available on any
                     const mergedPalette = Array.from(new Set([...(analysisResult.palette||[]), ...(analysis2.palette||[])] )).slice(0,6);
                     const mergedKw = [analysisResult.keywords, analysis2.keywords].filter(Boolean).join(', ');
                     const mergedFeatures = Array.from(new Set([...(analysisResult.distinctive_features||[]), ...(analysis2.distinctive_features||[])] ));
-                    analysisResult = { ...analysisResult, palette: mergedPalette, keywords: mergedKw, distinctive_features: mergedFeatures };
+                    const mergedBrand = analysisResult.brand_guess || analysis2.brand_guess || '';
+                    const mergedModel = analysisResult.model_guess || analysis2.model_guess || '';
+                    analysisResult = { ...analysisResult, palette: mergedPalette, keywords: mergedKw, distinctive_features: mergedFeatures, brand_guess: mergedBrand, model_guess: mergedModel };
                 } else {
                     try { cropper?.destroy(); } catch(_) {}
                     cropper = null;
@@ -196,6 +198,16 @@ export async function handleImageUpload(event) {
         if (runId !== imageAnalysisRunId) return;
 
         // Compose ultra-specific identity tokens to lock product identity in prompts
+        // Persist canonical DNA tokens for consistent injection across shots
+        try {
+            const canonicalTokens = {
+                brand: analysisResult.brand_guess || '',
+                model: analysisResult.model_guess || '',
+                colors: Array.isArray(analysisResult.palette) ? analysisResult.palette.slice(0,3) : []
+            };
+            localStorage.setItem('direktiva_visual_dna_tokens', JSON.stringify(canonicalTokens));
+        } catch(_) {}
+
         const identityPrefix = [
             analysisResult.brand_guess ? `brand=${analysisResult.brand_guess}` : '',
             analysisResult.model_guess ? `model=${analysisResult.model_guess}` : '',
@@ -335,11 +347,14 @@ export async function handleGenerate() {
         const finalized = Array.from(uniques.values()).slice(0, requestedCount);
         // Sanitize and enforce DNA prefix in every T2I prompt
         const visualDnaRaw = elements.visualDnaStorage.textContent || '';
+        // Use canonical tokens from localStorage when available to avoid drift
+        let canon = null;
+        try { canon = JSON.parse(localStorage.getItem('direktiva_visual_dna_tokens')||'null'); } catch(_) {}
         const dna = (() => {
-            const brand = (visualDnaRaw.match(/brand\s*=\s*([^,;]+)/i)||[])[1] || '';
-            const model = (visualDnaRaw.match(/model\s*=\s*([^,;]+)/i)||[])[1] || '';
-            const colorsRaw = (visualDnaRaw.match(/must_keep_colors\s*=\s*([^,;]+)/i)||[])[1] || '';
-            const colors = colorsRaw.split(/[|,\s]+/).filter(s=>/^#?[0-9A-Fa-f]{3,6}$/.test(s)).slice(0,3);
+            const brand = (canon?.brand) || (visualDnaRaw.match(/brand\s*=\s*([^,;]+)/i)||[])[1] || '';
+            const model = (canon?.model) || (visualDnaRaw.match(/model\s*=\s*([^,;]+)/i)||[])[1] || '';
+            const colorsRaw = (canon?.colors?.join('|')) || (visualDnaRaw.match(/must_keep_colors\s*=\s*([^,;]+)/i)||[])[1] || '';
+            const colors = (Array.isArray(canon?.colors) ? canon.colors : colorsRaw.split(/[|,\s]+/)).filter(s=>/^#?[0-9A-Fa-f]{3,6}$/.test(s)).slice(0,3);
             const parts = [];
             if (brand) parts.push(`brand=${brand}`);
             if (model) parts.push(`model=${model}`);
