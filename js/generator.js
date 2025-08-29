@@ -1,6 +1,6 @@
 // js/generator.js
 import { PLATFORM_CONFIG, buildPlatformPlan } from './platform.config.js';
-import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState } from './utils.js';
+import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState, createCharacterEssence, chooseShotFeatures } from './utils.js';
 import { t } from './i18n.js';
 import { analyzeImageWithAI, callGeminiAPI } from './api.js';
 import { getPersonas } from './persona.js';
@@ -379,19 +379,26 @@ export async function handleGenerate() {
             s = s.replace(/\bmust_keep_colors\s*=\s*[^,;]+[;,]?\s*/gi,'');
             return s.trim();
         };
-        const withDna = (text) => {
+        const withDna = (text, visualIdea = '') => {
             const core = stripTokens(text);
             if (!dna) return core;
-            const idBlock = `ID[${dna}${featuresStr ? `; features=${featuresStr}` : ''}]`;
-            // Append identity at the end to keep scene-first style
+            // Choose dynamic features per shot based on visual idea
+            let dyn = '';
+            try {
+                const allF = JSON.parse(localStorage.getItem('direktiva_visual_features')||'[]');
+                const chosen = chooseShotFeatures(visualIdea, allF);
+                if (Array.isArray(chosen) && chosen.length) dyn = chosen.slice(0,4).join(', ');
+            } catch(_) {}
+            const feats = dyn || featuresStr;
+            const idBlock = `ID[${dna}${feats ? `; features=${feats}` : ''}]`;
             return `${core} | ${idBlock}`;
         };
         const ensureDnaInScript = (sc) => {
             try {
-                if (sc?.hook?.shots) sc.hook.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt); });
-                if (sc?.body?.shots) sc.body.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt); });
-                if (sc?.cta?.shots) sc.cta.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt); });
-                if (Array.isArray(sc?.slides)) sc.slides.forEach(sl=>{ if (sl.text_to_image_prompt) sl.text_to_image_prompt = withDna(sl.text_to_image_prompt); });
+                if (sc?.hook?.shots) sc.hook.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt, sh.visual_idea||''); });
+                if (sc?.body?.shots) sc.body.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt, sh.visual_idea||''); });
+                if (sc?.cta?.shots) sc.cta.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt, sh.visual_idea||''); });
+                if (Array.isArray(sc?.slides)) sc.slides.forEach(sl=>{ if (sl.text_to_image_prompt) sl.text_to_image_prompt = withDna(sl.text_to_image_prompt, sl.slide_text||''); });
             } catch(_) {}
             return sc;
         };
@@ -488,7 +495,7 @@ export function getResponseSchema(count) {
 
     const shotObject = {
         type: "OBJECT",
-        properties: { "visual_idea": { "type": "STRING" }, "text_to_image_prompt": { "type": "STRING" }, "negative_prompt": { "type": "STRING", "description": "Sebutkan hal-hal yang TIDAK BOLEH muncul di gambar, misal: blurry, text, watermark, ugly, deformed hands." }, "image_to_video_prompt": { "type": "STRING" } },
+        properties: { "visual_idea": { "type": "STRING" }, "text_to_image_prompt": { "type": "STRING" }, "negative_prompt": { "type": "STRING", "description": "Sebutkan hal-hal yang TIDAK BOLEH muncul di gambar, misal: blurry, text, watermark, ugly, deformed hands." }, "image_to_video_prompt": { "type": "STRING" }, "camera_directives": { "type": "STRING" }, "lighting_directives": { "type": "STRING" }, "mood_directives": { "type": "STRING" } },
         required: ["visual_idea", "text_to_image_prompt", "image_to_video_prompt"]
     };
     const scriptPartObject = {
@@ -533,7 +540,10 @@ export function getResponseSchema(count) {
                 "slide_text": { "type": "STRING" },
                 "text_to_image_prompt": { "type": "STRING" },
                 "layout_suggestion": { "type": "STRING" },
-                "engagement_idea": { "type": "STRING" }
+                "engagement_idea": { "type": "STRING" },
+                "camera_directives": { "type": "STRING" },
+                "lighting_directives": { "type": "STRING" },
+                "mood_directives": { "type": "STRING" }
             },
             required: ["slide_text", "text_to_image_prompt"]
         };
@@ -726,9 +736,30 @@ export function constructPrompt() {
 
     let characterSheetInstruction = '';
     if (characterSheets.length > 0) {
-        characterSheetInstruction = currentLanguage === 'en'
-            ? `\n- **CHARACTER SHEET(S) (MUST BE USED):** ${JSON.stringify(characterSheets)}`
-            : `\n- **CHARACTER SHEET(S) (WAJIB DIGUNAKAN):** ${JSON.stringify(characterSheets)}`;
+        // Persist canonical character tokens for consistency and build persona synthesis guidance
+        try {
+            const cs = characterSheets[0] || {};
+            const charTokens = {
+                name: cs.name || '',
+                gender: cs.gender || '',
+                age: cs.age || '',
+                ethnicity: cs.ethnicity || '',
+                hair: [cs.hair_style, cs.hair_color].filter(Boolean).join(' '),
+                eyes: cs.eye_color || '',
+                skin: cs.skin_tone || '',
+                vibe: cs.vibe || ''
+            };
+            localStorage.setItem('direktiva_char_tokens', JSON.stringify(charTokens));
+            const essence = createCharacterEssence(cs);
+            localStorage.setItem('direktiva_char_essence', essence);
+        } catch(_) {}
+
+        const personaGuideEn = `- CHARACTER PERSONA SYNTHESIS: Blend the sheet facts into a living persona with coherent facial proportions (eye distance, nose bridge, lip fullness) and micro-expressions. Maintain these anchor cues consistently across shots. Express mood naturally through eyes and mouth; avoid mannequin faces.`;
+        const personaGuideId = `- SINTESIS PERSONA: Gabungkan fakta sheet menjadi sosok hidup dengan proporsi wajah koheren (jarak mata, pangkal hidung, ketebalan bibir) dan micro-expression. Jaga ciri jangkar ini konsisten antar shot. Ekspresikan mood natural; hindari wajah manekin.`;
+
+        characterSheetInstruction = (currentLanguage === 'en')
+            ? `\n- **CHARACTER ESSENCE (USE IN <char-desc>):** [[CHAR_ESSENCE]]\n${personaGuideEn}\n- If character is visible, you may append a compact CHAR[...] identity block at the end.`
+            : `\n- **ESENSI KARAKTER (PAKAI DI <char-desc>):** [[CHAR_ESSENCE]]\n${personaGuideId}\n- Jika karakter terlihat, boleh tambah blok ringkas CHAR[...] di akhir.`;
     }
     
     let interactionInstruction = '';
@@ -811,12 +842,17 @@ export function constructPrompt() {
 const visualDna = elements.visualDnaStorage.textContent;
     if (visualDna) {
         base += currentLanguage === 'en'
-            ? `\n- **PRODUCT VISUAL DNA (STRICT IDENTITY LOCK):** ${visualDna}`
-            : `\n- **VISUAL DNA PRODUK (KUNCI IDENTITAS KETAT):** ${visualDna}`;
+            ? `\n- **PRODUCT VISUAL DNA:** ${visualDna}`
+            : `\n- **VISUAL DNA PRODUK:** ${visualDna}`;
         const dnaRule = currentLanguage === 'en'
-            ? `\n- For EVERY shot, you MUST explicitly include the Visual DNA tokens inside each text_to_image_prompt. Start each T2I prompt with the tokens (brand=..., model=..., must_keep_colors=...) before other details. Do NOT rely on memory across shots; restate identity every time.`
-            : `\n- Untuk SETIAP shot, WAJIB menyertakan token Visual DNA di dalam setiap text_to_image_prompt. Mulai setiap prompt T2I dengan token (brand=..., model=..., must_keep_colors=...) sebelum detail lainnya. JANGAN mengandalkan memori antar shot; sebutkan identitas setiap kali.`;
+            ? `\n- For EVERY shot, include product identity as a compact trailing block at the END of each text_to_image_prompt in the format ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...]. Do NOT rely on memory; restate identity every time.`
+            : `\n- Untuk SETIAP shot, sertakan identitas produk sebagai blok ringkas DI AKHIR tiap text_to_image_prompt dengan format ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...]. Jangan mengandalkan memori; sebutkan identitas setiap kali.`;
         base += dnaRule;
+
+        const cineRule = currentLanguage === 'en'
+            ? `\n- CINEMATIC BLOCKS (REQUIRED): At the END of each text_to_image_prompt, after ID[…], append three compact blocks to set style: CAM[lens & framing], LIGHT[key/fill/rim & quality], MOOD[emotional tone]. Keep them short, e.g., CAM[50mm macro, product close-up, tripod, eye-level] | LIGHT[softbox key 45°, bounce fill 1/3, specular highlights, clean BG] | MOOD[clean, confident].`
+            : `\n- BLOK SINEMATIK (WAJIB): Di AKHIR setiap text_to_image_prompt, setelah ID[…], tambahkan tiga blok ringkas untuk gaya: CAM[lensa & framing], LIGHT[key/fill/rim & kualitas], MOOD[nuansa emosi]. Contoh singkat: CAM[50mm macro, close-up produk, tripod, eye-level] | LIGHT[softbox 45°, bounce fill 1/3, specular highlights, background bersih] | MOOD[clean, confident].`;
+        base += cineRule;
     }
 
     if (currentMode === 'carousel') {

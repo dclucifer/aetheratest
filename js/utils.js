@@ -586,6 +586,41 @@ export function getCharacterDescriptionString(cs) {
     return parts.join(', ');
 }
 
+export function createCharacterEssence(character) {
+    if (!character) return '';
+    const name = character.name || 'Unnamed';
+    const age = character.age ? `${character.age}-year-old` : '';
+    const ethnicity = character.ethnicity || '';
+    const gender = character.gender || '';
+    const face = [character.face_shape].filter(Boolean).join(' ');
+    const eyes = character.eye_color ? `${character.eye_color} eyes` : '';
+    const hair = [character.hair_style, character.hair_color].filter(Boolean).join(' ');
+    const skin = character.skin_tone ? `${character.skin_tone} skin` : '';
+    const vibe = character.vibe || character.notes || '';
+    const outfit = [character.clothing_style, character.specific_outfit].filter(Boolean).join(' ');
+    const extras = [character.unique_features, character.makeup_style].filter(Boolean).join(', ');
+    const parts = [age, ethnicity, gender].filter(Boolean).join(' ');
+    const physical = [face, eyes, hair, skin].filter(Boolean).join(', ');
+    const clothing = outfit ? `wearing ${outfit}` : '';
+    const extra = extras ? `notable features: ${extras}` : '';
+    return `${name}: ${parts}. ${physical}. ${clothing}. ${extra}. Natural micro-expressions, coherent facial proportions, consistent look across shots.`.replace(/\s+/g,' ').trim();
+}
+
+export function chooseShotFeatures(visualIdea, allFeatures) {
+    if (!Array.isArray(allFeatures) || allFeatures.length === 0) return [];
+    const text = (visualIdea||'').toLowerCase();
+    const buckets = [
+        {key:'handle', words:['handle','grip','pegangan'], picks:['handle','grip']},
+        {key:'interior', words:['interior','inside','non-stick','coating'], picks:['non-stick','speckled']},
+        {key:'rim', words:['rim','edge','lip'], picks:['rim','edge']},
+        {key:'body', words:['body','exterior','bowl','round','curved'], picks:['bowl','curved','exterior']}
+    ];
+    const chosen = new Set();
+    buckets.forEach(b=>{ if (b.words.some(w=>text.includes(w))) { allFeatures.forEach(f=>{ if (b.picks.some(p=>f.toLowerCase().includes(p))) chosen.add(f); }); } });
+    if (chosen.size < 3) { allFeatures.slice(0,4).forEach(f=>chosen.add(f)); }
+    return Array.from(chosen).slice(0,4);
+}
+
 // Function to handle A/B variant usage with visual prompt regeneration
 window.useVariant = async function(partKey, variantIndex) {
     // Find the card element that contains this variant

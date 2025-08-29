@@ -633,7 +633,7 @@ Return strictly JSON with structure:
   "shots": [
     {
       "visual_idea": "concise cinematic description in English",
-      "text_to_image_prompt": "very detailed T2I prompt in English (use <char-desc> for physical details only). IMPORTANT: Begin with PRODUCT VISUAL DNA tokens if provided: brand=..., model=..., must_keep_colors=HEX|HEX|HEX.",
+      "text_to_image_prompt": "very detailed T2I prompt in English (use <char-desc> for physical details only). END the prompt with compact blocks: ID[brand/model/colors; features=...] | CAM[...] | LIGHT[...] | MOOD[...].",
       "image_to_video_prompt": "I2V prompt in English (movement only, no physical descriptions)",
       "negative_prompt": "negative prompt for image quality"
     }
@@ -665,7 +665,7 @@ Kembalikan JSON murni dengan struktur:
   "shots": [
     {
       "visual_idea": "deskripsi sinematik singkat dalam Bahasa Indonesia",
-      "text_to_image_prompt": "prompt T2I sangat detail dalam Bahasa Inggris (gunakan <char-desc> hanya untuk deskripsi fisik). PENTING: Awali dengan token VISUAL DNA jika tersedia: brand=..., model=..., must_keep_colors=HEX|HEX|HEX.",
+      "text_to_image_prompt": "prompt T2I sangat detail dalam Bahasa Inggris (gunakan <char-desc> hanya untuk deskripsi fisik). AKHIRI dengan blok ringkas: ID[brand/model/colors; features=...] | CAM[...] | LIGHT[...] | MOOD[...].",
       "image_to_video_prompt": "prompt I2V dalam Bahasa Inggris (khusus pergerakan, tanpa deskripsi fisik)",
       "negative_prompt": "negative prompt untuk kualitas gambar"
     }
