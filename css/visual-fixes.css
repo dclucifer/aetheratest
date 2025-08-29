@@ -789,12 +789,15 @@ header {
 
 /* Image Cropper modal adjustments */
 #image-cropper-modal .modal-content {
-  margin-top: 80px !important;
-  max-height: calc(92vh - 80px) !important;
+  margin-top: 64px !important;
+  max-height: 90vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
 }
 #image-cropper-modal img#cropper-target {
-  max-height: 70vh;
+  max-height: 60vh;
+  width: 100%;
   display: block;
 }
 #image-cropper-modal { z-index: 200 !important; }
-#image-cropper-modal .modal-content { overflow: hidden !important; }
