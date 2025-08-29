@@ -881,9 +881,17 @@ const visualDna = elements.visualDnaStorage.textContent;
         localStorage.removeItem('productColorPalette');
     }
 
-    const finalInstruction = currentLanguage === 'en'
+    let finalInstruction = currentLanguage === 'en'
         ? `${base}\n**Additional Instructions:** Create a script consisting of "hook", "body", and "cta". Each section must have script text and an array containing 2-3 'shots' (micro-shots). If the visual strategy is 'Character Sheet', define one or more characters in 'character_sheet'.`
         : `${base}\n**Instruksi Tambahan:** Buat skrip yang terdiri dari "hook", "body", dan "cta". Setiap bagian harus memiliki teks skrip dan sebuah array berisi 2-3 'shots' (micro-shots). Jika strategi visual adalah 'Character Sheet', definisikan satu atau lebih karakter di 'character_sheet'.`;
+
+    // Replace character essence placeholder if present
+    try {
+        const essence = localStorage.getItem('direktiva_char_essence') || '';
+        finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE]]', essence);
+    } catch(_) {
+        finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE]]', '');
+    }
     
     return finalInstruction;
 }
