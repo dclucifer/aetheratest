@@ -73,6 +73,7 @@ export async function handleImageUpload(event) {
     let usedBlob = file;
     let objectUrl = '';
     let cropper = null;
+    let firstCropDataUrl = null;
 
     try {
         // Tampilkan modal cropper agar user bisa pilih area produk (opsional)
@@ -105,7 +106,10 @@ export async function handleImageUpload(event) {
                     if (useCrop && cropper) {
                         const canvas = cropper.getCroppedCanvas({ imageSmoothingEnabled: true, imageSmoothingQuality: 'high' });
                         const blob = await new Promise((res) => canvas.toBlob(res, file.type || 'image/jpeg', 0.92));
-                        if (blob) usedBlob = new File([blob], file.name, { type: file.type || 'image/jpeg' });
+                        if (blob) {
+                            firstCropDataUrl = canvas.toDataURL(file.type || 'image/jpeg', 0.92);
+                            usedBlob = new File([blob], file.name, { type: file.type || 'image/jpeg' });
+                        }
                     }
                 } finally {
                     try { cropper?.destroy(); } catch(_) {}
@@ -144,7 +148,49 @@ export async function handleImageUpload(event) {
         const base64Data = await fileToBase64(usedBlob);
         // Gunakan nama produk sebagai hint fokus (misal "crop tee", "saucepan", dsb.)
         const focusLabel = (elements.inputs.productName.value || '').trim();
-        const analysisResult = await analyzeImageWithAI(base64Data, usedBlob.type, focusLabel);
+        let analysisResult = await analyzeImageWithAI(base64Data, usedBlob.type, focusLabel);
+
+        // Multi-crop optional: jika user ingin menambahkan crop kedua (misal oneset)
+        if (firstCropDataUrl) {
+            const ask = (languageState.current === 'en') ? 'Add second crop for set (bottom/accessory)?' : 'Tambahkan crop kedua untuk set (bawahan/aksesori)?';
+            if (confirm(ask)) {
+                const modal2 = document.getElementById('image-cropper-modal');
+                const img2 = document.getElementById('cropper-target');
+                const use2 = document.getElementById('cropper-use-btn');
+                const skip2 = document.getElementById('cropper-skip-btn');
+                img2.src = objectUrl; // pakai gambar asli
+                modal2.classList.remove('opacity-0', 'pointer-events-none');
+                modal2.querySelector('.modal-content')?.classList.remove('scale-95');
+                await new Promise(r => setTimeout(r, 50));
+                cropper = new window.Cropper(img2, { viewMode:1, movable:true, zoomable:true, dragMode:'move', autoCropArea:0.88, background:false, responsive:true });
+                const usedSecond = await new Promise((resolve)=>{
+                    const onUse2 = ()=>{ use2.removeEventListener('click', onUse2); skip2.removeEventListener('click', onSkip2); resolve(true); };
+                    const onSkip2 = ()=>{ use2.removeEventListener('click', onUse2); skip2.removeEventListener('click', onSkip2); resolve(false); };
+                    use2.addEventListener('click', onUse2, { once:true });
+                    skip2.addEventListener('click', onSkip2, { once:true });
+                });
+                if (usedSecond && cropper) {
+                    const canvas2 = cropper.getCroppedCanvas({ imageSmoothingEnabled:true, imageSmoothingQuality:'high' });
+                    const dataUrl2 = canvas2.toDataURL(file.type || 'image/jpeg', 0.92);
+                    try { cropper.destroy(); } catch(_) {}
+                    cropper = null;
+                    modal2.classList.add('opacity-0', 'pointer-events-none');
+                    modal2.querySelector('.modal-content')?.classList.add('scale-95');
+                    const base64Second = dataUrl2.split(',')[1];
+                    const analysis2 = await analyzeImageWithAI(base64Second, usedBlob.type, focusLabel);
+                    // Merge: palette union, keywords concat, features union
+                    const mergedPalette = Array.from(new Set([...(analysisResult.palette||[]), ...(analysis2.palette||[])] )).slice(0,6);
+                    const mergedKw = [analysisResult.keywords, analysis2.keywords].filter(Boolean).join(', ');
+                    const mergedFeatures = Array.from(new Set([...(analysisResult.distinctive_features||[]), ...(analysis2.distinctive_features||[])] ));
+                    analysisResult = { ...analysisResult, palette: mergedPalette, keywords: mergedKw, distinctive_features: mergedFeatures };
+                } else {
+                    try { cropper?.destroy(); } catch(_) {}
+                    cropper = null;
+                    modal2.classList.add('opacity-0', 'pointer-events-none');
+                    modal2.querySelector('.modal-content')?.classList.add('scale-95');
+                }
+            }
+        }
 
         // Jika bukan run terbaru, abaikan hasil ini
         if (runId !== imageAnalysisRunId) return;
@@ -703,6 +749,10 @@ const visualDna = elements.visualDnaStorage.textContent;
         base += currentLanguage === 'en'
             ? `\n- **PRODUCT VISUAL DNA (STRICT IDENTITY LOCK):** ${visualDna}`
             : `\n- **VISUAL DNA PRODUK (KUNCI IDENTITAS KETAT):** ${visualDna}`;
+        const dnaRule = currentLanguage === 'en'
+            ? `\n- For EVERY shot, you MUST explicitly include the Visual DNA tokens inside each text_to_image_prompt. Start each T2I prompt with the tokens (brand=..., model=..., must_keep_colors=...) before other details. Do NOT rely on memory across shots; restate identity every time.`
+            : `\n- Untuk SETIAP shot, WAJIB menyertakan token Visual DNA di dalam setiap text_to_image_prompt. Mulai setiap prompt T2I dengan token (brand=..., model=..., must_keep_colors=...) sebelum detail lainnya. JANGAN mengandalkan memori antar shot; sebutkan identitas setiap kali.`;
+        base += dnaRule;
     }
 
     if (currentMode === 'carousel') {
