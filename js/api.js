@@ -94,58 +94,77 @@ export async function analyzeImageWithAI(base64Data, mimeType, focusLabel = '') 
 
 const DEFAULT_TIMEOUT_MS = Number(localStorage.getItem('direktiva_timeout_ms')) || 120000;
 export async function callGeminiAPI(prompt, schema, temperature, timeoutMs = DEFAULT_TIMEOUT_MS) {
-    try {
-        // Siapkan headers dasar
-        const headers = { 'Content-Type': 'application/json' };
-
-        // Sertakan token Supabase jika tersedia, namun jangan blokir jika tidak ada
+    // Helper notify tanpa hard dependency
+    let _notify;
+    const notify = async (msg, type = 'warning', dur = 4000) => {
         try {
-            // Hindari memicu refresh token saat offline; hanya gunakan session jika tersedia tanpa network call
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session?.access_token) {
-                headers['Authorization'] = `Bearer ${session.access_token}`;
+            if (!_notify) { const m = await import('./utils.js'); _notify = m.showNotification; }
+            _notify(msg, type, dur);
+        } catch (_) {}
+    };
+    const delay = (ms) => new Promise(r => setTimeout(r, ms));
+
+    // Siapkan headers dasar
+    const headers = { 'Content-Type': 'application/json' };
+
+    // Sertakan token Supabase jika tersedia, namun jangan blokir jika tidak ada
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`;
+    } catch (_) {}
+
+    // Sertakan API key pengguna jika disetel di Settings
+    const userApiKey = localStorage.getItem('direktiva_user_api_key');
+    if (userApiKey) headers['x-user-api-key'] = userApiKey;
+
+    const maxAttempts = Math.max(1, Number(localStorage.getItem('direktiva_retry_max')) || 3);
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+            const controller = new AbortController();
+            const to = setTimeout(() => controller.abort(new DOMException('timeout','AbortError')), timeoutMs);
+            const response = await fetch('/api/generateScript', {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ prompt, schema, temperature }),
+                signal: controller.signal
+            });
+            clearTimeout(to);
+
+            if (!response.ok) {
+                let message = t('notification_api_error') || 'Terjadi kesalahan pada server.';
+                let retriable = false;
+                try {
+                    const errorData = await response.json();
+                    if (errorData?.error) message = errorData.error;
+                } catch (_) {}
+                const msgLower = String(message || '').toLowerCase();
+                retriable = response.status === 429 || response.status === 503 || /overloaded|exhausted|busy|quota|temporar/i.test(msgLower);
+                if (retriable && attempt < maxAttempts) {
+                    const backoffMs = Math.min(15000, 1500 * Math.pow(2, attempt - 1) + Math.floor(Math.random() * 500));
+                    await notify((t('model_overloaded_retry') || 'Model penuh, mencoba lagi...') + ` (${attempt}/${maxAttempts})`);
+                    await delay(backoffMs);
+                    continue;
+                }
+                throw new Error(message);
             }
-        } catch (_) {
-            // Abaikan jika Supabase tidak tersedia atau belum login (mode lokal)
+            return await response.json();
+        } catch (error) {
+            if (error?.name === 'AbortError') {
+                const secs = Math.round((timeoutMs||DEFAULT_TIMEOUT_MS)/1000);
+                const e = new Error(`Request timeout after ${secs}s. Server lambat atau antrian penuh—coba lagi atau naikkan timeout.`);
+                e.code = 'TIMEOUT';
+                throw e;
+            }
+            const msgLower = String(error?.message || '').toLowerCase();
+            const retriable = /overloaded|exhausted|busy|temporar|network|fetch/i.test(msgLower) && attempt < maxAttempts;
+            if (retriable) {
+                const backoffMs = Math.min(15000, 1500 * Math.pow(2, attempt - 1) + Math.floor(Math.random() * 500));
+                await notify((t('model_overloaded_retry') || 'Model penuh, mencoba lagi...') + ` (${attempt}/${maxAttempts})`);
+                await delay(backoffMs);
+                continue;
+            }
+            console.error('Error calling backend function:', error);
+            throw error;
         }
-
-        // Sertakan API key pengguna jika disetel di Settings
-        const userApiKey = localStorage.getItem('direktiva_user_api_key');
-        if (userApiKey) {
-            headers['x-user-api-key'] = userApiKey;
-        }
-
-        const controller = new AbortController();
-        const to = setTimeout(() => controller.abort(new DOMException('timeout','AbortError')), timeoutMs);
-
-        const response = await fetch('/api/generateScript', {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ prompt, schema, temperature }),
-            signal: controller.signal
-        });
-
-        clearTimeout(to);
-
-        if (!response.ok) {
-            // Coba parsing JSON error, fallback ke pesan default/i18n
-            let message = t('notification_api_error') || 'Terjadi kesalahan pada server.';
-            try {
-                const errorData = await response.json();
-                if (errorData?.error) message = errorData.error;
-            } catch (_) { /* ignore parse error */ }
-            throw new Error(message);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Error calling backend function:", error);
-        if (error?.name === 'AbortError') {
-        const secs = Math.round((timeoutMs||DEFAULT_TIMEOUT_MS)/1000);
-        const e = new Error(`Request timeout after ${secs}s. Server lambat atau antrian penuh—coba lagi atau naikkan timeout.`);
-        e.code = 'TIMEOUT';
-        throw e;
-        }
-        throw error;
     }
 }

@@ -373,8 +373,17 @@ export async function handleGenerate() {
           }
         }
 
-        // Finalize hasil sesuai requestedCount
-        const finalized = Array.from(uniques.values()).slice(0, requestedCount);
+        // Finalize hasil sesuai requestedCount, minta top-up kalau kurang
+        let finalized = Array.from(uniques.values()).slice(0, requestedCount);
+        if (finalized.length < requestedCount) {
+            const missing = requestedCount - finalized.length;
+            try {
+                const more = await callGeminiAPI(prompt + (languageState.current==='en' ? '\nReturn EXACTLY the requested number of scripts.' : '\nKembalikan JUMLAH skrip sesuai yang diminta.'), getResponseSchema(missing), Math.min(1,(temperature||0.7)+0.05), timeoutMs);
+                if (Array.isArray(more)) {
+                    more.forEach(r=>{ const sig = signatureOf(r); if (!uniques.has(sig) && finalized.length < requestedCount) { uniques.set(sig, r); finalized.push(r); } });
+                }
+            } catch(_) {}
+        }
         // Sanitize and enforce DNA prefix in every T2I prompt
         const visualDnaRaw = elements.visualDnaStorage.textContent || '';
         // Use canonical tokens from localStorage when available to avoid drift
@@ -410,6 +419,15 @@ export async function handleGenerate() {
         };
         const withDna = (text, visualIdea = '') => {
             const core = stripTokens(text);
+            // Inject <char-desc> with character essence when character is visible
+            let enrichedCore = core;
+            try {
+                const essence = localStorage.getItem('direktiva_char_essence') || '';
+                if (essence && isCharacterVisible(visualIdea, core)) {
+                    enrichedCore = enrichedCore.replace(/<\/?char-desc>[^]*?<\/char-desc>/gi, '').trim();
+                    enrichedCore = `<char-desc>${essence}</char-desc> ${enrichedCore}`.trim();
+                }
+            } catch(_) {}
         
             // --- BAGIAN 1: Membangun Blok ID Produk (Logika ini sebagian besar sama) ---
             let productIdBlock = '';
@@ -425,7 +443,7 @@ export async function handleGenerate() {
                 const productName = elements.inputs?.productName?.value || '';
         
                 // Hanya tambahkan blok ID jika relevan dengan visual
-                if (shouldAttachProductId(visualIdea, productName, canon?.brand || '', core)) {
+                if (shouldAttachProductId(visualIdea, productName, canon?.brand || '', enrichedCore)) {
                     productIdBlock = ` | ${tempIdBlock}`;
                 }
             }
@@ -444,7 +462,7 @@ export async function handleGenerate() {
         
             // --- BAGIAN 3: Menggabungkan semuanya ---
             // Gabungkan teks inti, blok ID produk, dan blok ID karakter
-            return `${core}${productIdBlock}${charBlock}`;
+            return `${enrichedCore}${productIdBlock}${charBlock}`;
         };
         const ensureDnaInScript = (sc) => {
             try {
