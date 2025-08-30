@@ -636,24 +636,39 @@ export function chooseShotFeatures(visualIdea, allFeatures) {
     return Array.from(chosen).slice(0,4);
 }
 
-export function shouldAttachProductId(visualIdea, productName = '', brandGuess = '') {
+export function shouldAttachProductId(visualIdea, productName = '', brandGuess = '', t2iTextOpt = '') {
     const s = (visualIdea || '').toLowerCase();
-    if (!s) return true;
+    const t2i = (t2iTextOpt || '').toLowerCase();
+    const source = `${s}\n${t2i}`;
+    // Broaden competitor/before detection for EN+ID
     const negatives = [
-        'before', 'sebelum', 'competitor', 'kompetitor', 'generic', 'murahan', 'bukan',
-        'old', 'worn', 'damaged', 'dirty', 'non-brand', 'non brand', 'nonbrand',
-        'cheap', 'brand lain', 'produk lain'
+        'before','sebelum','competitor','kompetitor','competitor\'s','brand lain','produk lain','bukan produk kita',
+        'generic','murahan','non-brand','non brand','nonbrand','tanpa merek','tanpa brand','no brand','unbranded',
+        'old','lama','worn','rusak','dented','scratched','kotor','dirty','greasy','lengket','sticky','gosong','burnt','stuck',
+        'messy','berantakan','bad condition','poor condition'
     ];
-    // Build positives from dynamic context
     const norm = (t)=> (t||'').toLowerCase().replace(/[^a-z0-9\s-]/g,' ').trim();
     const nameTokens = norm(productName).split(/\s+/).filter(w=>w.length>2);
     const brandTokens = norm(brandGuess).split(/\s+/).filter(w=>w.length>1);
-    const positives = ['our', 'produk kita', 'brand kita', 'kita', 'milik kita']
+    const positives = ['our','produk kita','brand kita','milik kita','kita','our brand','with our product']
         .concat(nameTokens).concat(brandTokens);
-    const hasNeg = negatives.some(k => s.includes(k));
-    const hasPos = positives.some(k => s.includes(k));
+    const hasNeg = negatives.some(k => source.includes(k));
+    const hasPos = positives.some(k => source.includes(k));
     if (hasNeg && !hasPos) return false;
     return true;
+}
+
+export function isCharacterVisible(visualIdea, t2iTextOpt = '') {
+    const s = `${visualIdea||''}\n${t2iTextOpt||''}`.toLowerCase();
+    const personHints = [
+        'face','portrait','model','person','character','woman','man','girl','boy','actor','actress',
+        'smile','eyes','eye','hair','skin','elena','he ','she ','her ','his '
+    ];
+    const handsOnlyHints = ['hands only','only hands','close-up hands','tangan saja','hanya tangan'];
+    const mentionsPerson = personHints.some(k => s.includes(k));
+    const handsOnly = handsOnlyHints.some(k => s.includes(k));
+    if (handsOnly && !mentionsPerson) return false;
+    return mentionsPerson; // true if any person cue exists
 }
 
 // Function to handle A/B variant usage with visual prompt regeneration

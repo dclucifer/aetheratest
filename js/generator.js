@@ -1,6 +1,6 @@
 // js/generator.js
 import { PLATFORM_CONFIG, buildPlatformPlan } from './platform.config.js';
-import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState, createCharacterEssence, chooseShotFeatures, shouldAttachProductId, createCharacterTokens } from './utils.js';
+import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState, createCharacterEssence, chooseShotFeatures, shouldAttachProductId, createCharacterTokens, isCharacterVisible } from './utils.js';
 import { t } from './i18n.js';
 import { analyzeImageWithAI, callGeminiAPI } from './api.js';
 import { getPersonas } from './persona.js';
@@ -74,6 +74,8 @@ export async function handleImageUpload(event) {
     let objectUrl = '';
     let cropper = null;
     let firstCropDataUrl = null;
+    let multiMode = false;
+    const multiAreas = [];
 
     try {
         // Tampilkan modal cropper agar user bisa pilih area produk (opsional)
@@ -89,6 +91,37 @@ export async function handleImageUpload(event) {
             modal.classList.remove('opacity-0', 'pointer-events-none');
             modal.querySelector('.modal-content')?.classList.remove('scale-95');
 
+            // LANGKAH BARU: Pilih mode Single atau Multi sebelum cropping
+            const chooser = document.createElement('div');
+            chooser.style.display = 'flex';
+            chooser.style.gap = '8px';
+            chooser.style.margin = '8px 0';
+            chooser.style.flexWrap = 'wrap';
+            const chooseText = document.createElement('div');
+            chooseText.className = 'text-xs text-gray-300';
+            chooseText.textContent = (languageState.current==='en')
+              ? 'Crop mode: choose Single product or Multi areas'
+              : 'Mode crop: pilih Satu produk atau Multi area';
+            const btnSingle = document.createElement('button');
+            btnSingle.type = 'button';
+            btnSingle.className = 'px-2 py-1 rounded bg-blue-600 text-white text-xs';
+            btnSingle.textContent = (languageState.current==='en') ? 'Single Crop' : 'Satu Produk';
+            const btnMulti = document.createElement('button');
+            btnMulti.type = 'button';
+            btnMulti.className = 'px-2 py-1 rounded bg-emerald-600 text-white text-xs';
+            btnMulti.textContent = (languageState.current==='en') ? 'Multi Crop' : 'Multi Crop';
+            chooser.append(chooseText, btnSingle, btnMulti);
+            const contentNode = modal.querySelector('.modal-content') || modal;
+            contentNode.insertBefore(chooser, contentNode.firstChild);
+
+            await new Promise((resolve) => {
+                const pick = (isMulti) => { multiMode = !!isMulti; btnSingle.removeEventListener('click', onSingle); btnMulti.removeEventListener('click', onMulti); chooser.remove(); resolve(); };
+                const onSingle = ()=> pick(false);
+                const onMulti = ()=> pick(true);
+                btnSingle.addEventListener('click', onSingle, { once:true });
+                btnMulti.addEventListener('click', onMulti, { once:true });
+            });
+
             await new Promise((resolve) => setTimeout(resolve, 50));
             try { cropper?.destroy(); } catch(_) {}
             cropper = new window.Cropper(imgEl, {
@@ -101,40 +134,55 @@ export async function handleImageUpload(event) {
                 responsive: true
             });
 
-            const finalize = async (useCrop) => {
-                try {
-                    if (useCrop && cropper) {
-                        const canvas = cropper.getCroppedCanvas({ imageSmoothingEnabled: true, imageSmoothingQuality: 'high' });
-                        const blob = await new Promise((res) => canvas.toBlob(res, file.type || 'image/jpeg', 0.92));
-                        if (blob) {
-                            firstCropDataUrl = canvas.toDataURL(file.type || 'image/jpeg', 0.92);
-                            usedBlob = new File([blob], file.name, { type: file.type || 'image/jpeg' });
-                        }
-                    }
-                } finally {
-                    try { cropper?.destroy(); } catch(_) {}
-                    cropper = null;
-                    modal.classList.add('opacity-0', 'pointer-events-none');
-                    try { modal.querySelector('.modal-content').classList.add('scale-95'); } catch(_) {}
+            // Sesuaikan label tombol untuk mode
+            try {
+                if (multiMode) {
+                    useBtn.textContent = (languageState.current==='en') ? 'Add Area' : 'Tambah Area';
+                    skipBtn.textContent = (languageState.current==='en') ? 'Done' : 'Selesai';
+                } else {
+                    useBtn.textContent = (languageState.current==='en') ? 'Use Crop' : 'Gunakan Crop';
+                    skipBtn.textContent = (languageState.current==='en') ? 'Continue without Crop' : 'Lanjut tanpa crop';
                 }
+            } catch(_) {}
+
+            const closeModal = () => {
+                try { cropper?.destroy(); } catch(_) {}
+                cropper = null;
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                try { modal.querySelector('.modal-content').classList.add('scale-95'); } catch(_) {}
             };
 
             await new Promise((resolve) => {
-                const onUse = async () => { 
+                const onUse = async () => {
+                    if (!cropper) return;
+                    const canvas = cropper.getCroppedCanvas({ imageSmoothingEnabled: true, imageSmoothingQuality: 'high' });
+                    const blob = await new Promise((res) => canvas.toBlob(res, file.type || 'image/jpeg', 0.92));
+                    if (blob) {
+                        const dataUrl = canvas.toDataURL(file.type || 'image/jpeg', 0.92);
+                        if (!firstCropDataUrl) firstCropDataUrl = dataUrl;
+                        if (multiMode) {
+                            multiAreas.push(dataUrl);
+                            // Tanda kecil sukses
+                            try { showNotification((languageState.current==='en')?'Area added':'Area ditambahkan','success',1500); } catch(_){}
+                            return; // tetap di modal untuk area berikutnya
+                        } else {
+                            usedBlob = new File([blob], file.name, { type: file.type || 'image/jpeg' });
+                            useBtn.removeEventListener('click', onUse);
+                            skipBtn.removeEventListener('click', onSkip);
+                            closeModal();
+                            resolve();
+                        }
+                    }
+                };
+                const onSkip = async () => {
+                    // Selesai (multi) atau lanjut tanpa crop (single)
                     useBtn.removeEventListener('click', onUse);
                     skipBtn.removeEventListener('click', onSkip);
-                    await finalize(true); 
-                    resolve(); 
+                    closeModal();
+                    resolve();
                 };
-                const onSkip = async () => { 
-                    useBtn.removeEventListener('click', onUse);
-                    skipBtn.removeEventListener('click', onSkip);
-                    await finalize(false); 
-                    resolve(); 
-                };
-                // Pastikan tombol tersedia
-                if (useBtn) useBtn.addEventListener('click', onUse, { once: true });
-                if (skipBtn) skipBtn.addEventListener('click', onSkip, { once: true });
+                if (useBtn) useBtn.addEventListener('click', onUse);
+                if (skipBtn) skipBtn.addEventListener('click', onSkip);
             });
         }
 
@@ -145,54 +193,33 @@ export async function handleImageUpload(event) {
         };
         reader.readAsDataURL(usedBlob);
 
-        const base64Data = await fileToBase64(usedBlob);
-        // Gunakan nama produk sebagai hint fokus (misal "crop tee", "saucepan", dsb.)
+        // Siapkan analisis: single crop (usedBlob) atau multi crop (multiAreas)
+        let analysisResult = null;
         const focusLabel = (elements.inputs.productName.value || '').trim();
-        let analysisResult = await analyzeImageWithAI(base64Data, usedBlob.type, focusLabel);
-
-        // Multi-crop optional: jika user ingin menambahkan crop kedua (misal oneset)
-        if (firstCropDataUrl) {
-            const ask = (languageState.current === 'en') ? 'Add second crop for set (bottom/accessory)?' : 'Tambahkan crop kedua untuk set (bawahan/aksesori)?';
-            if (confirm(ask)) {
-                const modal2 = document.getElementById('image-cropper-modal');
-                const img2 = document.getElementById('cropper-target');
-                const use2 = document.getElementById('cropper-use-btn');
-                const skip2 = document.getElementById('cropper-skip-btn');
-                img2.src = objectUrl; // pakai gambar asli
-                modal2.classList.remove('opacity-0', 'pointer-events-none');
-                modal2.querySelector('.modal-content')?.classList.remove('scale-95');
-                await new Promise(r => setTimeout(r, 50));
-                cropper = new window.Cropper(img2, { viewMode:1, movable:true, zoomable:true, dragMode:'move', autoCropArea:0.88, background:false, responsive:true });
-                const usedSecond = await new Promise((resolve)=>{
-                    const onUse2 = ()=>{ use2.removeEventListener('click', onUse2); skip2.removeEventListener('click', onSkip2); resolve(true); };
-                    const onSkip2 = ()=>{ use2.removeEventListener('click', onUse2); skip2.removeEventListener('click', onSkip2); resolve(false); };
-                    use2.addEventListener('click', onUse2, { once:true });
-                    skip2.addEventListener('click', onSkip2, { once:true });
-                });
-                if (usedSecond && cropper) {
-                    const canvas2 = cropper.getCroppedCanvas({ imageSmoothingEnabled:true, imageSmoothingQuality:'high' });
-                    const dataUrl2 = canvas2.toDataURL(file.type || 'image/jpeg', 0.92);
-                    try { cropper.destroy(); } catch(_) {}
-                    cropper = null;
-                    modal2.classList.add('opacity-0', 'pointer-events-none');
-                    modal2.querySelector('.modal-content')?.classList.add('scale-95');
-                    const base64Second = dataUrl2.split(',')[1];
-                    const analysis2 = await analyzeImageWithAI(base64Second, usedBlob.type, focusLabel);
-                    // Merge: palette union, keywords concat, features union, prefer brand/model if available on any
-                    const mergedPalette = Array.from(new Set([...(analysisResult.palette||[]), ...(analysis2.palette||[])] )).slice(0,6);
-                    const mergedKw = [analysisResult.keywords, analysis2.keywords].filter(Boolean).join(', ');
-                    const mergedFeatures = Array.from(new Set([...(analysisResult.distinctive_features||[]), ...(analysis2.distinctive_features||[])] ));
-                    const mergedBrand = analysisResult.brand_guess || analysis2.brand_guess || '';
-                    const mergedModel = analysisResult.model_guess || analysis2.model_guess || '';
-                    analysisResult = { ...analysisResult, palette: mergedPalette, keywords: mergedKw, distinctive_features: mergedFeatures, brand_guess: mergedBrand, model_guess: mergedModel };
-                } else {
-                    try { cropper?.destroy(); } catch(_) {}
-                    cropper = null;
-                    modal2.classList.add('opacity-0', 'pointer-events-none');
-                    modal2.querySelector('.modal-content')?.classList.add('scale-95');
-                }
+        if (multiMode && multiAreas.length > 0) {
+            // analisis area pertama
+            const first = multiAreas[0].split(',')[1];
+            analysisResult = await analyzeImageWithAI(first, file.type || 'image/jpeg', focusLabel);
+            // analisis area tambahan dan merge
+            for (let i = 1; i < multiAreas.length; i++) {
+                const bx = multiAreas[i].split(',')[1];
+                const a2 = await analyzeImageWithAI(bx, file.type || 'image/jpeg', focusLabel);
+                const mergedPalette = Array.from(new Set([...(analysisResult.palette||[]), ...(a2.palette||[])] )).slice(0,6);
+                const mergedKw = [analysisResult.keywords, a2.keywords].filter(Boolean).join(', ');
+                const mergedFeatures = Array.from(new Set([...(analysisResult.distinctive_features||[]), ...(a2.distinctive_features||[])] ));
+                const mergedBrand = analysisResult.brand_guess || a2.brand_guess || '';
+                const mergedModel = analysisResult.model_guess || a2.model_guess || '';
+                analysisResult = { ...analysisResult, palette: mergedPalette, keywords: mergedKw, distinctive_features: mergedFeatures, brand_guess: mergedBrand, model_guess: mergedModel };
             }
+            // perlihatkan preview area pertama
+            elements.imagePreview.src = multiAreas[0];
+            elements.imagePreviewContainer.classList.remove('hidden');
+        } else {
+            const base64Data = await fileToBase64(usedBlob);
+            analysisResult = await analyzeImageWithAI(base64Data, usedBlob.type, focusLabel);
         }
+
+        // Hapus confirm lama (multi-crop ditangani di atas)
 
         // Jika bukan run terbaru, abaikan hasil ini
         if (runId !== imageAnalysisRunId) return;
@@ -398,7 +425,7 @@ export async function handleGenerate() {
                 const productName = elements.inputs?.productName?.value || '';
         
                 // Hanya tambahkan blok ID jika relevan dengan visual
-                if (shouldAttachProductId(visualIdea, productName, canon?.brand || '')) {
+                if (shouldAttachProductId(visualIdea, productName, canon?.brand || '', core)) {
                     productIdBlock = ` | ${tempIdBlock}`;
                 }
             }
@@ -408,7 +435,7 @@ export async function handleGenerate() {
             const charId = localStorage.getItem('direktiva_char_id') || '';
             
             // Cek apakah mode visual adalah 'character' dan ID karakter ada
-            if ((localStorage.getItem('visualStrategy') === 'character') && charId) {
+            if ((localStorage.getItem('visualStrategy') === 'character') && charId && isCharacterVisible(visualIdea, core)) {
                 // Untuk karakter, kita langsung sisipkan ID stabilnya.
                 // Kita berasumsi AI sudah diperintahkan untuk membuat deskripsi naratifnya (<char-desc>)
                 // dari prompt utama (constructPrompt).
