@@ -644,14 +644,14 @@ export function shouldAttachProductId(visualIdea, productName = '', brandGuess =
     const negatives = [
         'before','sebelum','competitor','kompetitor','competitor\'s','brand lain','produk lain','bukan produk kita',
         'generic','murahan','non-brand','non brand','nonbrand','tanpa merek','tanpa brand','no brand','unbranded',
-        'old','lama','worn','rusak','dented','scratched','kotor','dirty','greasy','lengket','sticky','gosong','burnt','stuck',
+        'old','lama','worn','rusak','dented','scratched','kotor','dirty','greasy','lengket','sticky','gosong','burnt',
         'messy','berantakan','bad condition','poor condition'
     ];
     const norm = (t)=> (t||'').toLowerCase().replace(/[^a-z0-9\s-]/g,' ').trim();
-    const nameTokens = norm(productName).split(/\s+/).filter(w=>w.length>2);
+    // Hindari memicu ID hanya berdasar nama produk generik; gunakan brand saja sebagai sinyal kuat
     const brandTokens = norm(brandGuess).split(/\s+/).filter(w=>w.length>1);
     const positives = ['our','produk kita','brand kita','milik kita','kita','our brand','with our product']
-        .concat(nameTokens).concat(brandTokens);
+        .concat(brandTokens);
     const hasNeg = negatives.some(k => source.includes(k));
     const hasPos = positives.some(k => source.includes(k));
     if (hasNeg && !hasPos) return false;
