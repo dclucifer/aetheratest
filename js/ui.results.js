@@ -255,6 +255,18 @@ export async function renderResults(scripts) {
         } catch(_) {}
         try { updateGlobalBestBadge(); } catch(e) {}
     }, 50);
+
+    // [AETHERA PIPELINE] show warnings (jika ada)
+    try {
+      const panel = document.getElementById("pipeline-warnings");
+      const first = Array.isArray(scripts) && scripts[0];
+      const warns = first?.__pipeline?.warnings || [];
+      if (panel) {
+        panel.innerHTML = (warns.length ? warns : []).map(
+          w => `<div>⚠️ ${w}</div>`
+        ).join("");
+      }
+    } catch(_) {}
 }
 
 export function renderError(message) {

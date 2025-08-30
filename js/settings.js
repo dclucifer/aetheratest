@@ -127,3 +127,10 @@ export function saveSettings() {
     showNotification(t('notification_settings_saved'));
     updateApiStatus();
 }
+
+window.APP_SETTINGS = window.APP_SETTINGS || {};
+window.APP_SETTINGS.PROMPT_PIPELINE = {
+  ENABLED: true,
+  // Gaya kalimat default (tidak mengunci vendor API):
+  DEFAULT_T2I_MODEL: "imagen" // 'auto'|'imagen'|'gemini'|'imagefx'|'flux'|'leonardo'
+};

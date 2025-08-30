@@ -9,6 +9,7 @@ import { DEFAULT_SYSTEM_PROMPT, ENGLISH_SYSTEM_PROMPT } from './settings.js';
 import { setScripts } from './state.js';
 import { getAdditionalAssetsResponseSchema } from './generator.schema.js';
 import { HooksCtaRegistry } from './hooks-cta-loader.js';
+import { applyPromptPipeline } from "./pipeline/index.js";
 
 export let visualStrategy = localStorage.getItem('visualStrategy') || 'default';
 export let aspectRatio = localStorage.getItem('aspectRatio') || '9:16';
@@ -455,9 +456,11 @@ export async function handleGenerate() {
             } catch(_) {}
             return sc;
         };
+        const model = (window.APP_SETTINGS?.PROMPT_PIPELINE?.DEFAULT_T2I_MODEL) || "auto";
         const generatedScripts = finalized.map((script, index) => {
-            const sanitized = ensureDnaInScript({ ...script });
-            return { ...sanitized, visual_dna: visualDnaRaw, id: `script-${Date.now()}-${index}` };
+            const { script: upgraded, warnings } = applyPromptPipeline(script, { model });
+            if (warnings?.length) console.warn("[prompt-pipeline warnings]", warnings);
+            return { ...upgraded, visual_dna: visualDnaRaw, id: `script-${Date.now()}-${index}` };
         });
         
         // Gunakan state manager untuk menyimpan skrip dan riwayat
@@ -548,8 +551,8 @@ export function getResponseSchema(count) {
 
     const shotObject = {
         type: "OBJECT",
-        properties: { "visual_idea": { "type": "STRING" }, "prompt_translation_notes": { "type": "STRING", "description": "Briefly explain how the text_to_image_prompt accurately translates the visual_idea, especially the framing and subject." }, "text_to_image_prompt": { "type": "STRING" }, "negative_prompt": { "type": "STRING" }, "suggested_negative_prompt": { "type": "STRING" }, "image_to_video_prompt": { "type": "STRING" }, "camera_directives": { "type": "STRING" }, "lighting_directives": { "type": "STRING" }, "mood_directives": { "type": "STRING" } },
-        required: ["visual_idea", "text_to_image_prompt", "image_to_video_prompt"]
+        properties: { "visual_idea": { "type": "STRING" }, "prompt_translation_notes": { "type": "STRING", "description": "Briefly explain how the text_to_image_prompt accurately translates the visual_idea, especially the framing and subject." }, "text_to_image_prompt": { "type": "STRING" }, "negative_prompt": { "type": "STRING", "description": "Contextual negatives for this shot" }, "suggested_negative_prompt": { "type": "STRING" }, "image_to_video_prompt": { "type": "STRING" }, "camera_directives": { "type": "STRING" }, "lighting_directives": { "type": "STRING" }, "mood_directives": { "type": "STRING" } },
+        required: ["visual_idea", "text_to_image_prompt", "image_to_video_prompt", "negative_prompt"]
     };
     const scriptPartObject = {
         type: "OBJECT",
