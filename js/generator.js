@@ -1,6 +1,6 @@
 // js/generator.js
 import { PLATFORM_CONFIG, buildPlatformPlan } from './platform.config.js';
-import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState, createCharacterEssence, chooseShotFeatures } from './utils.js';
+import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState, createCharacterEssence, chooseShotFeatures, shouldAttachProductId } from './utils.js';
 import { t } from './i18n.js';
 import { analyzeImageWithAI, callGeminiAPI } from './api.js';
 import { getPersonas } from './persona.js';
@@ -392,9 +392,8 @@ export async function handleGenerate() {
             const feats = dyn || featuresStr;
             const idBlock = `ID[${dna}${feats ? `; features=${feats}` : ''}]`;
             // Guard: if visualIdea clearly negates the product presence (e.g., old/non-brand pan), drop ID block
-            const idea = (visualIdea||'').toLowerCase();
-            const negate = /(old|generic|non[-\s]?brand|non[-\s]?tifale)/.test(idea);
-            return negate ? core : `${core} | ${idBlock}`;
+            const productName = elements.inputs?.productName?.value || '';
+            return shouldAttachProductId(visualIdea, productName, canon?.brand || '') ? `${core} | ${idBlock}` : core;
         };
         const ensureDnaInScript = (sc) => {
             try {

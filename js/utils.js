@@ -604,14 +604,7 @@ export function createCharacterEssence(character) {
     const clothing = outfit ? `wearing ${outfit}` : '';
     const extra = extras ? `notable features: ${extras}` : '';
     // Simple normalization to keep English phrasing
-    const normalize = (s) => {
-        return s
-          .replace(/indonesia\s*korea/gi, 'Indonesian-Korean')
-          .replace(/indonesia/gi, 'Indonesian')
-          .replace(/korea/gi, 'Korean')
-          .replace(/langsing/gi, 'slender')
-          .replace(/kulit\s*putih/gi, 'fair skin');
-    };
+    const normalize = (s) => s; // keep user-provided demonyms as-is for global support
     ethnicity = normalize(ethnicity);
     const essence = `${name}: ${parts}. ${physical}. ${clothing}. ${extra}. Natural micro-expressions, coherent facial proportions, consistent look across shots.`
       .replace(/\s+/g,' ').trim();
@@ -631,6 +624,26 @@ export function chooseShotFeatures(visualIdea, allFeatures) {
     buckets.forEach(b=>{ if (b.words.some(w=>text.includes(w))) { allFeatures.forEach(f=>{ if (b.picks.some(p=>f.toLowerCase().includes(p))) chosen.add(f); }); } });
     if (chosen.size < 3) { allFeatures.slice(0,4).forEach(f=>chosen.add(f)); }
     return Array.from(chosen).slice(0,4);
+}
+
+export function shouldAttachProductId(visualIdea, productName = '', brandGuess = '') {
+    const s = (visualIdea || '').toLowerCase();
+    if (!s) return true;
+    const negatives = [
+        'before', 'sebelum', 'competitor', 'kompetitor', 'generic', 'murahan', 'bukan',
+        'old', 'worn', 'damaged', 'dirty', 'non-brand', 'non brand', 'nonbrand',
+        'cheap', 'brand lain', 'produk lain'
+    ];
+    // Build positives from dynamic context
+    const norm = (t)=> (t||'').toLowerCase().replace(/[^a-z0-9\s-]/g,' ').trim();
+    const nameTokens = norm(productName).split(/\s+/).filter(w=>w.length>2);
+    const brandTokens = norm(brandGuess).split(/\s+/).filter(w=>w.length>1);
+    const positives = ['our', 'produk kita', 'brand kita', 'kita', 'milik kita']
+        .concat(nameTokens).concat(brandTokens);
+    const hasNeg = negatives.some(k => s.includes(k));
+    const hasPos = positives.some(k => s.includes(k));
+    if (hasNeg && !hasPos) return false;
+    return true;
 }
 
 // Function to handle A/B variant usage with visual prompt regeneration
