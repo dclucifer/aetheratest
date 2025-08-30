@@ -377,6 +377,8 @@ export async function handleGenerate() {
             s = s.replace(/\bbrand\s*=\s*[^,;]+[;,]?\s*/gi,'');
             s = s.replace(/\bmodel\s*=\s*[^,;]+[;,]?\s*/gi,'');
             s = s.replace(/\bmust_keep_colors\s*=\s*[^,;]+[;,]?\s*/gi,'');
+            // Remove any pre-existing ID[...] blocks to prevent duplicates
+            s = s.replace(/\|?\s*ID\[[^\]]*\]\s*/gi, '');
             return s.trim();
         };
         const withDna = (text, visualIdea = '') => {
