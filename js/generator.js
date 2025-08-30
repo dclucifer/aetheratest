@@ -932,6 +932,18 @@ const visualDna = elements.visualDnaStorage.textContent;
             : `\n- Untuk SETIAP shot, sertakan identitas produk sebagai blok ringkas DI AKHIR tiap text_to_image_prompt dengan format ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...]. Jangan mengandalkan memori; sebutkan identitas setiap kali. Jika adegan menyebut kompetitor/sebelum/kotor/lengket/gosong/lama/usang/murahan/tanpa brand, LEWATI ID block.`;
         base += dnaRule;
 
+        // Sinkronisasi visual_idea -> T2I wajib
+        const fidelityRule = currentLanguage === 'en'
+            ? `\n- FIDELITY (REQUIRED): For each shot, the text_to_image_prompt MUST explicitly reflect the subject + action + framing present in visual_idea. Start the prompt with a short one-line English paraphrase of visual_idea (no new ideas), then continue with details. Keep language strictly English.`
+            : `\n- KESESUAIAN (WAJIB): Untuk setiap shot, text_to_image_prompt HARUS secara eksplisit mencerminkan subjek + aksi + framing dari visual_idea. Mulai prompt dengan satu kalimat ringkas berbahasa Inggris yang memparafrasekan visual_idea (tanpa menambah ide baru), lalu lanjutkan detail. Bahasa untuk prompt gambar HARUS Inggris.`;
+        base += fidelityRule;
+
+        // Aturan karakter supaya selalu konsisten
+        const charRule = currentLanguage === 'en'
+            ? `\n- CHARACTER CONSISTENCY: If visual strategy is 'Character Sheet' and the character is visible, BEGIN text_to_image_prompt with <char-desc>[[CHAR_ESSENCE]]</char-desc>. Do NOT include <char-desc> in image_to_video_prompt.`
+            : `\n- KONSISTENSI KARAKTER: Jika strategi visual 'Character Sheet' dan karakter terlihat, AWALI text_to_image_prompt dengan <char-desc>[[CHAR_ESSENCE]]</char-desc>. JANGAN memakai <char-desc> di image_to_video_prompt.`;
+        base += charRule;
+
         const cineRule = currentLanguage === 'en'
             ? `\n- CINEMATIC BLOCKS (REQUIRED): At the END of each text_to_image_prompt, after ID[…], append three compact blocks to set style: CAM[lens & framing], LIGHT[key/fill/rim & quality], MOOD[emotional tone]. Keep them short, e.g., CAM[50mm macro, product close-up, tripod, eye-level] | LIGHT[softbox key 45°, bounce fill 1/3, specular highlights, clean BG] | MOOD[clean, confident].`
             : `\n- BLOK SINEMATIK (WAJIB): Di AKHIR setiap text_to_image_prompt, setelah ID[…], tambahkan tiga blok ringkas untuk gaya: CAM[lensa & framing], LIGHT[key/fill/rim & kualitas], MOOD[nuansa emosi]. Contoh singkat: CAM[50mm macro, close-up produk, tripod, eye-level] | LIGHT[softbox 45°, bounce fill 1/3, specular highlights, background bersih] | MOOD[clean, confident].`;
