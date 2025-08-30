@@ -409,10 +409,15 @@ export async function handleGenerate() {
         const stripTokens = (text) => {
             if (!text) return '';
             let s = String(text);
+            // Remove noisy tokens
             s = s.replace(/^\((?:brand|model|must_keep_colors)[^)]*\)\s*/i,'');
             s = s.replace(/\bbrand\s*=\s*[^,;]+[;,]?\s*/gi,'');
             s = s.replace(/\bmodel\s*=\s*[^,;]+[;,]?\s*/gi,'');
             s = s.replace(/\bmust_keep_colors\s*=\s*[^,;]+[;,]?\s*/gi,'');
+            s = s.replace(/\bCAM\[[^\]]*\]\s*\|?/gi,'');
+            s = s.replace(/\bLIGHT\[[^\]]*\]\s*\|?/gi,'');
+            s = s.replace(/\bMOOD\[[^\]]*\]\s*\|?/gi,'');
+            s = s.replace(/\bcharid\[[^\]]*\]/gi,'');
             // Remove any pre-existing ID[...] blocks to prevent duplicates
             s = s.replace(/\|?\s*ID\[[^\]]*\]\s*/gi, '');
             return s.trim();
@@ -448,21 +453,12 @@ export async function handleGenerate() {
                 }
             }
         
-            // --- BAGIAN 2: Membangun Blok ID Karakter (Logika BARU) ---
-            let charBlock = '';
-            const charId = localStorage.getItem('direktiva_char_id') || '';
-            
-            // Cek apakah mode visual adalah 'character' dan ID karakter ada
-            if ((localStorage.getItem('visualStrategy') === 'character') && charId) {
-                // Untuk karakter, kita langsung sisipkan ID stabilnya.
-                // Kita berasumsi AI sudah diperintahkan untuk membuat deskripsi naratifnya (<char-desc>)
-                // dari prompt utama (constructPrompt).
-                charBlock = ` ${charId}`; // perhatikan spasi di depan
-            }
+            // --- BAGIAN 2: Tidak lagi menyisipkan charID ke T2I (cukup <char-desc>) ---
+            const charBlock = '';
         
             // --- BAGIAN 3: Menggabungkan semuanya ---
             // Gabungkan teks inti, blok ID produk, dan blok ID karakter
-            return `${enrichedCore}${productIdBlock}${charBlock}`;
+            return `${enrichedCore}${productIdBlock}`;
         };
         const ensureDnaInScript = (sc) => {
             try {
@@ -928,8 +924,8 @@ const visualDna = elements.visualDnaStorage.textContent;
             ? `\n- **PRODUCT VISUAL DNA:** ${visualDna}`
             : `\n- **VISUAL DNA PRODUK:** ${visualDna}`;
         const dnaRule = currentLanguage === 'en'
-            ? `\n- For EVERY shot, include product identity as a compact trailing block at the END of each text_to_image_prompt in the format ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...]. Do NOT rely on memory; restate identity every time. If the scene describes competitor/before/messy/dirty/greasy/sticky/burnt/old/worn/cheap/unbranded, SKIP the ID block.`
-            : `\n- Untuk SETIAP shot, sertakan identitas produk sebagai blok ringkas DI AKHIR tiap text_to_image_prompt dengan format ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...]. Jangan mengandalkan memori; sebutkan identitas setiap kali. Jika adegan menyebut kompetitor/sebelum/kotor/lengket/gosong/lama/usang/murahan/tanpa brand, LEWATI ID block.`;
+            ? `\n- At the END of each text_to_image_prompt, optionally append ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...] ONLY if the scene clearly depicts OUR product (not competitor/before/messy/dirty/greasy/sticky/burnt/old/worn/unbranded).`
+            : `\n- Di AKHIR tiap text_to_image_prompt, tambahkan ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...] HANYA jika adegan jelas memperlihatkan produk KITA (bukan kompetitor/sebelum/kotor/lengket/gosong/lama/usang/tanpa brand).`;
         base += dnaRule;
 
         // Sinkronisasi visual_idea -> T2I wajib
@@ -938,16 +934,13 @@ const visualDna = elements.visualDnaStorage.textContent;
             : `\n- KESESUAIAN (WAJIB): Untuk setiap shot, text_to_image_prompt HARUS secara eksplisit mencerminkan subjek + aksi + framing dari visual_idea. Mulai prompt dengan satu kalimat ringkas berbahasa Inggris yang memparafrasekan visual_idea (tanpa menambah ide baru), lalu lanjutkan detail. Bahasa untuk prompt gambar HARUS Inggris.`;
         base += fidelityRule;
 
-        // Aturan karakter supaya selalu konsisten
+        // Konsistensi karakter (tanpa charID)
         const charRule = currentLanguage === 'en'
-            ? `\n- CHARACTER CONSISTENCY: If visual strategy is 'Character Sheet' and the character is visible, BEGIN text_to_image_prompt with <char-desc>[[CHAR_ESSENCE]]</char-desc>. Do NOT include <char-desc> in image_to_video_prompt.`
-            : `\n- KONSISTENSI KARAKTER: Jika strategi visual 'Character Sheet' dan karakter terlihat, AWALI text_to_image_prompt dengan <char-desc>[[CHAR_ESSENCE]]</char-desc>. JANGAN memakai <char-desc> di image_to_video_prompt.`;
+            ? `\n- CHARACTER CONSISTENCY: If visual strategy is 'Character Sheet', BEGIN text_to_image_prompt with <char-desc>[[CHAR_ESSENCE]]</char-desc>. Do NOT include <char-desc> in image_to_video_prompt.`
+            : `\n- KONSISTENSI KARAKTER: Jika strategi visual 'Character Sheet', AWALI text_to_image_prompt dengan <char-desc>[[CHAR_ESSENCE]]</char-desc>. JANGAN pakai <char-desc> pada image_to_video_prompt.`;
         base += charRule;
 
-        const cineRule = currentLanguage === 'en'
-            ? `\n- CINEMATIC BLOCKS (REQUIRED): At the END of each text_to_image_prompt, after ID[…], append three compact blocks to set style: CAM[lens & framing], LIGHT[key/fill/rim & quality], MOOD[emotional tone]. Keep them short, e.g., CAM[50mm macro, product close-up, tripod, eye-level] | LIGHT[softbox key 45°, bounce fill 1/3, specular highlights, clean BG] | MOOD[clean, confident].`
-            : `\n- BLOK SINEMATIK (WAJIB): Di AKHIR setiap text_to_image_prompt, setelah ID[…], tambahkan tiga blok ringkas untuk gaya: CAM[lensa & framing], LIGHT[key/fill/rim & kualitas], MOOD[nuansa emosi]. Contoh singkat: CAM[50mm macro, close-up produk, tripod, eye-level] | LIGHT[softbox 45°, bounce fill 1/3, specular highlights, background bersih] | MOOD[clean, confident].`;
-        base += cineRule;
+        // Hilangkan instruksi blok sinematik agar prompt ringkas dan fokus
     }
 
     if (currentMode === 'carousel') {
