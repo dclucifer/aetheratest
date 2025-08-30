@@ -1,6 +1,6 @@
 // js/ui.results.js (split from ui.js)
 import { t } from './i18n.js'; // You might also need this if not already imported
-import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoadingState, languageState } from './utils.js';
+import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoadingState, languageState, chooseShotFeatures, shouldAttachProductId } from './utils.js';
 import { updateCardContent, initSwiper, createAssetsHTML, createCarouselSlideHTML } from './ui.js';
 import { updateSingleScript, getScripts } from './state.js';
 import { exportPromptPackJSON, exportPromptPackCSV, exportCapCutSRT, exportCapCutCSV } from './download.js';
@@ -406,7 +406,7 @@ export async function createABVariantsHTML(script) {
     const theme = localStorage.getItem('direktiva_theme') || 'dark';
     const bestWrapClass = theme === 'light' ? 'bg-emerald-50 border border-emerald-200' : 'bg-green-900/20 border border-green-700/30';
     const normalWrapClass = theme === 'light' ? 'bg-gray-100/80 border border-gray-200' : 'bg-gray-800/30';
-
+    
     let html = `
         <div class="ab-variants p-4 rounded-lg bg-gray-900/40 border border-gray-800/40">
             <h4 class="text-lg font-semibold text-blue-300 mb-2">A/B Variants - Pilih Copy Terbaik</h4>
@@ -608,7 +608,7 @@ export async function regenerateVisualPrompts(script, section, newText) {
         const visualPrompt = `${systemPrompt}
 
 ${currentLanguage === 'en' ? 
-`Based on the new ${section.toUpperCase()} text: "${newText}"
+            `Based on the new ${section.toUpperCase()} text: "${newText}"
 
 Product: ${productName}
 Description: ${productDescription}
@@ -640,7 +640,7 @@ Return strictly JSON with structure:
   ]
 }`
 :
-`Berdasarkan teks ${section.toUpperCase()} yang baru: "${newText}"
+            `Berdasarkan teks ${section.toUpperCase()} yang baru: "${newText}"
 
 Produk: ${productName}
 Deskripsi: ${productDescription}
@@ -702,6 +702,70 @@ Kembalikan JSON murni dengan struktur:
 }
 
 export async function applyVariantToScript(card, script, section, newText) {
+    // Helper: sanitize and inject DNA for returned shots (mirror logic from generator)
+    function stripIdentityBlocks(text) {
+        if (!text) return '';
+        let s = String(text);
+        s = s.replace(/^\((?:brand|model|must_keep_colors)[^)]*\)\s*/i, '');
+        s = s.replace(/\bbrand\s*=\s*[^,;]+[;,]?\s*/gi, '');
+        s = s.replace(/\bmodel\s*=\s*[^,;]+[;,]?\s*/gi, '');
+        s = s.replace(/\bmust_keep_colors\s*=\s*[^,;]+[;,]?\s*/gi, '');
+        s = s.replace(/\|?\s*ID\[[^\]]*\]\s*/gi, '');
+        return s.trim();
+    }
+    function buildDnaString() {
+        let canon = null;
+        try { canon = JSON.parse(localStorage.getItem('direktiva_visual_dna_tokens')||'null'); } catch(_) {}
+        const visualDnaRaw = elements.visualDnaStorage?.textContent || '';
+        const brand = (canon?.brand) || ((visualDnaRaw.match(/brand\s*=\s*([^,;]+)/i)||[])[1] || '');
+        const model = (canon?.model) || ((visualDnaRaw.match(/model\s*=\s*([^,;]+)/i)||[])[1] || '');
+        const colorsRaw = (canon?.colors?.join('|')) || ((visualDnaRaw.match(/must_keep_colors\s*=\s*([^,;]+)/i)||[])[1] || '');
+        const colors = (Array.isArray(canon?.colors) ? canon.colors : colorsRaw.split(/[|,\s]+/))
+            .filter(s => /^#?[0-9A-Fa-f]{3,6}$/.test(s))
+            .slice(0,3);
+        const parts = [];
+        if (brand) parts.push(`brand=${brand}`);
+        if (model) parts.push(`model=${model}`);
+        if (colors.length) parts.push(`must_keep_colors=${colors.map(c=>c.startsWith('#')?c:'#'+c).join('|')}`);
+        return parts.join(', ');
+    }
+    function injectDna(text, visualIdea) {
+        const core = stripIdentityBlocks(text);
+        const dna = buildDnaString();
+        if (!dna) return core;
+        // pick features (dynamic per visual idea)
+        let featuresStr = '';
+        try {
+            const allF = JSON.parse(localStorage.getItem('direktiva_visual_features')||'[]');
+            const chosen = chooseShotFeatures(visualIdea||'', allF);
+            if (Array.isArray(chosen) && chosen.length) featuresStr = chosen.slice(0,4).join(', ');
+            else if (Array.isArray(allF) && allF.length) featuresStr = allF.slice(0,4).join(', ');
+        } catch(_) {}
+        const idBlock = `ID[${dna}${featuresStr ? `; features=${featuresStr}` : ''}]`;
+        const productName = elements.inputs?.productName?.value || '';
+        let suffix = '';
+        try {
+            const canon = JSON.parse(localStorage.getItem('direktiva_visual_dna_tokens')||'null');
+            if (shouldAttachProductId(visualIdea||'', productName, canon?.brand||'')) suffix = ` | ${idBlock}`;
+        } catch(_) { suffix = ` | ${idBlock}`; }
+        // append char stable id if using character strategy
+        let charBlock = '';
+        try {
+            if ((localStorage.getItem('visualStrategy') === 'character')) {
+                const charId = localStorage.getItem('direktiva_char_id') || '';
+                if (charId) charBlock = ` ${charId}`;
+            }
+        } catch(_) {}
+        return `${core}${suffix}${charBlock}`;
+    }
+    function sanitizeShots(shots) {
+        if (!Array.isArray(shots)) return shots;
+        return shots.map(sh => ({
+            ...sh,
+            text_to_image_prompt: injectDna(sh?.text_to_image_prompt || '', sh?.visual_idea || ''),
+            image_to_video_prompt: (sh?.image_to_video_prompt || '').replace(/<\/?char-desc>/gi, '')
+        }));
+    }
     // Show loading state
     const loadingNotification = import('./utils.js').then(({ showNotification }) => {
         showNotification(t('regenerating_visual_prompts') || 'Meregenerasi prompt visual...', 'info');
@@ -715,7 +779,7 @@ export async function applyVariantToScript(card, script, section, newText) {
                 // Regenerate visual prompts for hook
                 const hookShots = await regenerateVisualPrompts(script, 'hook', newText);
                 if (hookShots && hookShots.length > 0) {
-                    script.hook.shots = hookShots;
+                    script.hook.shots = sanitizeShots(hookShots);
                 }
             }
             break;
@@ -725,7 +789,7 @@ export async function applyVariantToScript(card, script, section, newText) {
                 // Regenerate visual prompts for body
                 const bodyShots = await regenerateVisualPrompts(script, 'body', newText);
                 if (bodyShots && bodyShots.length > 0) {
-                    script.body.shots = bodyShots;
+                    script.body.shots = sanitizeShots(bodyShots);
                 }
             }
             break;
@@ -742,7 +806,7 @@ export async function applyVariantToScript(card, script, section, newText) {
                 // Regenerate visual prompts for body with new intro
                 const bodyShots = await regenerateVisualPrompts(script, 'body', script.body.text);
                 if (bodyShots && bodyShots.length > 0) {
-                    script.body.shots = bodyShots;
+                    script.body.shots = sanitizeShots(bodyShots);
                 }
             }
             break;
@@ -752,7 +816,7 @@ export async function applyVariantToScript(card, script, section, newText) {
                 // Regenerate visual prompts for cta
                 const ctaShots = await regenerateVisualPrompts(script, 'cta', newText);
                 if (ctaShots && ctaShots.length > 0) {
-                    script.cta.shots = ctaShots;
+                    script.cta.shots = sanitizeShots(ctaShots);
                 }
             }
             break;

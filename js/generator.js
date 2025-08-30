@@ -1,6 +1,6 @@
 // js/generator.js
 import { PLATFORM_CONFIG, buildPlatformPlan } from './platform.config.js';
-import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState, createCharacterEssence, chooseShotFeatures, shouldAttachProductId } from './utils.js';
+import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState, createCharacterEssence, chooseShotFeatures, shouldAttachProductId, createCharacterTokens } from './utils.js';
 import { t } from './i18n.js';
 import { analyzeImageWithAI, callGeminiAPI } from './api.js';
 import { getPersonas } from './persona.js';
@@ -521,7 +521,7 @@ export function getResponseSchema(count) {
 
     const shotObject = {
         type: "OBJECT",
-        properties: { "visual_idea": { "type": "STRING" }, "text_to_image_prompt": { "type": "STRING" }, "negative_prompt": { "type": "STRING", "description": "Sebutkan hal-hal yang TIDAK BOLEH muncul di gambar, misal: blurry, text, watermark, ugly, deformed hands." }, "suggested_negative_prompt": { "type": "STRING", "description": "Saran negative prompt tambahan yang spesifik untuk visual ini (misal: 'clashing colors', 'unrealistic reflections')." }, "image_to_video_prompt": { "type": "STRING" }, "camera_directives": { "type": "STRING" }, "lighting_directives": { "type": "STRING" }, "mood_directives": { "type": "STRING" } },
+        properties: { "visual_idea": { "type": "STRING" }, "text_to_image_prompt": { "type": "STRING" }, "negative_prompt": { "type": "STRING" }, "suggested_negative_prompt": { "type": "STRING" }, "image_to_video_prompt": { "type": "STRING" }, "camera_directives": { "type": "STRING" }, "lighting_directives": { "type": "STRING" }, "mood_directives": { "type": "STRING" } },
         required: ["visual_idea", "text_to_image_prompt", "image_to_video_prompt"]
     };
     const scriptPartObject = {
@@ -577,7 +577,7 @@ export function getResponseSchema(count) {
         scriptObject.required.push("slides");
     }
 
-    return { type: "ARRAY", items: scriptObject, minItems: scriptCount, maxItems: scriptCount };
+    return { type: "ARRAY", items: scriptObject };
 }
 
 function getLanguageSpecificSystemPrompt() {
