@@ -423,7 +423,7 @@ export async function handleGenerate() {
             let enrichedCore = core;
             try {
                 const essence = localStorage.getItem('direktiva_char_essence') || '';
-                if (essence && isCharacterVisible(visualIdea, core)) {
+                if (essence && (localStorage.getItem('visualStrategy') === 'character')) {
                     enrichedCore = enrichedCore.replace(/<\/?char-desc>[^]*?<\/char-desc>/gi, '').trim();
                     enrichedCore = `<char-desc>${essence}</char-desc> ${enrichedCore}`.trim();
                 }
@@ -453,7 +453,7 @@ export async function handleGenerate() {
             const charId = localStorage.getItem('direktiva_char_id') || '';
             
             // Cek apakah mode visual adalah 'character' dan ID karakter ada
-            if ((localStorage.getItem('visualStrategy') === 'character') && charId && isCharacterVisible(visualIdea, core)) {
+            if ((localStorage.getItem('visualStrategy') === 'character') && charId) {
                 // Untuk karakter, kita langsung sisipkan ID stabilnya.
                 // Kita berasumsi AI sudah diperintahkan untuk membuat deskripsi naratifnya (<char-desc>)
                 // dari prompt utama (constructPrompt).
