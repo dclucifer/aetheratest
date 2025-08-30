@@ -586,6 +586,16 @@ export function getCharacterDescriptionString(cs) {
     return parts.join(', ');
 }
 
+export function createCharacterTokens(characterSheet) {
+    const cs = characterSheet || {};
+    const essence = `A ${cs.age || 'young adult'} ${cs.ethnicity || ''} ${cs.gender || 'woman'} named ${cs.name || 'a character'}. Vibe: ${cs.vibe || 'neutral'}. Key features: ${cs.unique_features || 'none'}.`;
+
+    // BUAT ID STABIL DARI ATRIBUT INTI
+    const stableId = `charID[name=${cs.name || 'char'};age=${cs.age || 'na'};ethnicity=${cs.ethnicity || 'na'};hair=${cs.hair_color || 'na'}_${cs.hair_style || 'na'}]`.replace(/\s+/g, '_').toLowerCase();
+
+    return { essence, stableId };
+}
+
 export function createCharacterEssence(character) {
     if (!character) return '';
     const name = character.name || 'Unnamed';

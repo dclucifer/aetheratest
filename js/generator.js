@@ -383,19 +383,41 @@ export async function handleGenerate() {
         };
         const withDna = (text, visualIdea = '') => {
             const core = stripTokens(text);
-            if (!dna) return core;
-            // Choose dynamic features per shot based on visual idea
-            let dyn = '';
-            try {
-                const allF = JSON.parse(localStorage.getItem('direktiva_visual_features')||'[]');
-                const chosen = chooseShotFeatures(visualIdea, allF);
-                if (Array.isArray(chosen) && chosen.length) dyn = chosen.slice(0,4).join(', ');
-            } catch(_) {}
-            const feats = dyn || featuresStr;
-            const idBlock = `ID[${dna}${feats ? `; features=${feats}` : ''}]`;
-            // Guard: if visualIdea clearly negates the product presence (e.g., old/non-brand pan), drop ID block
-            const productName = elements.inputs?.productName?.value || '';
-            return shouldAttachProductId(visualIdea, productName, canon?.brand || '') ? `${core} | ${idBlock}` : core;
+        
+            // --- BAGIAN 1: Membangun Blok ID Produk (Logika ini sebagian besar sama) ---
+            let productIdBlock = '';
+            if (dna) {
+                let dyn = '';
+                try {
+                    const allF = JSON.parse(localStorage.getItem('direktiva_visual_features') || '[]');
+                    const chosen = chooseShotFeatures(visualIdea, allF);
+                    if (Array.isArray(chosen) && chosen.length) dyn = chosen.slice(0, 4).join(', ');
+                } catch (_) {}
+                const feats = dyn || featuresStr;
+                const tempIdBlock = `ID[${dna}${feats ? `; features=${feats}` : ''}]`;
+                const productName = elements.inputs?.productName?.value || '';
+        
+                // Hanya tambahkan blok ID jika relevan dengan visual
+                if (shouldAttachProductId(visualIdea, productName, canon?.brand || '')) {
+                    productIdBlock = ` | ${tempIdBlock}`;
+                }
+            }
+        
+            // --- BAGIAN 2: Membangun Blok ID Karakter (Logika BARU) ---
+            let charBlock = '';
+            const charId = localStorage.getItem('direktiva_char_id') || '';
+            
+            // Cek apakah mode visual adalah 'character' dan ID karakter ada
+            if ((localStorage.getItem('visualStrategy') === 'character') && charId) {
+                // Untuk karakter, kita langsung sisipkan ID stabilnya.
+                // Kita berasumsi AI sudah diperintahkan untuk membuat deskripsi naratifnya (<char-desc>)
+                // dari prompt utama (constructPrompt).
+                charBlock = ` ${charId}`; // perhatikan spasi di depan
+            }
+        
+            // --- BAGIAN 3: Menggabungkan semuanya ---
+            // Gabungkan teks inti, blok ID produk, dan blok ID karakter
+            return `${core}${productIdBlock}${charBlock}`;
         };
         const ensureDnaInScript = (sc) => {
             try {
@@ -499,7 +521,7 @@ export function getResponseSchema(count) {
 
     const shotObject = {
         type: "OBJECT",
-        properties: { "visual_idea": { "type": "STRING" }, "text_to_image_prompt": { "type": "STRING" }, "negative_prompt": { "type": "STRING", "description": "Sebutkan hal-hal yang TIDAK BOLEH muncul di gambar, misal: blurry, text, watermark, ugly, deformed hands." }, "image_to_video_prompt": { "type": "STRING" }, "camera_directives": { "type": "STRING" }, "lighting_directives": { "type": "STRING" }, "mood_directives": { "type": "STRING" } },
+        properties: { "visual_idea": { "type": "STRING" }, "text_to_image_prompt": { "type": "STRING" }, "negative_prompt": { "type": "STRING", "description": "Sebutkan hal-hal yang TIDAK BOLEH muncul di gambar, misal: blurry, text, watermark, ugly, deformed hands." }, "suggested_negative_prompt": { "type": "STRING", "description": "Saran negative prompt tambahan yang spesifik untuk visual ini (misal: 'clashing colors', 'unrealistic reflections')." }, "image_to_video_prompt": { "type": "STRING" }, "camera_directives": { "type": "STRING" }, "lighting_directives": { "type": "STRING" }, "mood_directives": { "type": "STRING" } },
         required: ["visual_idea", "text_to_image_prompt", "image_to_video_prompt"]
     };
     const scriptPartObject = {
@@ -670,6 +692,10 @@ export function constructPrompt() {
         ? `\n- **NEGATIVE PROMPT (REQUIRED):** ${NEGATIVE_BASE.join(', ')}`
         : `\n- **NEGATIVE PROMPT (WAJIB):** ${NEGATIVE_BASE.join(', ')}`;
     
+    const negPromptRule = (currentLanguage === 'en')
+        ? `\n- For each shot, analyze the text_to_image_prompt and populate 'suggested_negative_prompt' with specific keywords to avoid potential issues related to that particular shot.`
+        : `\n- Untuk setiap shot, analisis text_to_image_prompt dan isi 'suggested_negative_prompt' dengan kata kunci spesifik untuk menghindari potensi masalah yang relevan dengan shot tersebut.`;
+    
     // A/B Variants instruction
     const AB_VARIANT_COUNT = parseInt(localStorage.getItem('ab_variant_count') || '3', 10);
     const abVariantsInstruction = currentLanguage === 'en'
@@ -743,6 +769,11 @@ export function constructPrompt() {
         // Persist canonical character tokens for consistency and build persona synthesis guidance
         try {
             const cs = characterSheets[0] || {};
+            // Panggil fungsi baru untuk mendapatkan esensi dan ID stabil
+            const { essence, stableId } = createCharacterTokens(cs); // Pastikan fungsi ini sudah ada di utils.js
+            // Simpan kedua bagian ke localStorage untuk digunakan nanti saat menyuntikkan ke prompt T2I
+            localStorage.setItem('direktiva_char_essence', essence);
+            localStorage.setItem('direktiva_char_id', stableId);
             const charTokens = {
                 name: cs.name || '',
                 gender: cs.gender || '',
@@ -754,9 +785,10 @@ export function constructPrompt() {
                 vibe: cs.vibe || ''
             };
             localStorage.setItem('direktiva_char_tokens', JSON.stringify(charTokens));
-            const essence = createCharacterEssence(cs);
-            localStorage.setItem('direktiva_char_essence', essence);
-        } catch(_) {}
+
+    } catch(e) {
+        console.error("Failed to process character sheet tokens:", e);
+    }
 
         const personaGuideEn = `- CHARACTER PERSONA SYNTHESIS: Blend the sheet facts into a living persona with coherent facial proportions (eye distance, nose bridge, lip fullness) and micro-expressions. Maintain these anchor cues consistently across shots. Express mood naturally through eyes and mouth; avoid mannequin faces.`;
         const personaGuideId = `- SINTESIS PERSONA: Gabungkan fakta sheet menjadi sosok hidup dengan proporsi wajah koheren (jarak mata, pangkal hidung, ketebalan bibir) dan micro-expression. Jaga ciri jangkar ini konsisten antar shot. Ekspresikan mood natural; hindari wajah manekin.`;
