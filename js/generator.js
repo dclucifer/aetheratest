@@ -458,9 +458,16 @@ export async function handleGenerate() {
         };
         const model = (window.APP_SETTINGS?.PROMPT_PIPELINE?.DEFAULT_T2I_MODEL) || "auto";
         const generatedScripts = finalized.map((script, index) => {
-            const { script: upgraded, warnings } = applyPromptPipeline(script, { model });
-            if (warnings?.length) console.warn("[prompt-pipeline warnings]", warnings);
-            return { ...upgraded, visual_dna: visualDnaRaw, id: `script-${Date.now()}-${index}` };
+            // Jalankan pipeline eksternal (jika ada)
+            let upgraded = script;
+            try {
+                const out = applyPromptPipeline(script, { model });
+                if (out && out.script) upgraded = out.script;
+                if (out?.warnings?.length) console.warn('[prompt-pipeline warnings]', out.warnings);
+            } catch(_) {}
+            // Terapkan injeksi DNA/charID yang ketat SESUDAH pipeline agar tidak ditimpa
+            const sanitized = ensureDnaInScript({ ...upgraded });
+            return { ...sanitized, visual_dna: visualDnaRaw, id: `script-${Date.now()}-${index}` };
         });
         
         // Gunakan state manager untuk menyimpan skrip dan riwayat
@@ -705,6 +712,7 @@ export function constructPrompt() {
     const _unused_old_system_prompt = getLanguageSpecificSystemPrompt();
     const systemPromptRaw = getLanguageSpecificSystemPrompt();
     const placeholdersUsed = (systemPromptRaw.includes('[[PLATFORM_NOTES]]') || systemPromptRaw.includes('[[PLATFORM_PLAN_JSON]]'));
+    // Pastikan placeholder karakter tersedia
     const systemPrompt = systemPromptRaw
       .replace('[[PLATFORM_NOTES]]', platformOptimization)
       .replace('[[PLATFORM_PLAN_JSON]]', platformPlanJson);
@@ -911,8 +919,8 @@ const visualDna = elements.visualDnaStorage.textContent;
             ? `\n- **PRODUCT VISUAL DNA:** ${visualDna}`
             : `\n- **VISUAL DNA PRODUK:** ${visualDna}`;
         const dnaRule = currentLanguage === 'en'
-            ? `\n- For EVERY shot, include product identity as a compact trailing block at the END of each text_to_image_prompt in the format ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...]. Do NOT rely on memory; restate identity every time.`
-            : `\n- Untuk SETIAP shot, sertakan identitas produk sebagai blok ringkas DI AKHIR tiap text_to_image_prompt dengan format ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...]. Jangan mengandalkan memori; sebutkan identitas setiap kali.`;
+            ? `\n- For EVERY shot, include product identity as a compact trailing block at the END of each text_to_image_prompt in the format ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...]. Do NOT rely on memory; restate identity every time. If the scene describes competitor/before/messy/dirty/greasy/sticky/burnt/old/worn/cheap/unbranded, SKIP the ID block.`
+            : `\n- Untuk SETIAP shot, sertakan identitas produk sebagai blok ringkas DI AKHIR tiap text_to_image_prompt dengan format ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...]. Jangan mengandalkan memori; sebutkan identitas setiap kali. Jika adegan menyebut kompetitor/sebelum/kotor/lengket/gosong/lama/usang/murahan/tanpa brand, LEWATI ID block.`;
         base += dnaRule;
 
         const cineRule = currentLanguage === 'en'
@@ -951,9 +959,14 @@ const visualDna = elements.visualDnaStorage.textContent;
         ? `${base}\n**Additional Instructions:** Create a script consisting of "hook", "body", and "cta". Each section must have script text and an array containing 2-3 'shots' (micro-shots). If the visual strategy is 'Character Sheet', define one or more characters in 'character_sheet'.`
         : `${base}\n**Instruksi Tambahan:** Buat skrip yang terdiri dari "hook", "body", dan "cta". Setiap bagian harus memiliki teks skrip dan sebuah array berisi 2-3 'shots' (micro-shots). Jika strategi visual adalah 'Character Sheet', definisikan satu atau lebih karakter di 'character_sheet'.`;
 
-    // Replace character essence placeholder if present
+    // Replace character essence placeholder if present; enforce language
     try {
-        const essence = localStorage.getItem('direktiva_char_essence') || '';
+        let essence = localStorage.getItem('direktiva_char_essence') || '';
+        if (currentLanguage === 'en') {
+            // keep as-is
+        } else {
+            // Jika UI Indonesia, essence tetap Bahasa Inggris agar T2I tidak tercampur
+        }
         finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE]]', essence);
     } catch(_) {
         finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE]]', '');
