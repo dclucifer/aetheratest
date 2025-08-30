@@ -9,7 +9,6 @@ import { DEFAULT_SYSTEM_PROMPT, ENGLISH_SYSTEM_PROMPT } from './settings.js';
 import { setScripts } from './state.js';
 import { getAdditionalAssetsResponseSchema } from './generator.schema.js';
 import { HooksCtaRegistry } from './hooks-cta-loader.js';
-import { applyPromptPipeline } from "./pipeline/index.js";
 
 export let visualStrategy = localStorage.getItem('visualStrategy') || 'default';
 export let aspectRatio = localStorage.getItem('aspectRatio') || '9:16';
@@ -456,17 +455,9 @@ export async function handleGenerate() {
             } catch(_) {}
             return sc;
         };
-        const model = (window.APP_SETTINGS?.PROMPT_PIPELINE?.DEFAULT_T2I_MODEL) || "auto";
         const generatedScripts = finalized.map((script, index) => {
-            // Jalankan pipeline eksternal (jika ada)
-            let upgraded = script;
-            try {
-                const out = applyPromptPipeline(script, { model });
-                if (out && out.script) upgraded = out.script;
-                if (out?.warnings?.length) console.warn('[prompt-pipeline warnings]', out.warnings);
-            } catch(_) {}
-            // Terapkan injeksi DNA/charID yang ketat SESUDAH pipeline agar tidak ditimpa
-            const sanitized = ensureDnaInScript({ ...upgraded });
+            // Pipeline dinonaktifkan sementara untuk stabilitas runtime
+            const sanitized = ensureDnaInScript({ ...script });
             return { ...sanitized, visual_dna: visualDnaRaw, id: `script-${Date.now()}-${index}` };
         });
         
