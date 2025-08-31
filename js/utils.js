@@ -621,19 +621,20 @@ export function createCharacterTokens(characterSheet) {
 export function createCharacterEssence(character) {
     if (!character) return '';
     const age = character.age ? `${character.age}-year-old` : '';
-    const ethnicity = character.ethnicity || '';
-    const gender = character.gender || '';
-    const face = [character.face_shape].filter(Boolean).join(' ');
-    const eyes = [character.eye_color, character.eye_shape].filter(Boolean).join(' ');
-    const brows = character.eyebrow_style ? `${character.eyebrow_style} eyebrows` : '';
-    const nose = character.nose_shape ? `${character.nose_shape} nose` : '';
-    const lips = character.lip_shape ? `${character.lip_shape} lips` : '';
-    const hair = [character.hair_style, character.hair_color].filter(Boolean).join(' ');
-    const skin = character.skin_tone ? `${character.skin_tone} skin` : '';
+    const tr = (s)=> normalizeToEnglish((s||'').toString());
+    const ethnicity = tr(character.ethnicity);
+    const gender = tr(character.gender);
+    const face = [tr(character.face_shape)].filter(Boolean).join(' ');
+    const eyes = [tr(character.eye_color), tr(character.eye_shape)].filter(Boolean).join(' ');
+    const brows = character.eyebrow_style ? `${tr(character.eyebrow_style)} eyebrows` : '';
+    const nose = character.nose_shape ? `${tr(character.nose_shape)} nose` : '';
+    const lips = character.lip_shape ? `${tr(character.lip_shape)} lips` : '';
+    const hair = [tr(character.hair_style), tr(character.hair_color)].filter(Boolean).join(' ');
+    const skin = character.skin_tone ? `${tr(character.skin_tone)} skin` : '';
     const height = character.height ? `${character.height} height` : '';
-    const vibe = character.vibe || character.notes || '';
-    const outfit = [character.clothing_style, character.specific_outfit].filter(Boolean).join(' ');
-    const extras = [character.unique_features, character.makeup_style].filter(Boolean).join(', ');
+    const vibe = tr(character.vibe || character.notes || '');
+    const outfit = [tr(character.clothing_style), tr(character.specific_outfit)].filter(Boolean).join(' ');
+    const extras = [tr(character.unique_features), tr(character.makeup_style)].filter(Boolean).join(', ');
 
     const intro = [age, ethnicity, gender].filter(Boolean).join(' ');
     const facial = [face, eyes && `${eyes} eyes`, brows, nose, lips].filter(Boolean).join(', ');
@@ -642,8 +643,36 @@ export function createCharacterEssence(character) {
     const extra = extras ? `notable features: ${extras}` : '';
 
     const essence = `${intro}. ${facial}. ${body}. ${clothing}. ${extra}. Natural micro-expressions, coherent facial proportions, consistent look across shots.`
+      .replace(/\b(lips)\s+\1\b/gi,'$1')
       .replace(/\s+/g,' ').trim();
     return essence;
+}
+
+// Basic ID→EN normalizer for common sheet terms to avoid mixed language
+export function normalizeToEnglish(input) {
+    let s = (input || '').toString().toLowerCase();
+    const map = [
+        ['indonesia korea','indonesian-korean'],
+        ['indonesia','indonesian'],
+        ['korea','korean'],
+        ['abu-abu','gray'], ['abu abu','gray'], ['abu','gray'],
+        ['tebal','thick'], ['tipis','thin'],
+        ['mancung','high-bridged'],
+        ['oval','oval'],
+        ['almond','almond'], ['alomnd','almond'],
+        ['bulat','round'],
+        ['putih cerah berseri','fair glowing'], ['putih cerah','fair'], ['gelap','dark'],
+        ['panjang','long'], ['pendek','short'],
+        ['lurus','straight'], ['ikal','wavy'], ['keriting','curly'],
+        ['hitam','black'], ['coklat','brown'], ['biru','blue'], ['hijau','green'], ['merah','red'], ['pink','pink'],
+        ['lesung pipi','dimples'],
+        ['minimalis','minimalist'], ['kasual','casual'],
+        ['make up','makeup']
+    ];
+    map.forEach(([id,en])=>{ s = s.replace(new RegExp(`\\b${id}\\b`,'g'), en); });
+    // fix doubles and minor typos
+    s = s.replace(/alomnd/gi,'almond');
+    return s.trim();
 }
 
 export function chooseShotFeatures(visualIdea, allFeatures) {
