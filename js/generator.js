@@ -812,10 +812,11 @@ export function constructPrompt() {
         // Persist canonical character tokens for consistency and build persona synthesis guidance
         try {
             const cs = characterSheets[0] || {};
-            // Panggil fungsi baru untuk mendapatkan esensi dan ID stabil
-            const { essence, stableId } = createCharacterTokens(cs); // Pastikan fungsi ini sudah ada di utils.js
-            // Simpan kedua bagian ke localStorage untuk digunakan nanti saat menyuntikkan ke prompt T2I
-            localStorage.setItem('direktiva_char_essence', essence);
+            // Ambil esensi lengkap untuk <char-desc> dan ID stabil
+            const { stableId } = createCharacterTokens(cs);
+            const essenceFull = createCharacterEssence(cs);
+            // Simpan ke localStorage untuk injeksi T2I
+            localStorage.setItem('direktiva_char_essence', essenceFull);
             localStorage.setItem('direktiva_char_id', stableId);
             const charTokens = {
                 name: cs.name || '',

@@ -620,27 +620,30 @@ export function createCharacterTokens(characterSheet) {
 
 export function createCharacterEssence(character) {
     if (!character) return '';
-    const name = character.name || 'Unnamed';
     const age = character.age ? `${character.age}-year-old` : '';
-    let ethnicity = character.ethnicity || '';
+    const ethnicity = character.ethnicity || '';
     const gender = character.gender || '';
     const face = [character.face_shape].filter(Boolean).join(' ');
-    const eyes = character.eye_color ? `${character.eye_color} eyes` : '';
+    const eyes = [character.eye_color, character.eye_shape].filter(Boolean).join(' ');
+    const brows = character.eyebrow_style ? `${character.eyebrow_style} eyebrows` : '';
+    const nose = character.nose_shape ? `${character.nose_shape} nose` : '';
+    const lips = character.lip_shape ? `${character.lip_shape} lips` : '';
     const hair = [character.hair_style, character.hair_color].filter(Boolean).join(' ');
     const skin = character.skin_tone ? `${character.skin_tone} skin` : '';
+    const height = character.height ? `${character.height} height` : '';
     const vibe = character.vibe || character.notes || '';
     const outfit = [character.clothing_style, character.specific_outfit].filter(Boolean).join(' ');
     const extras = [character.unique_features, character.makeup_style].filter(Boolean).join(', ');
-    const parts = [age, ethnicity, gender].filter(Boolean).join(' ');
-    const physical = [face, eyes, hair, skin].filter(Boolean).join(', ');
+
+    const intro = [age, ethnicity, gender].filter(Boolean).join(' ');
+    const facial = [face, eyes && `${eyes} eyes`, brows, nose, lips].filter(Boolean).join(', ');
+    const body = [skin, height].filter(Boolean).join(', ');
     const clothing = outfit ? `wearing ${outfit}` : '';
     const extra = extras ? `notable features: ${extras}` : '';
-    // Simple normalization to keep English phrasing
-    const normalize = (s) => s; // keep user-provided demonyms as-is for global support
-    ethnicity = normalize(ethnicity);
-    const essence = `${name}: ${parts}. ${physical}. ${clothing}. ${extra}. Natural micro-expressions, coherent facial proportions, consistent look across shots.`
+
+    const essence = `${intro}. ${facial}. ${body}. ${clothing}. ${extra}. Natural micro-expressions, coherent facial proportions, consistent look across shots.`
       .replace(/\s+/g,' ').trim();
-    return normalize(essence);
+    return essence;
 }
 
 export function chooseShotFeatures(visualIdea, allFeatures) {
