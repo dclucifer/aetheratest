@@ -563,7 +563,7 @@ export function getResponseSchema(count) {
 
     const shotObject = {
         type: "OBJECT",
-        properties: { "visual_idea": { "type": "STRING" }, "prompt_translation_notes": { "type": "STRING", "description": "Briefly explain how the text_to_image_prompt accurately translates the visual_idea, especially the framing and subject." }, "text_to_image_prompt": { "type": "STRING" }, "negative_prompt": { "type": "STRING", "description": "Contextual negatives for this shot" }, "suggested_negative_prompt": { "type": "STRING" }, "image_to_video_prompt": { "type": "STRING" }, "camera_directives": { "type": "STRING" }, "lighting_directives": { "type": "STRING" }, "mood_directives": { "type": "STRING" } },
+        properties: { "visual_idea": { "type": "STRING" }, "prompt_translation_notes": { "type": "STRING", "description": "Explain step-by-step how the visual_idea is translated into the text_to_image_prompt, ensuring all key elements like framing and subject are identical." }, "text_to_image_prompt": { "type": "STRING" }, "negative_prompt": { "type": "STRING", "description": "Contextual negatives for this shot" }, "suggested_negative_prompt": { "type": "STRING" }, "image_to_video_prompt": { "type": "STRING" }, "camera_directives": { "type": "STRING" }, "lighting_directives": { "type": "STRING" }, "mood_directives": { "type": "STRING" } },
         required: ["visual_idea", "text_to_image_prompt", "image_to_video_prompt", "negative_prompt"]
     };
     const scriptPartObject = {

@@ -588,10 +588,32 @@ export function getCharacterDescriptionString(cs) {
 
 export function createCharacterTokens(characterSheet) {
     const cs = characterSheet || {};
-    const essence = `A ${cs.age || 'young adult'} ${cs.ethnicity || ''} ${cs.gender || 'woman'} named ${cs.name || 'a character'}. Vibe: ${cs.vibe || 'neutral'}. Key features: ${cs.unique_features || 'none'}.`;
+    let essenceParts = [];
+    let idParts = [];
 
-    // BUAT ID STABIL DARI ATRIBUT INTI
-    const stableId = `charID[name=${cs.name || 'char'};age=${cs.age || 'na'};ethnicity=${cs.ethnicity || 'na'};hair=${cs.hair_color || 'na'}_${cs.hair_style || 'na'}]`.replace(/\s+/g, '_').toLowerCase();
+    // Daftar field yang lebih penting untuk deskripsi naratif
+    const narrativeFields = ['age', 'ethnicity', 'gender', 'name', 'vibe', 'unique_features', 'clothing_style', 'makeup_style'];
+
+    // Membangun deskripsi naratif (essence)
+    if (cs.name) {
+        essenceParts.push(`a character named ${cs.name}`);
+    }
+    narrativeFields.forEach(field => {
+        if (cs[field] && field !== 'name') {
+            essenceParts.push(`${field.replace('_', ' ')}: ${cs[field]}`);
+        }
+    });
+    const essence = essenceParts.join(', ');
+
+    // Membangun ID Stabil dari SEMUA field yang terisi
+    for (const key in cs) {
+        if (Object.hasOwn(cs, key) && cs[key]) {
+            // Mengambil 2-3 kata pertama untuk menjaga ID tetap ringkas
+            const value = String(cs[key]).split(' ').slice(0, 3).join('_');
+            idParts.push(`${key}=${value}`);
+        }
+    }
+    const stableId = `charID[${idParts.join(';').replace(/\s+/g, '_').toLowerCase()}]`;
 
     return { essence, stableId };
 }
