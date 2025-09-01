@@ -423,14 +423,18 @@ export async function handleGenerate() {
             return s.trim();
         };
         const withDna = (text, visualIdea = '') => {
-            const core = stripTokens(text);
-            // Inject <char-desc> with character essence when character is visible
-            let enrichedCore = core;
+            let core = stripTokens(text);
+            // Inject <char-desc> for ALL characters when using character strategy
             try {
-                const essence = localStorage.getItem('direktiva_char_essence') || '';
-                if (essence && (localStorage.getItem('visualStrategy') === 'character')) {
-                    enrichedCore = enrichedCore.replace(/<\/?char-desc>[^]*?<\/char-desc>/gi, '').trim();
-                    enrichedCore = `<char-desc>${essence}</char-desc> ${enrichedCore}`.trim();
+                if ((localStorage.getItem('visualStrategy') === 'character')) {
+                    const list = JSON.parse(localStorage.getItem('direktiva_char_essences') || '[]');
+                    const single = localStorage.getItem('direktiva_char_essence') || '';
+                    const chunks = (Array.isArray(list) && list.length) ? list.map(e => e && e.essence).filter(Boolean) : (single ? [single] : []);
+                    if (chunks.length) {
+                        const cleaned = core.replace(/<\/?char-desc>[^]*?<\/char-desc>/gi, '').trim();
+                        const blocks = chunks.map(c => `<char-desc>${c}</char-desc>`).join(' ');
+                        core = `${blocks} ${cleaned}`.trim();
+                    }
                 }
             } catch(_) {}
         
@@ -448,7 +452,7 @@ export async function handleGenerate() {
                 const productName = elements.inputs?.productName?.value || '';
         
                 // Hanya tambahkan blok ID jika relevan dengan visual
-                if (shouldAttachProductId(visualIdea, productName, canon?.brand || '', enrichedCore)) {
+                if (shouldAttachProductId(visualIdea, productName, canon?.brand || '', core)) {
                     productIdBlock = ` | ${tempIdBlock}`;
                 }
             }
@@ -457,8 +461,26 @@ export async function handleGenerate() {
             const charBlock = '';
         
             // --- BAGIAN 3: Menggabungkan semuanya ---
-            // Gabungkan teks inti, blok ID produk, dan blok ID karakter
-            return `${enrichedCore}${productIdBlock}`;
+            let result = `${core}${productIdBlock}`;
+            // Model adaptation for engines that dislike bracket blocks
+            try {
+                const mt = (localStorage.getItem('model_target') || 'auto').toLowerCase();
+                const bracketless = (mt === 'imagen' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
+                if (bracketless) {
+                    const brandMatch = (dna.match(/brand=([^,\s]+)/) || [])[1] || '';
+                    const modelMatch = (dna.match(/model=([^,\s]+)/) || [])[1] || '';
+                    const colorsMatch = (dna.match(/must_keep_colors=([^\s]+)/) || [])[1] || '';
+                    const colorList = colorsMatch ? colorsMatch.split('|').filter(Boolean) : [];
+                    const feats = (result.match(/ID\[[^\]]*features=([^\]]+)\]/i) || [])[1] || '';
+                    let suffixParts = [];
+                    if (brandMatch || modelMatch) suffixParts.push(`official ${[brandMatch, modelMatch].filter(Boolean).join(' ')}`.trim());
+                    if (colorList.length) suffixParts.push(`exact brand colors ${colorList.join(', ')}`);
+                    if (feats) suffixParts.push(`identity features: ${feats}`);
+                    const nat = suffixParts.length ? ` — ${suffixParts.join('; ')}` : '';
+                    result = result.replace(/\s*\|\s*ID\[[^\]]*\]\s*$/i, '') + nat;
+                }
+            } catch(_) {}
+            return result;
         };
         const ensureDnaInScript = (sc) => {
             try {
@@ -815,7 +837,7 @@ export function constructPrompt() {
             // Ambil esensi lengkap untuk <char-desc> dan ID stabil
             const { stableId } = createCharacterTokens(cs);
             const essenceFull = createCharacterEssence(cs);
-            // Simpan ke localStorage untuk injeksi T2I
+            // Simpan ke localStorage untuk injeksi T2I (kompatibilitas lama)
             localStorage.setItem('direktiva_char_essence', essenceFull);
             localStorage.setItem('direktiva_char_id', stableId);
             const charTokens = {
@@ -829,6 +851,11 @@ export function constructPrompt() {
                 vibe: cs.vibe || ''
             };
             localStorage.setItem('direktiva_char_tokens', JSON.stringify(charTokens));
+            // Simpan semua essence karakter untuk dukungan multi-karakter
+            try {
+                const allEssences = characterSheets.map(sheet => ({ name: sheet.name || '', essence: createCharacterEssence(sheet) }));
+                localStorage.setItem('direktiva_char_essences', JSON.stringify(allEssences));
+            } catch(_) {}
 
     } catch(e) {
         console.error("Failed to process character sheet tokens:", e);
@@ -838,8 +865,8 @@ export function constructPrompt() {
         const personaGuideId = `- SINTESIS PERSONA: Gabungkan fakta sheet menjadi sosok hidup dengan proporsi wajah koheren (jarak mata, pangkal hidung, ketebalan bibir) dan micro-expression. Jaga ciri jangkar ini konsisten antar shot. Ekspresikan mood natural; hindari wajah manekin.`;
 
         characterSheetInstruction = (currentLanguage === 'en')
-            ? `\n- **CHARACTER ESSENCE (USE IN <char-desc>):** [[CHAR_ESSENCE]]\n${personaGuideEn}\n- If character is visible, you may append a compact CHAR[...] identity block at the end.`
-            : `\n- **ESENSI KARAKTER (PAKAI DI <char-desc>):** [[CHAR_ESSENCE]]\n${personaGuideId}\n- Jika karakter terlihat, boleh tambah blok ringkas CHAR[...] di akhir.`;
+            ? `\n- **CHARACTER ESSENCE (USE IN <char-desc>):** [[CHAR_ESSENCE]]\n- For multi-character scenes, include ALL of these as separate <char-desc> blocks: [[CHAR_ESSENCE_ALL]]\n${personaGuideEn}\n- If character is visible, you may append a compact CHAR[...] identity block at the end.`
+            : `\n- **ESENSI KARAKTER (PAKAI DI <char-desc>):** [[CHAR_ESSENCE]]\n- Untuk adegan multi-karakter, sertakan SEMUA berikut sebagai blok <char-desc> terpisah: [[CHAR_ESSENCE_ALL]]\n${personaGuideId}\n- Jika karakter terlihat, boleh tambah blok ringkas CHAR[...] di akhir.`;
     }
     
     let interactionInstruction = '';
@@ -974,17 +1001,22 @@ export function constructPrompt() {
         ? `${base}\n**Additional Instructions:** Create a script consisting of "hook", "body", and "cta". Each section must have script text and an array containing 2-3 'shots' (micro-shots). If the visual strategy is 'Character Sheet', define one or more characters in 'character_sheet'.`
         : `${base}\n**Instruksi Tambahan:** Buat skrip yang terdiri dari "hook", "body", dan "cta". Setiap bagian harus memiliki teks skrip dan sebuah array berisi 2-3 'shots' (micro-shots). Jika strategi visual adalah 'Character Sheet', definisikan satu atau lebih karakter di 'character_sheet'.`;
 
-    // Replace character essence placeholder if present; enforce language
+    // Replace character essence placeholder(s) if present; enforce language
     try {
-        let essence = localStorage.getItem('direktiva_char_essence') || '';
-        if (currentLanguage === 'en') {
-            // keep as-is
-        } else {
-            // Jika UI Indonesia, essence tetap Bahasa Inggris agar T2I tidak tercampur
-        }
-        finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE]]', essence);
+        const singleEssence = localStorage.getItem('direktiva_char_essence') || '';
+        let allEssencesStr = '';
+        try {
+            const arr = JSON.parse(localStorage.getItem('direktiva_char_essences') || '[]');
+            if (Array.isArray(arr) && arr.length) {
+                const blocks = arr.map(e => e && e.essence).filter(Boolean).map(s => `<char-desc>${s}</char-desc>`);
+                allEssencesStr = blocks.join(' ');
+            }
+        } catch(_) {}
+        finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE]]', singleEssence);
+        finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE_ALL]]', allEssencesStr);
     } catch(_) {
         finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE]]', '');
+        finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE_ALL]]', '');
     }
     
     return finalInstruction;

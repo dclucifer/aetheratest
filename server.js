@@ -139,9 +139,12 @@ If focus label provided, LIMIT analysis STRICTLY to the product matching that la
 4) model_guess: If any model/series/variant text is visible, guess; else empty string.
 5) ocr_text: Any readable packaging/label text (array of strings, best-effort OCR). If not present, empty array.
 6) distinctive_features: Array of 5-10 short bullet phrases capturing unique, non-generic identity traits (shape geometry, cuts, logo mark shape, accents, materials, finishes, stitch/pattern, ports/buttons layout, cap/nozzle type, etc.).
+7) logo_shape_hint: short phrase describing the logo mark silhouette/geometry if visible; else empty string.
+8) packaging_form_factor: concise descriptor (e.g., "pump bottle", "jar with matte lid", "tubular can") if applicable; else empty string.
+9) manufacturing_finishes: short list of finishes (e.g., brushed aluminum, glossy ABS, satin glass) if visible; else empty array.
 
 STRICT OUTPUT SHAPE (JSON only, no extra text):
-{"description":"...","palette":["#RRGGBB",...],"brand_guess":"","model_guess":"","ocr_text":["..."],"distinctive_features":["..."]}`;
+{"description":"...","palette":["#RRGGBB",...],"brand_guess":"","model_guess":"","ocr_text":["..."],"distinctive_features":["..."],"logo_shape_hint":"","packaging_form_factor":"","manufacturing_finishes":["..."]}`;
 
     payload = {
       contents: [{
@@ -164,9 +167,9 @@ STRICT OUTPUT SHAPE (JSON only, no extra text):
   } else if (mode === 'extractKeywords') {
     // Tahap 2: Ekstrak keywords dari deskripsi/JSON identitas
     const context = typeof textData === 'string' ? textData : JSON.stringify(textData);
-    prompt = `You will receive DESCRIPTION/CONTEXT (may be plain text or JSON with description, palette, brand_guess, model_guess, ocr_text, distinctive_features). Optional focus label: "${(focusLabel||'').toString().slice(0,80)}".
+    prompt = `You will receive DESCRIPTION/CONTEXT (may be plain text or JSON with description, palette, brand_guess, model_guess, ocr_text, distinctive_features, logo_shape_hint, packaging_form_factor, manufacturing_finishes). Optional focus label: "${(focusLabel||'').toString().slice(0,80)}".
 Return a single comma-separated KEYWORD STRING optimized for text-to-image models, with 40-60 tokens.
-- Start with identity lock tokens: brand=<brand_guess if any>, model=<model_guess if any>, logo_mark=<short shape/geometry>, must_keep_colors=<top 2-3 HEX>.
+- Start with identity lock tokens: brand=<brand_guess if any>, model=<model_guess if any>, logo_mark=<logo_shape_hint if any>, must_keep_colors=<top 2-3 HEX>.
 - Then list ultra-specific nouns/adjectives: product type, materials, finish, geometry, edges, accents, texture, patterns, proportions, ports/buttons layout, packaging details, camera angle, lens, lighting style, background color.
 - Prefer concrete terms, avoid subjective words; no sentences; no quotes.
 DESCRIPTION/CONTEXT:\n${context}`;

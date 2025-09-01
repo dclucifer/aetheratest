@@ -760,15 +760,40 @@ export async function applyVariantToScript(card, script, section, newText) {
             const canon = JSON.parse(localStorage.getItem('direktiva_visual_dna_tokens')||'null');
             if (shouldAttachProductId(visualIdea||'', productName, canon?.brand||'')) suffix = ` | ${idBlock}`;
         } catch(_) { suffix = ` | ${idBlock}`; }
-        // append char stable id if using character strategy
-        let charBlock = '';
+        // inject all characters as <char-desc> blocks when using character strategy
+        let injected = core;
         try {
             if ((localStorage.getItem('visualStrategy') === 'character')) {
-                const charId = localStorage.getItem('direktiva_char_id') || '';
-                if (charId) charBlock = ` ${charId}`;
+                const list = JSON.parse(localStorage.getItem('direktiva_char_essences') || '[]');
+                const single = localStorage.getItem('direktiva_char_essence') || '';
+                const chunks = (Array.isArray(list) && list.length) ? list.map(e => e && e.essence).filter(Boolean) : (single ? [single] : []);
+                if (chunks.length) {
+                    injected = injected.replace(/<\/?char-desc>[^]*?<\/char-desc>/gi, '').trim();
+                    const blocks = chunks.map(c => `<char-desc>${c}</char-desc>`).join(' ');
+                    injected = `${blocks} ${injected}`.trim();
+                }
             }
         } catch(_) {}
-        return `${core}${suffix}${charBlock}`;
+        // model-specific adaptation: remove bracket ID block for bracketless engines and append natural-language suffix
+        try {
+            const mt = (localStorage.getItem('model_target') || 'auto').toLowerCase();
+            const isBracketless = (mt === 'imagen' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
+            if (isBracketless) {
+                const brandMatch = (dna.match(/brand=([^,\s]+)/) || [])[1] || '';
+                const modelMatch = (dna.match(/model=([^,\s]+)/) || [])[1] || '';
+                const colorsMatch = (dna.match(/must_keep_colors=([^\s]+)/) || [])[1] || '';
+                const colorList = colorsMatch ? colorsMatch.split('|').filter(Boolean) : [];
+                let parts = [];
+                if (brandMatch || modelMatch) parts.push(`official ${[brandMatch, modelMatch].filter(Boolean).join(' ')}`.trim());
+                if (colorList.length) parts.push(`exact brand colors ${colorList.join(', ')}`);
+                if (featuresStr) parts.push(`identity features: ${featuresStr}`);
+                const nat = parts.length ? ` — ${parts.join('; ')}` : '';
+                return `${injected}${nat}`;
+            }
+        } catch(_) {}
+        // default: keep bracket ID block
+        // do not append char stable id anymore
+        return `${injected}${suffix}`;
     }
     function sanitizeShots(shots) {
         if (!Array.isArray(shots)) return shots;
@@ -1270,7 +1295,7 @@ function openHowToModal(mode) {
     if (!modal || !body) return;
     const isT2I = mode !== 'i2v';
     const chips = (labels) => `<div class="flex flex-wrap gap-2 mt-2">${labels.map(l=>`<span class=\"px-2 py-0.5 text-xs rounded bg-gray-700 text-white border border-gray-600\">${l}</span>`).join('')}</div>`;
-    const chipLabels = isT2I ? ['Leonardo','Flux','Imagen','Gemini'] : ['Pika','Runway','Veo'];
+    const chipLabels = isT2I ? ['Leonardo','Flux','Imagen','Gemini','Nano Banana'] : ['Pika','Runway','Veo'];
     const step = (title, desc, extra='') => `
       <div class=\"mb-4\">
         <div class=\"text-sm font-semibold text-blue-300\">${title}</div>
