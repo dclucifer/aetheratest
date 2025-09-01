@@ -384,15 +384,95 @@ export async function handleGenerate() {
                 }
             } catch(_) {}
         }
+        // Sanitize and enforce DNA prefix in every T2I prompt
+        const visualDnaRaw = elements.visualDnaStorage.textContent || '';
+        // Use canonical tokens from localStorage when available to avoid drift
+        let canon = null;
+        try { canon = JSON.parse(localStorage.getItem('direktiva_visual_dna_tokens')||'null'); } catch(_) {}
+        const dna = (() => {
+            const brand = (canon?.brand) || (visualDnaRaw.match(/brand\s*=\s*([^,;]+)/i)||[])[1] || '';
+            const model = (canon?.model) || (visualDnaRaw.match(/model\s*=\s*([^,;]+)/i)||[])[1] || '';
+            const colorsRaw = (canon?.colors?.join('|')) || (visualDnaRaw.match(/must_keep_colors\s*=\s*([^,;]+)/i)||[])[1] || '';
+            const colors = (Array.isArray(canon?.colors) ? canon.colors : colorsRaw.split(/[|,\s]+/)).filter(s=>/^#?[0-9A-Fa-f]{3,6}$/.test(s)).slice(0,3);
+            const parts = [];
+            if (brand) parts.push(`brand=${brand}`);
+            if (model) parts.push(`model=${model}`);
+            if (colors.length) parts.push(`must_keep_colors=${colors.map(c=>c.startsWith('#')?c:'#'+c).join('|')}`);
+            return parts.join(', ');
+        })();
+        // Build compact identity block for clarity; keep at most 4 features
+        let featuresStr = '';
+        try {
+            const f = JSON.parse(localStorage.getItem('direktiva_visual_features')||'[]');
+            if (Array.isArray(f) && f.length) featuresStr = f.slice(0,4).join(', ');
+        } catch(_) {}
+        const stripTokens = (text) => {
+            if (!text) return '';
+            let s = String(text);
+            // Remove noisy tokens
+            s = s.replace(/^\((?:brand|model|must_keep_colors)[^)]*\)\s*/i,'');
+            s = s.replace(/\bbrand\s*=\s*[^,;]+[;,]?\s*/gi,'');
+            s = s.replace(/\bmodel\s*=\s*[^,;]+[;,]?\s*/gi,'');
+            s = s.replace(/\bmust_keep_colors\s*=\s*[^,;]+[;,]?\s*/gi,'');
+            s = s.replace(/\bCAM\[[^\]]*\]\s*\|?/gi,'');
+            s = s.replace(/\bLIGHT\[[^\]]*\]\s*\|?/gi,'');
+            s = s.replace(/\bMOOD\[[^\]]*\]\s*\|?/gi,'');
+            s = s.replace(/\bcharid\[[^\]]*\]/gi,'');
+            // Remove any pre-existing ID[...] blocks to prevent duplicates
+            s = s.replace(/\|?\s*ID\[[^\]]*\]\s*/gi, '');
+            return s.trim();
+        };
+        const withDna = (text, visualIdea = '') => {
+            const core = stripTokens(text);
+            // Inject <char-desc> with character essence when character is visible
+            let enrichedCore = core;
+            try {
+                const essence = localStorage.getItem('direktiva_char_essence') || '';
+                if (essence && (localStorage.getItem('visualStrategy') === 'character')) {
+                    enrichedCore = enrichedCore.replace(/<\/?char-desc>[^]*?<\/char-desc>/gi, '').trim();
+                    enrichedCore = `<char-desc>${essence}</char-desc> ${enrichedCore}`.trim();
+                }
+            } catch(_) {}
         
+            // --- BAGIAN 1: Membangun Blok ID Produk (Logika ini sebagian besar sama) ---
+            let productIdBlock = '';
+            if (dna) {
+                let dyn = '';
+                try {
+                    const allF = JSON.parse(localStorage.getItem('direktiva_visual_features') || '[]');
+                    const chosen = chooseShotFeatures(visualIdea, allF);
+                    if (Array.isArray(chosen) && chosen.length) dyn = chosen.slice(0, 4).join(', ');
+                } catch (_) {}
+                const feats = dyn || featuresStr;
+                const tempIdBlock = `ID[${dna}${feats ? `; features=${feats}` : ''}]`;
+                const productName = elements.inputs?.productName?.value || '';
+        
+                // Hanya tambahkan blok ID jika relevan dengan visual
+                if (shouldAttachProductId(visualIdea, productName, canon?.brand || '', enrichedCore)) {
+                    productIdBlock = ` | ${tempIdBlock}`;
+                }
+            }
+        
+            // --- BAGIAN 2: Tidak lagi menyisipkan charID ke T2I (cukup <char-desc>) ---
+            const charBlock = '';
+        
+            // --- BAGIAN 3: Menggabungkan semuanya ---
+            // Gabungkan teks inti, blok ID produk, dan blok ID karakter
+            return `${enrichedCore}${productIdBlock}`;
+        };
+        const ensureDnaInScript = (sc) => {
+            try {
+                if (sc?.hook?.shots) sc.hook.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt, sh.visual_idea||''); });
+                if (sc?.body?.shots) sc.body.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt, sh.visual_idea||''); });
+                if (sc?.cta?.shots) sc.cta.shots.forEach(sh=>{ if (sh.text_to_image_prompt) sh.text_to_image_prompt = withDna(sh.text_to_image_prompt, sh.visual_idea||''); });
+                if (Array.isArray(sc?.slides)) sc.slides.forEach(sl=>{ if (sl.text_to_image_prompt) sl.text_to_image_prompt = withDna(sl.text_to_image_prompt, sl.slide_text||''); });
+            } catch(_) {}
+            return sc;
+        };
         const generatedScripts = finalized.map((script, index) => {
-            // TIDAK ADA LAGI SANITASI ATAU MODIFIKASI.
-            // Kita percaya penuh pada prompt yang dihasilkan oleh AI berdasarkan Master Prompt baru kita.
-            return { 
-                ...script, 
-                visual_dna: elements.visualDnaStorage.textContent || '', // Simpan DNA hanya untuk referensi
-                id: `script-${Date.now()}-${index}` 
-            };
+            // Pipeline dinonaktifkan sementara untuk stabilitas runtime
+            const sanitized = ensureDnaInScript({ ...script });
+            return { ...sanitized, visual_dna: visualDnaRaw, id: `script-${Date.now()}-${index}` };
         });
         
         // Gunakan state manager untuk menyimpan skrip dan riwayat
@@ -729,20 +809,37 @@ export function constructPrompt() {
 
     let characterSheetInstruction = '';
     if (characterSheets.length > 0) {
-        // Gabungkan deskripsi SEMUA karakter menjadi satu instruksi.
-        const allCharactersDescription = characterSheets.map((char, index) => {
-            // Panggil fungsi createCharacterEssence dari utils.js untuk setiap karakter
-            const essence = createCharacterEssence(char); 
-            return `Character ${index + 1}: ${essence}`;
-        }).join('\n');
+        // Persist canonical character tokens for consistency and build persona synthesis guidance
+        try {
+            const cs = characterSheets[0] || {};
+            // Ambil esensi lengkap untuk <char-desc> dan ID stabil
+            const { stableId } = createCharacterTokens(cs);
+            const essenceFull = createCharacterEssence(cs);
+            // Simpan ke localStorage untuk injeksi T2I
+            localStorage.setItem('direktiva_char_essence', essenceFull);
+            localStorage.setItem('direktiva_char_id', stableId);
+            const charTokens = {
+                name: cs.name || '',
+                gender: cs.gender || '',
+                age: cs.age || '',
+                ethnicity: cs.ethnicity || '',
+                hair: [cs.hair_style, cs.hair_color].filter(Boolean).join(' '),
+                eyes: cs.eye_color || '',
+                skin: cs.skin_tone || '',
+                vibe: cs.vibe || ''
+            };
+            localStorage.setItem('direktiva_char_tokens', JSON.stringify(charTokens));
 
-        // Simpan essence gabungan untuk debugging.
-        localStorage.setItem('direktiva_char_essence', allCharactersDescription);
+    } catch(e) {
+        console.error("Failed to process character sheet tokens:", e);
+    }
 
-        // Buat instruksi yang lugas untuk AI.
+        const personaGuideEn = `- CHARACTER PERSONA SYNTHESIS: Blend the sheet facts into a living persona with coherent facial proportions (eye distance, nose bridge, lip fullness) and micro-expressions. Maintain these anchor cues consistently across shots. Express mood naturally through eyes and mouth; avoid mannequin faces.`;
+        const personaGuideId = `- SINTESIS PERSONA: Gabungkan fakta sheet menjadi sosok hidup dengan proporsi wajah koheren (jarak mata, pangkal hidung, ketebalan bibir) dan micro-expression. Jaga ciri jangkar ini konsisten antar shot. Ekspresikan mood natural; hindari wajah manekin.`;
+
         characterSheetInstruction = (currentLanguage === 'en')
-            ? `\n- **CHARACTER SHEET (MUST USE):**\n${allCharactersDescription}`
-            : `\n- **CHARACTER SHEET (WAJIB DIGUNAKAN):**\n${allCharactersDescription}`;
+            ? `\n- **CHARACTER ESSENCE (USE IN <char-desc>):** [[CHAR_ESSENCE]]\n${personaGuideEn}\n- If character is visible, you may append a compact CHAR[...] identity block at the end.`
+            : `\n- **ESENSI KARAKTER (PAKAI DI <char-desc>):** [[CHAR_ESSENCE]]\n${personaGuideId}\n- Jika karakter terlihat, boleh tambah blok ringkas CHAR[...] di akhir.`;
     }
     
     let interactionInstruction = '';
@@ -759,14 +856,6 @@ export function constructPrompt() {
         durationInstruction = currentLanguage === 'en'
             ? `\n- Target Video Duration: Around ${duration} seconds.`
             : `\n- Target Durasi Video: Sekitar ${duration} detik.`;
-    }
-
-    const visualDnaContent = elements.visualDnaStorage.textContent.trim();
-    let visualDnaInstruction = '';
-    if (visualDnaContent) {
-        visualDnaInstruction = currentLanguage === 'en'
-            ? `\n- **PRODUCT VISUAL DNA (FROM IMAGE ANALYSIS - MUST FOLLOW STRICTLY):** ${visualDnaContent}`
-            : `\n- **VISUAL DNA PRODUK (DARI ANALISIS GAMBAR - WAJIB DIIKUTI SECARA KETAT):** ${visualDnaContent}`;
     }
 
     let base = currentLanguage === 'en'
@@ -830,6 +919,30 @@ export function constructPrompt() {
     if (!placeholdersUsed) {
       base += platformOptimization + `\n\n[[PLATFORM_PLAN_JSON]]\n${platformPlanJson}`;
     }
+const visualDna = elements.visualDnaStorage.textContent;
+    if (visualDna) {
+        base += currentLanguage === 'en'
+            ? `\n- **PRODUCT VISUAL DNA:** ${visualDna}`
+            : `\n- **VISUAL DNA PRODUK:** ${visualDna}`;
+        const dnaRule = currentLanguage === 'en'
+            ? `\n- At the END of each text_to_image_prompt, optionally append ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...] ONLY if the scene clearly depicts OUR product (not competitor/before/messy/dirty/greasy/sticky/burnt/old/worn/unbranded).`
+            : `\n- Di AKHIR tiap text_to_image_prompt, tambahkan ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...] HANYA jika adegan jelas memperlihatkan produk KITA (bukan kompetitor/sebelum/kotor/lengket/gosong/lama/usang/tanpa brand).`;
+        base += dnaRule;
+
+        // Sinkronisasi visual_idea -> T2I wajib
+        const fidelityRule = currentLanguage === 'en'
+            ? `\n- FIDELITY (REQUIRED): For each shot, the text_to_image_prompt MUST explicitly reflect the subject + action + framing present in visual_idea. Start the prompt with a short one-line English paraphrase of visual_idea (no new ideas), then continue with details. Keep language strictly English.`
+            : `\n- KESESUAIAN (WAJIB): Untuk setiap shot, text_to_image_prompt HARUS secara eksplisit mencerminkan subjek + aksi + framing dari visual_idea. Mulai prompt dengan satu kalimat ringkas berbahasa Inggris yang memparafrasekan visual_idea (tanpa menambah ide baru), lalu lanjutkan detail. Bahasa untuk prompt gambar HARUS Inggris.`;
+        base += fidelityRule;
+
+        // Konsistensi karakter (tanpa charID)
+        const charRule = currentLanguage === 'en'
+            ? `\n- CHARACTER CONSISTENCY: If visual strategy is 'Character Sheet', BEGIN text_to_image_prompt with <char-desc>[[CHAR_ESSENCE]]</char-desc>. Do NOT include <char-desc> in image_to_video_prompt.`
+            : `\n- KONSISTENSI KARAKTER: Jika strategi visual 'Character Sheet', AWALI text_to_image_prompt dengan <char-desc>[[CHAR_ESSENCE]]</char-desc>. JANGAN pakai <char-desc> pada image_to_video_prompt.`;
+        base += charRule;
+
+        // Hilangkan instruksi blok sinematik agar prompt ringkas dan fokus
+    }
 
     if (currentMode === 'carousel') {
         const slideCount = elements.inputs.slideCount.value;
@@ -859,8 +972,21 @@ export function constructPrompt() {
 
     let finalInstruction = currentLanguage === 'en'
         ? `${base}\n**Additional Instructions:** Create a script consisting of "hook", "body", and "cta". Each section must have script text and an array containing 2-3 'shots' (micro-shots). If the visual strategy is 'Character Sheet', define one or more characters in 'character_sheet'.`
-        : `${base}\n**Instruksi Tambahan:** Buat skrip yang terdiri dari "hook", "body", dan "cta". Setiap bagian harus memiliki teks skrip dan sebuah array berisi 2-3 'shots' (micro-shots). Jika strategi visual adalah 'Character Sheet', definisikan satu atau lebih karakter di 'character_sheet'. PENTING: Semua teks 'visual_idea' HARUS dalam Bahasa Indonesia.`;
+        : `${base}\n**Instruksi Tambahan:** Buat skrip yang terdiri dari "hook", "body", dan "cta". Setiap bagian harus memiliki teks skrip dan sebuah array berisi 2-3 'shots' (micro-shots). Jika strategi visual adalah 'Character Sheet', definisikan satu atau lebih karakter di 'character_sheet'.`;
 
+    // Replace character essence placeholder if present; enforce language
+    try {
+        let essence = localStorage.getItem('direktiva_char_essence') || '';
+        if (currentLanguage === 'en') {
+            // keep as-is
+        } else {
+            // Jika UI Indonesia, essence tetap Bahasa Inggris agar T2I tidak tercampur
+        }
+        finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE]]', essence);
+    } catch(_) {
+        finalInstruction = finalInstruction.replaceAll('[[CHAR_ESSENCE]]', '');
+    }
+    
     return finalInstruction;
 }
 
