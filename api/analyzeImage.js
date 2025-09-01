@@ -48,17 +48,24 @@ export default async function handler(request, response) {
     payload = {
       contents: [{
         parts: [
-          { text: `Analyze this PRODUCT image in depth and return STRICT JSON only. Goals: ultra-specific identity for T2I/I2V prompts.
-If focus label provided, LIMIT analysis STRICTLY to the product matching that label, ignore model/body/background and unrelated clothing. Focus label: "${(focusLabel||'').toString().slice(0,80)}".
-1) description: Long, concrete visual description in English focusing ONLY on the product (not background).
-2) palette: 5 dominant colors in HEX.
-3) brand_guess: If any brand/label/logo is visible, guess the brand name; else empty string.
-4) model_guess: If any model/series/variant text is visible, guess; else empty string.
-5) ocr_text: Any readable packaging/label text (array of strings, best-effort OCR). If not present, empty array.
-6) distinctive_features: Array of 5-10 short bullet phrases capturing unique, non-generic identity traits (shape geometry, cuts, logo mark shape, accents, materials, finishes, stitch/pattern, ports/buttons layout, cap/nozzle type, etc.).
-
-STRICT OUTPUT SHAPE (JSON only, no extra text):
-{"description":"...","palette":["#RRGGBB",...],"brand_guess":"","model_guess":"","ocr_text":["..."],"distinctive_features":["..."]}` },
+          { text: `You are a meticulous product photographer and branding specialist. Your primary goal is to deconstruct a product's visual identity from an image into hyper-specific details for generating photorealistic images. Return STRICT JSON only.
+    
+    Focus Label (if provided, analyze ONLY this item): "${(focusLabel||'').toString().slice(0,80)}"
+    
+    **Analysis categories (MUST be filled with extreme detail):**
+    1.  **description**: A detailed, objective description in English, separating observations for the product's exterior, interior, and handle.
+    2.  **palette**: An array of 5-6 dominant and accent colors in HEX format.
+    3.  **brand_guess**: Guess the brand name if a logo is visible, otherwise an empty string.
+    4.  **model_guess**: Guess the model/series name if visible, otherwise an empty string.
+    5.  **ocr_text**: Extract any and all readable text from the product or its packaging (array of strings).
+    6.  **distinctive_features**: The most critical part. Provide an array of short, descriptive English phrases. Be a detective. **Separately describe the exterior, interior, and handle.**
+        * **Exterior:** e.g., "smooth matte navy blue outer coating", "polished chrome base".
+        * **Interior:** e.g., "black granite non-stick surface", "subtle white and grey speckle pattern".
+        * **Handle & Construction:** e.g., "light wood-texture ergonomic handle", "attached with two prominent silver rivets", "polished metallic rim".
+        * **Overall Shape:** e.g., "deep circular sauce pan body".
+    
+    **STRICT OUTPUT SHAPE (JSON only, no extra text):**
+    {"description":"...","palette":["#RRGGBB",...],"brand_guess":"","model_guess":"","ocr_text":["..."],"distinctive_features":["..."]}` },
           { inline_data: { mime_type: mimeType, data: base64Data } }
         ]
       }],
