@@ -729,16 +729,20 @@ export function constructPrompt() {
 
     let characterSheetInstruction = '';
     if (characterSheets.length > 0) {
-        // Langsung buat deskripsi lengkap dari sheet untuk diberikan ke AI.
-        const essenceFull = createCharacterEssence(characterSheets[0]); 
+        // Gabungkan deskripsi SEMUA karakter menjadi satu instruksi.
+        const allCharactersDescription = characterSheets.map((char, index) => {
+            // Panggil fungsi createCharacterEssence dari utils.js untuk setiap karakter
+            const essence = createCharacterEssence(char); 
+            return `Character ${index + 1}: ${essence}`;
+        }).join('\n');
 
-        // Simpan essence ini hanya untuk referensi atau debugging, bukan untuk injeksi manual lagi.
-        localStorage.setItem('direktiva_char_essence', essenceFull);
+        // Simpan essence gabungan untuk debugging.
+        localStorage.setItem('direktiva_char_essence', allCharactersDescription);
 
-        // Berikan instruksi yang lugas kepada AI.
+        // Buat instruksi yang lugas untuk AI.
         characterSheetInstruction = (currentLanguage === 'en')
-            ? `\n- **CHARACTER SHEET (MUST USE):** ${essenceFull}`
-            : `\n- **CHARACTER SHEET (WAJIB DIGUNAKAN):** ${essenceFull}`;
+            ? `\n- **CHARACTER SHEET (MUST USE):**\n${allCharactersDescription}`
+            : `\n- **CHARACTER SHEET (WAJIB DIGUNAKAN):**\n${allCharactersDescription}`;
     }
     
     let interactionInstruction = '';
@@ -755,6 +759,14 @@ export function constructPrompt() {
         durationInstruction = currentLanguage === 'en'
             ? `\n- Target Video Duration: Around ${duration} seconds.`
             : `\n- Target Durasi Video: Sekitar ${duration} detik.`;
+    }
+
+    const visualDnaContent = elements.visualDnaStorage.textContent.trim();
+    let visualDnaInstruction = '';
+    if (visualDnaContent) {
+        visualDnaInstruction = currentLanguage === 'en'
+            ? `\n- **PRODUCT VISUAL DNA (FROM IMAGE ANALYSIS - MUST FOLLOW STRICTLY):** ${visualDnaContent}`
+            : `\n- **VISUAL DNA PRODUK (DARI ANALISIS GAMBAR - WAJIB DIIKUTI SECARA KETAT):** ${visualDnaContent}`;
     }
 
     let base = currentLanguage === 'en'
@@ -847,7 +859,7 @@ export function constructPrompt() {
 
     let finalInstruction = currentLanguage === 'en'
         ? `${base}\n**Additional Instructions:** Create a script consisting of "hook", "body", and "cta". Each section must have script text and an array containing 2-3 'shots' (micro-shots). If the visual strategy is 'Character Sheet', define one or more characters in 'character_sheet'.`
-        : `${base}\n**Instruksi Tambahan:** Buat skrip yang terdiri dari "hook", "body", dan "cta". Setiap bagian harus memiliki teks skrip dan sebuah array berisi 2-3 'shots' (micro-shots). Jika strategi visual adalah 'Character Sheet', definisikan satu atau lebih karakter di 'character_sheet'.`;
+        : `${base}\n**Instruksi Tambahan:** Buat skrip yang terdiri dari "hook", "body", dan "cta". Setiap bagian harus memiliki teks skrip dan sebuah array berisi 2-3 'shots' (micro-shots). Jika strategi visual adalah 'Character Sheet', definisikan satu atau lebih karakter di 'character_sheet'. PENTING: Semua teks 'visual_idea' HARUS dalam Bahasa Indonesia.`;
 
     return finalInstruction;
 }
