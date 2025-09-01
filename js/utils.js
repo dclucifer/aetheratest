@@ -653,8 +653,10 @@ export function createCharacterEssence(character) {
     const clothing = outfit ? `Wearing ${outfit}.` : '';
     const extra = extras ? `Notable features: ${extras}.` : '';
 
-    const essence = `${intro} ${facial ? facial + '.' : ''} ${body ? body + '.' : ''} ${clothing} ${extra} Natural micro-expressions, coherent facial proportions, consistent look across shots.`
+    let essence = `${intro} ${facial ? facial + '.' : ''} ${body ? body + '.' : ''} ${clothing} ${extra} Natural micro-expressions, coherent facial proportions, consistent look across shots.`
       .replace(/\b(lips)\s+\1\b/gi,'$1')
+      .replace(/almond\-shape(d)?/gi,'almond-shaped')
+      .replace(/gray\s*-\s*gray/gi,'gray')
       .replace(/\s+/g,' ').trim();
     return essence;
 }
@@ -677,12 +679,14 @@ export function normalizeToEnglish(input) {
         ['lurus','straight'], ['ikal','wavy'], ['keriting','curly'],
         ['hitam','black'], ['coklat','brown'], ['biru','blue'], ['hijau','green'], ['merah','red'], ['pink','pink'],
         ['lesung pipi','dimples'],
-        ['minimalis','minimalist'], ['kasual','casual'],
-        ['make up','makeup']
+        ['minimalis','minimalist outfit'], ['kasual','casual outfit'],
+        ['make up','makeup'],
+        ['punya dimples yang hanya muncul saat tersenyum','dimples that appear only when smiling']
     ];
     map.forEach(([id,en])=>{ s = s.replace(new RegExp(`\\b${id}\\b`,'g'), en); });
     // fix doubles and minor typos
     s = s.replace(/alomnd/gi,'almond');
+    s = s.replace(/gray\s*-\s*gray/gi,'gray');
     return s.trim();
 }
 

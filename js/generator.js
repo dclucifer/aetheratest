@@ -254,18 +254,18 @@ export async function handleImageUpload(event) {
 
     } catch (error) {
         if (error?.name !== 'AbortError') {
-            console.error("Error during image analysis:", error);
+        console.error("Error during image analysis:", error);
             // Reset UI hanya jika ini run terbaru
             if (runId === imageAnalysisRunId) {
-                showNotification(`${t('notification_image_analysis_error') || 'Image analysis error'} ${error.message}`, 'error');
-                handleRemoveImage();
+        showNotification(`${t('notification_image_analysis_error') || 'Image analysis error'} ${error.message}`, 'error');
+        handleRemoveImage();
             }
         }
     } finally {
         if (objectUrl) { try { URL.revokeObjectURL(objectUrl); } catch(_) {} }
         // Hanya run terbaru yang boleh mengubah state UI tombol dan loader
         if (runId === imageAnalysisRunId) {
-            elements.imageLoader.classList.add('hidden');
+        elements.imageLoader.classList.add('hidden');
             try { elements.generateBtn.disabled = false; } catch(_) { }
         }
     }
@@ -919,7 +919,7 @@ export function constructPrompt() {
     if (!placeholdersUsed) {
       base += platformOptimization + `\n\n[[PLATFORM_PLAN_JSON]]\n${platformPlanJson}`;
     }
-const visualDna = elements.visualDnaStorage.textContent;
+    const visualDna = elements.visualDnaStorage.textContent;
     if (visualDna) {
         base += currentLanguage === 'en'
             ? `\n- **PRODUCT VISUAL DNA:** ${visualDna}`
@@ -1076,12 +1076,12 @@ Tambahkan juga daftar hashtag yang SPESIFIK untuk platform: ${platform}.
 Jika platform TikTok, gunakan kombinasi tag FYP dan niche yang relevan (contoh: #fyp, #foryou, #tiktokshop, serta niche spesifik produk/brand). Jika Instagram Reels, prioritaskan tag discoverability dan niche brand (contoh: #reels, #reelitfeelit). Jika YouTube Shorts, gunakan tag discoverability seperti #shorts serta niche.
 
 WAJIB: Selain platform yang dipilih, SELALU sertakan juga daftar khusus untuk Shopee pada field platform_hashtags.shopee (format array of strings) yang relevan untuk konversi marketplace (contoh: #Shopee, #ShopeeHaul, #Voucher, #GratisOngkir, dll).
- 
- ${t('script_label') || 'Skrip'}:
- ---
- ${fullScriptText}
- ---
- `;
+
+${t('script_label') || 'Skrip'}:
+---
+${fullScriptText}
+---
+`;
         // >>> pakai timeout lebih panjang khusus assets
         const timeoutMs = Number(localStorage.getItem('direktiva_timeout_ms')) || 120000;
         assets = await callGeminiAPI(prompt, getAdditionalAssetsResponseSchema(), /*temperature*/0.7, timeoutMs);
