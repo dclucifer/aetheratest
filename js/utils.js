@@ -624,25 +624,36 @@ export function createCharacterEssence(character) {
     const tr = (s)=> normalizeToEnglish((s||'').toString());
     const ethnicity = tr(character.ethnicity);
     const gender = tr(character.gender);
-    const face = [tr(character.face_shape)].filter(Boolean).join(' ');
-    const eyes = [tr(character.eye_color), tr(character.eye_shape)].filter(Boolean).join(' ');
+    const faceShape = tr(character.face_shape);
+    const eyeColor = tr(character.eye_color);
+    const eyeShapeRaw = tr(character.eye_shape);
+    const eyeShape = eyeShapeRaw ? (/(shape|shaped)$/i.test(eyeShapeRaw) ? eyeShapeRaw : `${eyeShapeRaw}-shaped`) : '';
     const brows = character.eyebrow_style ? `${tr(character.eyebrow_style)} eyebrows` : '';
     const nose = character.nose_shape ? `${tr(character.nose_shape)} nose` : '';
     const lips = character.lip_shape ? `${tr(character.lip_shape)} lips` : '';
-    const hair = [tr(character.hair_style), tr(character.hair_color)].filter(Boolean).join(' ');
+    const hairStyle = tr(character.hair_style);
+    const hairColor = tr(character.hair_color);
+    const hair = [hairStyle, hairColor].filter(Boolean).join(' ');
     const skin = character.skin_tone ? `${tr(character.skin_tone)} skin` : '';
-    const height = character.height ? `${character.height} height` : '';
+    const height = character.height ? `${tr(character.height)} height` : '';
     const vibe = tr(character.vibe || character.notes || '');
     const outfit = [tr(character.clothing_style), tr(character.specific_outfit)].filter(Boolean).join(' ');
     const extras = [tr(character.unique_features), tr(character.makeup_style)].filter(Boolean).join(', ');
 
-    const intro = [age, ethnicity, gender].filter(Boolean).join(' ');
-    const facial = [face, eyes && `${eyes} eyes`, brows, nose, lips].filter(Boolean).join(', ');
+    const namePart = character.name ? ` named ${tr(character.name)}` : '';
+    const intro = [age, ethnicity, gender].filter(Boolean).join(' ') + namePart + '.';
+    const facial = [
+        faceShape && `${faceShape} face`,
+        (eyeColor || eyeShape) && `${eyeShape} ${eyeColor} eyes`.trim(),
+        brows,
+        nose,
+        lips
+    ].filter(Boolean).join(', ');
     const body = [skin, height].filter(Boolean).join(', ');
-    const clothing = outfit ? `wearing ${outfit}` : '';
-    const extra = extras ? `notable features: ${extras}` : '';
+    const clothing = outfit ? `Wearing ${outfit}.` : '';
+    const extra = extras ? `Notable features: ${extras}.` : '';
 
-    const essence = `${intro}. ${facial}. ${body}. ${clothing}. ${extra}. Natural micro-expressions, coherent facial proportions, consistent look across shots.`
+    const essence = `${intro} ${facial ? facial + '.' : ''} ${body ? body + '.' : ''} ${clothing} ${extra} Natural micro-expressions, coherent facial proportions, consistent look across shots.`
       .replace(/\b(lips)\s+\1\b/gi,'$1')
       .replace(/\s+/g,' ').trim();
     return essence;

@@ -48,14 +48,23 @@ export default async function handler(request, response) {
     payload = {
       contents: [{
         parts: [
-          { text: `Analyze this PRODUCT image in depth and return STRICT JSON only. Goals: ultra-specific identity for T2I/I2V prompts.
-If focus label provided, LIMIT analysis STRICTLY to the product matching that label, ignore model/body/background and unrelated clothing. Focus label: "${(focusLabel||'').toString().slice(0,80)}".
-1) description: Long, concrete visual description in English focusing ONLY on the product (not background).
-2) palette: 5 dominant colors in HEX.
-3) brand_guess: If any brand/label/logo is visible, guess the brand name; else empty string.
-4) model_guess: If any model/series/variant text is visible, guess; else empty string.
-5) ocr_text: Any readable packaging/label text (array of strings, best-effort OCR). If not present, empty array.
-6) distinctive_features: Array of 5-10 short bullet phrases capturing unique, non-generic identity traits (shape geometry, cuts, logo mark shape, accents, materials, finishes, stitch/pattern, ports/buttons layout, cap/nozzle type, etc.).
+          { text: `Analyze this PRODUCT image and return STRICT JSON only.
+If focus label provided, LIMIT analysis STRICTLY to the product matching that label; ignore background/model. Focus label: "${(focusLabel||'').toString().slice(0,80)}".
+
+Return fields:
+1) description: Precise English description focusing ONLY on the product (materials, geometry, finish, colors, wear/age if any). Avoid subjective words.
+2) palette: Top 5 dominant colors in HEX.
+3) brand_guess: If any brand/label is visible, guess brand; else empty string.
+4) model_guess: If any model/series text is visible, guess; else empty string.
+5) ocr_text: Array of readable packaging/label text; empty array if none.
+6) distinctive_features: Array of 8–14 compact bullets describing identity traits. Include when present:
+   - exterior color name + HEX, interior color/finish (e.g., dark granite speckled non-stick)
+   - handle material/color/finish and wood-grain or texture details
+   - rim/band color or ring, lid/no-lid, spout/rim shape
+   - body geometry (e.g., deep bowl-like curved body, rounded base, diameter approx.)
+   - logo/brand mark presence and placement/shape
+   - material (stainless, cast aluminum, etc.) and surface finish (matte, glossy)
+   - unique contrast/accent that helps re-identify the product
 
 STRICT OUTPUT SHAPE (JSON only, no extra text):
 {"description":"...","palette":["#RRGGBB",...],"brand_guess":"","model_guess":"","ocr_text":["..."],"distinctive_features":["..."]}` },
@@ -73,12 +82,11 @@ STRICT OUTPUT SHAPE (JSON only, no extra text):
     payload = {
       contents: [{
         parts: [
-          { text: `You will receive DESCRIPTION/CONTEXT (may be plain text or JSON with description, palette, brand_guess, model_guess, ocr_text, distinctive_features). Optional focus label: "${(focusLabel||'').toString().slice(0,80)}".
-Return a single comma-separated KEYWORD STRING optimized for text-to-image models, with 40-60 tokens.
-- Start with identity lock tokens: brand=<brand_guess if any>, model=<model_guess if any>, logo_mark=<short shape/geometry>, must_keep_colors=<top 2-3 HEX>.
-- Then list ultra-specific nouns/adjectives: product type, materials, finish, geometry, edges, accents, texture, patterns, proportions, ports/buttons layout, packaging details, camera angle, lens, lighting style, environment (ONLY if essential), background color.
-- Prefer concrete terms, avoid subjective words; no sentences; no quotes.
-DESCRIPTION/CONTEXT:\n${typeof textData === 'string' ? textData : JSON.stringify(textData)}` }
+          { text: `You will receive DESCRIPTION/CONTEXT (plain text or JSON: description, palette, brand_guess, model_guess, ocr_text, distinctive_features). Optional focus: "${(focusLabel||'').toString().slice(0,80)}".
+Return a single comma-separated KEYWORD STRING (40–70 tokens) optimized for generic text-to-image models.
+- Start with identity locks: brand=<brand_guess>, model=<model_guess>, must_keep_colors=<top 2–3 HEX>.
+- Add concrete tokens: product type, materials, finish, geometry, rim/band, handle material & color, interior coating (e.g., dark granite speckled non-stick), exterior color name, logo/mark placement, accents, patterns, proportions.
+- Avoid subjective words and full sentences; no quotes.` }
         ]
       }]
     };
