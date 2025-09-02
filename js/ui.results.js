@@ -777,7 +777,7 @@ export async function applyVariantToScript(card, script, section, newText) {
         // model-specific adaptation: remove bracket ID block for bracketless engines and append natural-language suffix
         try {
             const mt = (localStorage.getItem('model_target') || 'auto').toLowerCase();
-            const isBracketless = (mt === 'imagen' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
+            const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
             if (isBracketless) {
                 const brandMatch = (dna.match(/brand=([^,\s]+)/) || [])[1] || '';
                 const modelMatch = (dna.match(/model=([^,\s]+)/) || [])[1] || '';

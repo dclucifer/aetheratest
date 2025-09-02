@@ -951,10 +951,20 @@ export function constructPrompt() {
         base += currentLanguage === 'en'
             ? `\n- **PRODUCT VISUAL DNA:** ${visualDna}`
             : `\n- **VISUAL DNA PRODUK:** ${visualDna}`;
-        const dnaRule = currentLanguage === 'en'
-            ? `\n- At the END of each text_to_image_prompt, optionally append ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...] ONLY if the scene clearly depicts OUR product (not competitor/before/messy/dirty/greasy/sticky/burnt/old/worn/unbranded).`
-            : `\n- Di AKHIR tiap text_to_image_prompt, tambahkan ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...] HANYA jika adegan jelas memperlihatkan produk KITA (bukan kompetitor/sebelum/kotor/lengket/gosong/lama/usang/tanpa brand).`;
-        base += dnaRule;
+        // Model-target aware DNA suffix rule (universal-friendly)
+        const mt = (localStorage.getItem('model_target') || 'auto').toLowerCase();
+        const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
+        if (isBracketless) {
+            const dnaRule = currentLanguage === 'en'
+                ? `\n- DNA SUFFIX (UNIVERSAL, NO TOKENS): Do NOT use any bracket tokens. End each text_to_image_prompt with a short natural-language suffix like: "— official <brand model>; exact brand colors <#HEX, #HEX>; identity features: <key features>" ONLY if the scene clearly shows OUR product (not competitor/before/messy/dirty/greasy/sticky/burnt/old/worn/unbranded).`
+                : `\n- DNA SUFFIX (UNIVERSAL, TANPA TOKEN): JANGAN gunakan token kurung. Akhiri tiap text_to_image_prompt dengan akhiran bahasa natural seperti: "— official <brand model>; exact brand colors <#HEX, #HEX>; identity features: <fitur kunci>" HANYA jika adegan jelas memperlihatkan produk KITA (bukan kompetitor/sebelum/kotor/lengket/gosong/lama/usang/tanpa brand).`;
+            base += dnaRule;
+        } else {
+            const dnaRule = currentLanguage === 'en'
+                ? `\n- At the END of each text_to_image_prompt, optionally append ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...] ONLY if the scene clearly depicts OUR product (not competitor/before/messy/dirty/greasy/sticky/burnt/old/worn/unbranded).`
+                : `\n- Di AKHIR tiap text_to_image_prompt, tambahkan ID[brand=...; model=...; must_keep_colors=HEX|HEX|HEX; features=...] HANYA jika adegan jelas memperlihatkan produk KITA (bukan kompetitor/sebelum/kotor/lengket/gosong/lama/usang/tanpa brand).`;
+            base += dnaRule;
+        }
 
         // Sinkronisasi visual_idea -> T2I wajib
         const fidelityRule = currentLanguage === 'en'
