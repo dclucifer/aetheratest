@@ -2,6 +2,17 @@ import { supabaseClient } from './supabase.js';
 import { languageState } from './utils.js';
 import { t } from './i18n.js';
 
+export async function translateToEnglishBatch(texts = []) {
+    if (!Array.isArray(texts) || texts.length === 0) return [];
+    const headers = { 'Content-Type': 'application/json' };
+    const userApiKey = localStorage.getItem('direktiva_user_api_key');
+    if (userApiKey) headers['x-user-api-key'] = userApiKey;
+    const r = await fetch('/api/translate', { method: 'POST', headers, body: JSON.stringify({ texts }) });
+    if (!r.ok) throw new Error('Failed to translate');
+    const data = await r.json();
+    return Array.isArray(data?.translations) ? data.translations : [];
+}
+
 // Safe JSON parser that tolerates empty/non-JSON responses
 async function parseJsonSafe(response) {
     try {

@@ -701,6 +701,13 @@ export function normalizeToEnglish(input) {
     // fix doubles and minor typos
     s = s.replace(/alomnd/gi,'almond');
     s = s.replace(/gray\s*-\s*gray/gi,'gray');
+    // Normalize common visual idea terms
+    const more = [
+        ['dapur','kitchen'], ['kompor','stovetop'], ['wajan','pan'], ['piring','plates'],
+        ['cahaya lembut','soft light'], ['pencahayaan lembut','soft lighting'], ['hangat','warm'], ['sejuk','cool'],
+        ['gerak melingkar','arc movement'], ['kamera','camera'], ['medium shot','medium shot'], ['close-up','close-up']
+    ];
+    more.forEach(([id,en])=>{ s = s.replace(new RegExp(`\\b${id}\\b`,'g'), en); });
     // cleanup double commas/spaces after map substitutions
     s = s.replace(/\s*,\s*,+/g, ', ').replace(/\s{2,}/g, ' ');
     return s.trim();

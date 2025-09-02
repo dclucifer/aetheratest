@@ -2,7 +2,7 @@
 import { PLATFORM_CONFIG, buildPlatformPlan } from './platform.config.js';
 import { elements, setLoadingState, showNotification, fileToBase64, getCharacterDescriptionString, getFullScriptText, closeEditModal, showBeforeAfter, languageState, createCharacterEssence, chooseShotFeatures, shouldAttachProductId, createCharacterTokens, isCharacterVisible } from './utils.js';
 import { t } from './i18n.js';
-import { analyzeImageWithAI, callGeminiAPI } from './api.js';
+import { analyzeImageWithAI, callGeminiAPI, translateToEnglishBatch } from './api.js';
 import { getPersonas } from './persona.js';
 import { renderResults, renderError } from './ui.results.js';
 import { DEFAULT_SYSTEM_PROMPT, ENGLISH_SYSTEM_PROMPT } from './settings.js';
@@ -865,8 +865,8 @@ export function constructPrompt() {
         const personaGuideId = `- SINTESIS PERSONA: Gabungkan fakta sheet menjadi sosok hidup dengan proporsi wajah koheren (jarak mata, pangkal hidung, ketebalan bibir) dan micro-expression. Jaga ciri jangkar ini konsisten antar shot. Ekspresikan mood natural; hindari wajah manekin.`;
 
         characterSheetInstruction = (currentLanguage === 'en')
-            ? `\n- **CHARACTER ESSENCE (USE IN <char-desc>):** [[CHAR_ESSENCE]]\n- For multi-character scenes, include ALL of these as separate <char-desc> blocks: [[CHAR_ESSENCE_ALL]]\n${personaGuideEn}\n- If character is visible, you may append a compact CHAR[...] identity block at the end.`
-            : `\n- **ESENSI KARAKTER (PAKAI DI <char-desc>):** [[CHAR_ESSENCE]]\n- Untuk adegan multi-karakter, sertakan SEMUA berikut sebagai blok <char-desc> terpisah: [[CHAR_ESSENCE_ALL]]\n${personaGuideId}\n- Jika karakter terlihat, boleh tambah blok ringkas CHAR[...] di akhir.`;
+            ? `\n- **CHARACTER ESSENCE (USE IN <char-desc>):** [[CHAR_ESSENCE]]\n- For multi-character scenes, include ALL of these as separate <char-desc> blocks: [[CHAR_ESSENCE_ALL]]\n${personaGuideEn}\n- IMPORTANT: All text_to_image_prompt and image_to_video_prompt MUST be in English, regardless of sheet input language.`
+            : `\n- **ESENSI KARAKTER (PAKAI DI <char-desc>):** [[CHAR_ESSENCE]]\n- Untuk adegan multi-karakter, sertakan SEMUA berikut sebagai blok <char-desc> terpisah: [[CHAR_ESSENCE_ALL]]\n${personaGuideId}\n- PENTING: Semua text_to_image_prompt dan image_to_video_prompt WAJIB Bahasa Inggris, apa pun bahasa input sheet.`;
     }
     
     let interactionInstruction = '';
@@ -953,7 +953,7 @@ export function constructPrompt() {
             : `\n- **VISUAL DNA PRODUK:** ${visualDna}`;
         // Model-target aware DNA suffix rule (universal-friendly)
         const mt = (localStorage.getItem('model_target') || 'auto').toLowerCase();
-        const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
+        const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'gemini' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
         if (isBracketless) {
             const dnaRule = currentLanguage === 'en'
                 ? `\n- DNA SUFFIX (UNIVERSAL, NO TOKENS): Do NOT use any bracket tokens. End each text_to_image_prompt with a short natural-language suffix like: "— official <brand model>; exact brand colors <#HEX, #HEX>; identity features: <key features>" ONLY if the scene clearly shows OUR product (not competitor/before/messy/dirty/greasy/sticky/burnt/old/worn/unbranded).`
