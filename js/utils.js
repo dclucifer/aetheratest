@@ -639,9 +639,12 @@ export function createCharacterEssence(character) {
       .replace(/\s{2,}/g, ' ')
       .trim();
     const skin = character.skin_tone ? `${tr(character.skin_tone)} skin` : '';
+    const bodyShape = character.body_shape ? `${tr(character.body_shape)}` : '';
     const height = character.height ? `${tr(character.height)} height` : '';
-    const vibe = tr(character.vibe || character.notes || '');
+    const vibe = tr(character.vibe || '');
+    const notes = tr(character.notes || '');
     const outfit = [tr(character.clothing_style), tr(character.specific_outfit)].filter(Boolean).join(' ');
+    const palette = character.color_palette ? tr(character.color_palette) : '';
     const extras = [tr(character.unique_features), tr(character.makeup_style)].filter(Boolean).join(', ');
 
     const namePart = character.name ? ` named ${tr(character.name)}` : '';
@@ -654,9 +657,11 @@ export function createCharacterEssence(character) {
         lips,
         hair && `${hair} hair`
     ].filter(Boolean).join(', ');
-    const body = [skin, height].filter(Boolean).join(', ');
-    const clothing = outfit ? `Wearing ${outfit}.` : '';
-    const extra = extras ? `Notable features: ${extras}.` : '';
+    const body = [skin, bodyShape, height].filter(Boolean).join(', ');
+    const clothing = [outfit && `Wearing ${outfit}.`, palette && `Dominant colors: ${palette}.`].filter(Boolean).join(' ');
+    const mood = vibe ? `Vibe: ${vibe}.` : '';
+    const notesLine = notes ? `Notes: ${notes}.` : '';
+    const extra = [extras && `Notable features: ${extras}.`, mood, notesLine].filter(Boolean).join(' ');
 
     let essence = `${intro} ${facial ? facial + '.' : ''} ${body ? body + '.' : ''} ${clothing} ${extra}`
       .replace(/\b(lips)\s+\1\b/gi,'$1')
