@@ -633,7 +633,7 @@ export function createCharacterEssence(character) {
     const lips = character.lip_shape ? `${tr(character.lip_shape)} lips` : '';
     const hairStyle = tr(character.hair_style);
     const hairColor = tr(character.hair_color);
-    const hairRaw = [hairStyle, hairColor].filter(Boolean).join(' ');
+    const hairRaw = canonicalizeHair([hairStyle, hairColor].filter(Boolean).join(' '));
     const hair = hairRaw
       .replace(/\s*,\s*/g, ' ')
       .replace(/\s{2,}/g, ' ')
@@ -641,7 +641,8 @@ export function createCharacterEssence(character) {
     const skin = character.skin_tone ? `${tr(character.skin_tone)} skin` : '';
     const bodyShape = character.body_shape ? `${tr(character.body_shape)}` : '';
     const height = character.height ? `${tr(character.height)} height` : '';
-    const vibe = tr(character.vibe || character.notes || '');
+    const vibe = tr(character.vibe || '');
+    const notes = tr(character.notes || '');
     const outfit = [tr(character.clothing_style), tr(character.specific_outfit)].filter(Boolean).join(' ');
     const palette = character.color_palette ? tr(character.color_palette) : '';
     const extras = [tr(character.unique_features), tr(character.makeup_style)].filter(Boolean).join(', ');
