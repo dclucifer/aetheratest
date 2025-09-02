@@ -701,6 +701,34 @@ export function normalizeToEnglish(input) {
     return s.trim();
 }
 
+// Canonicalize hair description: normalize order and common Indonesian patterns
+export function canonicalizeHair(input) {
+    const s0 = (input || '').toString().trim();
+    if (!s0) return '';
+    let s = normalizeToEnglish(s0);
+    s = s.replace(/\s*,\s*/g, ' ').replace(/\s{2,}/g, ' ').trim();
+    const tokens = s.split(/\s+/);
+    const lengths = ['very short','short','shoulder-length','medium','long','very long'];
+    const textures = ['straight','wavy','curly','coily','voluminous'];
+    const styles = ['bob','lob','pixie','bangs','fringe','layered'];
+    const colors = ['black','brown','blonde','blue','green','red','pink','purple','orange','yellow','gray','light','light gray','pastel','pastel pink'];
+    const picked = { length:'', texture:'', style:'', color:'' };
+    tokens.forEach(t => {
+        const tk = t.toLowerCase();
+        if (!picked.length && lengths.includes(tk)) picked.length = tk;
+        else if (!picked.texture && textures.includes(tk)) picked.texture = tk;
+        else if (!picked.style && styles.includes(tk)) picked.style = tk;
+        else if (!picked.color && (colors.includes(tk) || /^pastel\s+\w+$/i.test(s))) picked.color = tk;
+    });
+    // try to capture compound like "pastel pink"
+    if (!picked.color) {
+        const m = s.match(/pastel\s+(pink|blue|purple|green|yellow|orange|red|lilac|peach)/i);
+        if (m) picked.color = `pastel ${m[1].toLowerCase()}`;
+    }
+    const out = [picked.length, picked.texture, picked.style, picked.color].filter(Boolean).join(' ');
+    return out || s;
+}
+
 export function chooseShotFeatures(visualIdea, allFeatures) {
     if (!Array.isArray(allFeatures) || allFeatures.length === 0) return [];
     const text = (visualIdea||'').toLowerCase();
