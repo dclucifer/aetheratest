@@ -1,6 +1,6 @@
 // js/ui.results.js (split from ui.js)
 import { t } from './i18n.js'; // You might also need this if not already imported
-import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoadingState, languageState, chooseShotFeatures, shouldAttachProductId } from './utils.js';
+import { elements, copyToClipboard, getFullScriptText, openEditModal, setLoadingState, languageState, chooseShotFeatures, shouldAttachProductId, isCharacterVisible } from './utils.js';
 import { updateCardContent, initSwiper, createAssetsHTML, createCarouselSlideHTML } from './ui.js';
 import { updateSingleScript, getScripts } from './state.js';
 import { exportPromptPackJSON, exportPromptPackCSV, exportCapCutSRT, exportCapCutCSV } from './download.js';
