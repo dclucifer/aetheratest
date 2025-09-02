@@ -658,7 +658,7 @@ function getLanguageSpecificSystemPrompt() {
     return currentLanguage === 'en' ? ENGLISH_SYSTEM_PROMPT : DEFAULT_SYSTEM_PROMPT;
 }
 
-export function constructPrompt() {
+export async function constructPrompt() {
     const currentMode = localStorage.getItem('currentMode') || 'single';
     const currentLanguage = languageState.current;
 
@@ -836,7 +836,13 @@ export function constructPrompt() {
             const cs = characterSheets[0] || {};
             // Ambil esensi lengkap untuk <char-desc> dan ID stabil
             const { stableId } = createCharacterTokens(cs);
-            const essenceFull = createCharacterEssence(cs);
+            let essenceFull = createCharacterEssence(cs);
+            // Terjemahkan essence ke Bahasa Inggris untuk konsistensi model
+            try {
+                const { translateToEnglishBatch } = await import('./api.js');
+                const [essEn] = await translateToEnglishBatch([essenceFull]);
+                if (essEn) essenceFull = essEn;
+            } catch(_) {}
             // Simpan ke localStorage untuk injeksi T2I (kompatibilitas lama)
             localStorage.setItem('direktiva_char_essence', essenceFull);
             localStorage.setItem('direktiva_char_id', stableId);
@@ -851,9 +857,17 @@ export function constructPrompt() {
                 vibe: cs.vibe || ''
             };
             localStorage.setItem('direktiva_char_tokens', JSON.stringify(charTokens));
-            // Simpan semua essence karakter untuk dukungan multi-karakter
+            // Simpan semua essence karakter untuk dukungan multi-karakter (EN)
             try {
-                const allEssences = characterSheets.map(sheet => ({ name: sheet.name || '', essence: createCharacterEssence(sheet) }));
+                const allEssencesRaw = characterSheets.map(sheet => ({ name: sheet.name || '', essence: createCharacterEssence(sheet) }));
+                let allEssences = allEssencesRaw;
+                try {
+                    const { translateToEnglishBatch } = await import('./api.js');
+                    const translated = await translateToEnglishBatch(allEssencesRaw.map(e => e.essence));
+                    if (Array.isArray(translated) && translated.length === allEssencesRaw.length) {
+                        allEssences = allEssencesRaw.map((e,i)=> ({ name: e.name, essence: translated[i] || e.essence }));
+                    }
+                } catch(_) {}
                 localStorage.setItem('direktiva_char_essences', JSON.stringify(allEssences));
             } catch(_) {}
 

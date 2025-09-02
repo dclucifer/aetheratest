@@ -750,7 +750,7 @@ export async function applyVariantToScript(card, script, section, newText) {
           .replace(/\bdengan\b/gi,'with')
           .replace(/\bdi\b/gi,'in')
           .replace(/\bke\b/gi,'to')
-          .replace(/["'“”]/g,'')
+          .replace(/[\"'“”]/g,'')
           .trim();
         return norm;
     }
