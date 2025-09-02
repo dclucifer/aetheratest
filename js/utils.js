@@ -633,7 +633,11 @@ export function createCharacterEssence(character) {
     const lips = character.lip_shape ? `${tr(character.lip_shape)} lips` : '';
     const hairStyle = tr(character.hair_style);
     const hairColor = tr(character.hair_color);
-    const hair = [hairStyle, hairColor].filter(Boolean).join(' ');
+    const hairRaw = [hairStyle, hairColor].filter(Boolean).join(' ');
+    const hair = hairRaw
+      .replace(/\s*,\s*/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
     const skin = character.skin_tone ? `${tr(character.skin_tone)} skin` : '';
     const height = character.height ? `${tr(character.height)} height` : '';
     const vibe = tr(character.vibe || character.notes || '');
@@ -654,10 +658,10 @@ export function createCharacterEssence(character) {
     const clothing = outfit ? `Wearing ${outfit}.` : '';
     const extra = extras ? `Notable features: ${extras}.` : '';
 
-    let essence = `${intro} ${facial ? facial + '.' : ''} ${body ? body + '.' : ''} ${clothing} ${extra} Natural micro-expressions, coherent facial proportions, consistent look across shots.`
+    let essence = `${intro} ${facial ? facial + '.' : ''} ${body ? body + '.' : ''} ${clothing} ${extra}`
       .replace(/\b(lips)\s+\1\b/gi,'$1')
       .replace(/almond\-shape(d)?/gi,'almond-shaped')
-      .replace(/gray\s*-\s*gray/gi,'gray')
+      .replace(/gray\s*\-\s*gray/gi,'gray')
       .replace(/\s+/g,' ').trim();
     return essence;
 }
@@ -679,6 +683,10 @@ export function normalizeToEnglish(input) {
         ['panjang','long'], ['pendek','short'],
         ['lurus','straight'], ['ikal','wavy'], ['keriting','curly'],
         ['hitam','black'], ['coklat','brown'], ['biru','blue'], ['hijau','green'], ['merah','red'], ['pink','pink'],
+        ['ungu','purple'], ['kuning','yellow'], ['oranye','orange'], ['jingga','orange'], ['abu muda','light gray'],
+        ['pastel pink','pastel pink'], ['pink pastel','pastel pink'],
+        ['bervolume','voluminous'], ['bergelombang','wavy'],
+        ['dan','and'],
         ['lesung pipi','dimples'],
         ['minimalis','minimalist outfit'], ['kasual','casual outfit'],
         ['make up','makeup'],
@@ -688,6 +696,8 @@ export function normalizeToEnglish(input) {
     // fix doubles and minor typos
     s = s.replace(/alomnd/gi,'almond');
     s = s.replace(/gray\s*-\s*gray/gi,'gray');
+    // cleanup double commas/spaces after map substitutions
+    s = s.replace(/\s*,\s*,+/g, ', ').replace(/\s{2,}/g, ' ');
     return s.trim();
 }
 
