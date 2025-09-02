@@ -763,7 +763,7 @@ export async function applyVariantToScript(card, script, section, newText) {
         // inject all characters as <char-desc> blocks when using character strategy
         let injected = core;
         try {
-            if ((localStorage.getItem('visualStrategy') === 'character')) {
+            if ((localStorage.getItem('visualStrategy') === 'character') && isCharacterVisible(visualIdea||'', core||'')) {
                 const list = JSON.parse(localStorage.getItem('direktiva_char_essences') || '[]');
                 const single = localStorage.getItem('direktiva_char_essence') || '';
                 const chunks = (Array.isArray(list) && list.length) ? list.map(e => e && e.essence).filter(Boolean) : (single ? [single] : []);
@@ -779,6 +779,8 @@ export async function applyVariantToScript(card, script, section, newText) {
             const mt = (localStorage.getItem('model_target') || 'auto').toLowerCase();
             const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
             if (isBracketless) {
+                // Strip inline HEX from core to avoid redundancy with natural-language DNA suffix
+                let cleaned = injected.replace(/#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b/g, '').replace(/\s{2,}/g,' ').trim();
                 const brandMatch = (dna.match(/brand=([^,\s]+)/) || [])[1] || '';
                 const modelMatch = (dna.match(/model=([^,\s]+)/) || [])[1] || '';
                 const colorsMatch = (dna.match(/must_keep_colors=([^\s]+)/) || [])[1] || '';
@@ -788,7 +790,7 @@ export async function applyVariantToScript(card, script, section, newText) {
                 if (colorList.length) parts.push(`exact brand colors ${colorList.join(', ')}`);
                 if (featuresStr) parts.push(`identity features: ${featuresStr}`);
                 const nat = parts.length ? ` — ${parts.join('; ')}` : '';
-                return `${injected}${nat}`;
+                return `${cleaned}${nat}`;
             }
         } catch(_) {}
         // default: keep bracket ID block
