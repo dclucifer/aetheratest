@@ -779,8 +779,11 @@ export async function applyVariantToScript(card, script, section, newText) {
             const mt = (localStorage.getItem('model_target') || 'auto').toLowerCase();
             const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
             if (isBracketless) {
-                // Strip inline HEX from core to avoid redundancy with natural-language DNA suffix
-                let cleaned = injected.replace(/#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b/g, '').replace(/\s{2,}/g,' ').trim();
+                // Strip inline HEX and 'Colors: ...' from core to avoid redundancy with natural-language DNA suffix
+                let cleaned = injected
+                  .replace(/\bColors:\s*[^.]+\.?/gi, '')
+                  .replace(/#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b/g, '')
+                  .replace(/\s{2,}/g,' ').trim();
                 const brandMatch = (dna.match(/brand=([^,\s]+)/) || [])[1] || '';
                 const modelMatch = (dna.match(/model=([^,\s]+)/) || [])[1] || '';
                 const colorsMatch = (dna.match(/must_keep_colors=([^\s]+)/) || [])[1] || '';
@@ -790,7 +793,12 @@ export async function applyVariantToScript(card, script, section, newText) {
                 if (colorList.length) parts.push(`exact brand colors ${colorList.join(', ')}`);
                 if (featuresStr) parts.push(`identity features: ${featuresStr}`);
                 const nat = parts.length ? ` — ${parts.join('; ')}` : '';
-                return `${cleaned}${nat}`;
+                let attach = false;
+                try {
+                    const canon = JSON.parse(localStorage.getItem('direktiva_visual_dna_tokens')||'null');
+                    attach = shouldAttachProductId(visualIdea||'', productName, canon?.brand||'');
+                } catch(_) {}
+                return attach ? `${cleaned}${nat}` : cleaned;
             }
         } catch(_) {}
         // default: keep bracket ID block
