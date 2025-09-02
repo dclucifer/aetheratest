@@ -953,7 +953,7 @@ export function constructPrompt() {
             : `\n- **VISUAL DNA PRODUK:** ${visualDna}`;
         // Model-target aware DNA suffix rule (universal-friendly)
         const mt = (localStorage.getItem('model_target') || 'auto').toLowerCase();
-        const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
+        const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'gemini' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
         if (isBracketless) {
             const dnaRule = currentLanguage === 'en'
                 ? `\n- DNA SUFFIX (UNIVERSAL, NO TOKENS): Do NOT use any bracket tokens. End each text_to_image_prompt with a short natural-language suffix like: "— official <brand model>; exact brand colors <#HEX, #HEX>; identity features: <key features>" ONLY if the scene clearly shows OUR product (not competitor/before/messy/dirty/greasy/sticky/burnt/old/worn/unbranded).`

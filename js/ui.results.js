@@ -741,8 +741,23 @@ export async function applyVariantToScript(card, script, section, newText) {
         if (colors.length) parts.push(`must_keep_colors=${colors.map(c=>c.startsWith('#')?c:'#'+c).join('|')}`);
         return parts.join(', ');
     }
+    function buildT2IIntro(visualIdea) {
+        const s = String(visualIdea || '').trim();
+        if (!s) return '';
+        // Lightweight paraphrase: strip Indonesian connectors and keep subject-action-frame in EN
+        const norm = s
+          .replace(/\bdan\b/gi,'and')
+          .replace(/\bdengan\b/gi,'with')
+          .replace(/\bdi\b/gi,'in')
+          .replace(/\bke\b/gi,'to')
+          .replace(/["'“”]/g,'')
+          .trim();
+        return norm;
+    }
     function injectDna(text, visualIdea) {
-        const core = stripIdentityBlocks(text);
+        const core0 = stripIdentityBlocks(text);
+        const intro = buildT2IIntro(visualIdea);
+        const core = intro ? `${intro}. ${core0}` : core0;
         const dna = buildDnaString();
         if (!dna) return core;
         // pick features (dynamic per visual idea)
@@ -777,7 +792,7 @@ export async function applyVariantToScript(card, script, section, newText) {
         // model-specific adaptation: remove bracket ID block for bracketless engines and append natural-language suffix
         try {
             const mt = (localStorage.getItem('model_target') || 'auto').toLowerCase();
-            const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
+            const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'gemini' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
             if (isBracketless) {
                 // Strip inline HEX and 'Colors: ...' from core to avoid redundancy with natural-language DNA suffix
                 let cleaned = injected
