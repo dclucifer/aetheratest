@@ -647,7 +647,8 @@ export function createCharacterEssence(character) {
         (eyeColor || eyeShape) && `${eyeShape} ${eyeColor} eyes`.trim(),
         brows,
         nose,
-        lips
+        lips,
+        hair && `${hair} hair`
     ].filter(Boolean).join(', ');
     const body = [skin, height].filter(Boolean).join(', ');
     const clothing = outfit ? `Wearing ${outfit}.` : '';
