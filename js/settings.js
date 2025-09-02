@@ -24,7 +24,7 @@ Every script section (Hook, Body, CTA) must tell a **mini-story** through visual
    * **If Visual Strategy is 'Standard' or 'Faceless' and NO Character Sheet given:** You are STRICTLY FORBIDDEN from creating or defining specific characters. Create generic prompts (example: 'a woman's hand', 'a person from behind').
 4. **Technical Prompt Details:**
    * **\`visual_idea\`**: MUST be in English. Describe scenes, actions, and emotions cinematically.
-   * **\`text_to_image_prompt\` (T2I)**: MUST be in English. Must be very detailed. Combine the following information:
+   * **\`text_to_image_prompt\` (T2I)**: MUST be in English. Use fluent, sentence-based prose (not comma lists). Start with the main subject and shot type, then describe action and mood, then environment/lighting. Keep HEX codes terse or move brand colors to the closing suffix. Combine the following information:
         * **PROMPT TRANSLATION RULE (CRITICAL):** Your most important task is to translate the simple \`visual_idea\` into a hyper-detailed and ACCURATE \`text_to_image_prompt\`. The prompt MUST perfectly match the idea's subject, action, and framing (close-up, full body, etc.). The first few words of the prompt are the most important; they MUST define the main subject and camera shot type.
 		* **PRODUCT VISUAL KEYWORDS:** If provided, include these keywords as the main basis for object description.
 		* **MAIN COLOR PALETTE:** If provided, you MUST use these HEX color codes in the prompt to ensure color accuracy.
@@ -63,7 +63,7 @@ Setiap bagian skrip (Hook, Body, CTA) harus menceritakan sebuah **mini-story** m
     * **Jika Strategi Visual adalah 'Standar' atau 'Faceless' dan TIDAK diberi Character Sheet:** Anda DILARANG KERAS membuat atau mendefinisikan karakter spesifik. Buatlah prompt yang umum (contoh: "a woman's hand", "a person from behind").
 4.  **Detail Teknis Prompt:**
     * **\`visual_idea\`**: WAJIB mengikuti bahasa aplikasi saat ini. Jika mode bahasa adalah Indonesia, tulis dalam Bahasa Indonesia; jika Inggris, tulis dalam Bahasa Inggris. Deskripsikan adegan, aksi, dan emosi secara sinematik.
-    * **\`text_to_image_prompt\` (T2I)**: WAJIB dalam Bahasa Inggris. Harus sangat detail. Gabungkan informasi berikut:
+    * **\`text_to_image_prompt\` (T2I)**: WAJIB dalam Bahasa Inggris. Gunakan prosa kalimat yang mengalir (bukan daftar koma). Mulai dari subjek utama dan jenis shot, lalu aksi dan emosi, kemudian lingkungan/pencahayaan. Simpan kode HEX singkat atau pindahkan warna brand ke akhiran. Gabungkan informasi berikut:
         * **ATURAN PENERJEMAHAN PROMPT (KRITIS):** Tugas terpenting Anda adalah menerjemahkan \`visual_idea\` yang sederhana menjadi \`text_to_image_prompt\` yang sangat detail dan AKURAT. Prompt WAJIB cocok secara sempurna dengan subjek, aksi, dan framing (close-up, full body, dll.) dari ide tersebut. Beberapa kata pertama dari prompt adalah yang paling penting; WAJIB mendefinisikan subjek utama dan jenis shot kamera.
         * **VISUAL KEYWORDS PRODUK:** Jika diberikan, masukkan kata kunci ini sebagai dasar utama deskripsi objek.
         * **PALET WARNA UTAMA:** Jika diberikan, Anda WAJIB menggunakan kode warna HEX ini di dalam prompt untuk memastikan akurasi warna.
