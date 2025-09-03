@@ -857,6 +857,15 @@ export async function constructPrompt() {
                 vibe: cs.vibe || ''
             };
             localStorage.setItem('direktiva_char_tokens', JSON.stringify(charTokens));
+            // Wardrobe data (for wardrobe lock)
+            try {
+                const wardrobeList = characterSheets.map(sheet => ({
+                    clothing_style: sheet.clothing_style || '',
+                    specific_outfit: sheet.specific_outfit || '',
+                    color_palette: sheet.color_palette || ''
+                }));
+                localStorage.setItem('direktiva_char_wardrobe', JSON.stringify(wardrobeList));
+            } catch(_) {}
             // Simpan semua essence karakter untuk dukungan multi-karakter (EN)
             try {
                 const allEssencesRaw = characterSheets.map(sheet => ({ name: sheet.name || '', essence: createCharacterEssence(sheet) }));
