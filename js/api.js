@@ -1,7 +1,6 @@
 import { supabaseClient } from './supabase.js';
 import { languageState } from './utils.js';
 import { t } from './i18n.js';
-
 export async function translateToEnglishBatch(texts = []) {
     if (!Array.isArray(texts) || texts.length === 0) return [];
     const headers = { 'Content-Type': 'application/json' };
