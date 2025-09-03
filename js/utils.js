@@ -707,9 +707,18 @@ export function normalizeToEnglish(input) {
     s = s.replace(/gray\s*-\s*gray/gi,'gray');
     // Normalize common visual idea terms
     const more = [
+        // Scene terms
         ['dapur','kitchen'], ['kompor','stovetop'], ['wajan','pan'], ['piring','plates'],
         ['cahaya lembut','soft light'], ['pencahayaan lembut','soft lighting'], ['hangat','warm'], ['sejuk','cool'],
-        ['gerak melingkar','arc movement'], ['kamera','camera'], ['medium shot','medium shot'], ['close-up','close-up']
+        ['gerak melingkar','arc movement'], ['kamera','camera'], ['medium shot','medium shot'], ['close-up','close-up'],
+        // Character vibe and palette
+        ['warna netral','neutral'], ['netral','neutral'],
+        ['percaya diri','confident'], ['ceria','cheerful'],
+        // Body terms
+        ['ramping','slender'],
+        // Notes/tattoo
+        ['punya tato','has a tattoo'], ['tato','tattoo'], ['inisial','initials'],
+        ['punggung tangan kanan','the back of her right hand'], ['punggung tangan kiri','the back of her left hand']
     ];
     more.forEach(([id,en])=>{ s = s.replace(new RegExp(`\\b${id}\\b`,'g'), en); });
     // cleanup double commas/spaces after map substitutions
@@ -740,6 +749,11 @@ export function canonicalizeHair(input) {
     if (!picked.color) {
         const m = s.match(/pastel\s+(pink|blue|purple|green|yellow|orange|red|lilac|peach)/i);
         if (m) picked.color = `pastel ${m[1].toLowerCase()}`;
+    }
+    // Upgrade plain 'pastel' to compound if available
+    if (picked.color === 'pastel') {
+        const m2 = s.match(/pastel\s+(pink|blue|purple|green|yellow|orange|red|lilac|peach)/i);
+        if (m2) picked.color = `pastel ${m2[1].toLowerCase()}`;
     }
     const out = [picked.length, picked.texture, picked.style, picked.color].filter(Boolean).join(' ');
     return out || s;
