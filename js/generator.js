@@ -329,7 +329,7 @@ export async function handleGenerate() {
         // Update progress: 20% - Preparing prompt
         if (progressFill) progressFill.style.width = '20%';
         
-        const prompt = constructPrompt();
+        const prompt = await constructPrompt();
         const creativeSlider = document.getElementById('creative-freedom');
         const temperature = creativeSlider ? parseFloat(creativeSlider.value) : 0.7;
         
