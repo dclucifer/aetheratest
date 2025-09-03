@@ -754,6 +754,21 @@ export async function applyVariantToScript(card, script, section, newText) {
           .trim();
         return norm;
     }
+    function wardrobeLockSuffix() {
+        try {
+            const isFashion = (document.getElementById('product-category')?.value || '').toLowerCase() === 'fashion';
+            if (isFashion) return '';
+            const list = JSON.parse(localStorage.getItem('direktiva_char_wardrobe')||'[]');
+            const w = Array.isArray(list) && list[0] ? list[0] : {};
+            const parts = [];
+            if (w.clothing_style) parts.push(w.clothing_style);
+            if (w.specific_outfit) parts.push(w.specific_outfit);
+            let clause = parts.filter(Boolean).join(' ').trim();
+            if (w.color_palette) clause = clause ? `${clause} in ${w.color_palette} tones` : `outfit in ${w.color_palette} tones`;
+            if (!clause) clause = 'minimalist outfit in neutral tones';
+            return ` Wardrobe (must keep): ${clause}; avoid outfit/color/pattern changes.`;
+        } catch(_) { return ''; }
+    }
     function filterEssenceForShot(ess, visualIdea) {
         let s = String(ess || '').trim();
         const text = `${visualIdea||''}`.toLowerCase();
@@ -855,7 +870,7 @@ export async function applyVariantToScript(card, script, section, newText) {
         } catch(_) {}
         // default: keep bracket ID block
         // do not append char stable id anymore
-        return `${injected}${suffix}`;
+        return `${injected}${wardrobeLockSuffix()}${suffix}`;
     }
     function sanitizeShots(shots) {
         if (!Array.isArray(shots)) return shots;
