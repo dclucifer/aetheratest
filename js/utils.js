@@ -648,22 +648,26 @@ export function createCharacterEssence(character) {
     const extras = [tr(character.unique_features), tr(character.makeup_style)].filter(Boolean).join(', ');
 
     const namePart = character.name ? ` named ${tr(character.name)}` : '';
-    const intro = [age, ethnicity, gender].filter(Boolean).join(' ') + namePart + '.';
-    const facial = [
+    const introBase = [age, ethnicity, gender].filter(Boolean).join(' ') + namePart;
+    const facialList = [
         faceShape && `${faceShape} face`,
         (eyeColor || eyeShape) && `${eyeShape} ${eyeColor} eyes`.trim(),
         brows,
         nose,
         lips,
         hair && `${hair} hair`
-    ].filter(Boolean).join(', ');
-    const body = [skin, bodyShape, height].filter(Boolean).join(', ');
-    const clothing = [outfit && `Wearing ${outfit}.`, palette && `Dominant colors: ${palette}.`].filter(Boolean).join(' ');
-    const mood = vibe ? `Vibe: ${vibe}.` : '';
-    const notesLine = notes ? `Notes: ${notes}.` : '';
-    const extra = [extras && `Notable features: ${extras}.`, mood, notesLine].filter(Boolean).join(' ');
+    ].filter(Boolean);
+    const withClause = facialList.length ? `with ${facialList.join(', ')}` : '';
+    const bodyClause = [skin, bodyShape, height].filter(Boolean).join(', ');
+    const wearClause = outfit ? `wearing ${outfit}${palette ? ` in ${palette} tones` : ''}` : '';
+    const extrasClause = extras ? `notable for ${extras}` : '';
+    const vibeClause = vibe ? `exuding ${vibe}` : '';
+    const notesClause = notes ? `${notes}` : '';
+    const sentence = [introBase, withClause, bodyClause, wearClause, extrasClause, vibeClause, notesClause]
+      .filter(Boolean)
+      .join(', ') + '.';
 
-    let essence = `${intro} ${facial ? facial + '.' : ''} ${body ? body + '.' : ''} ${clothing} ${extra}`
+    let essence = sentence
       .replace(/\b(lips)\s+\1\b/gi,'$1')
       .replace(/almond\-shape(d)?/gi,'almond-shaped')
       .replace(/gray\s*\-\s*gray/gi,'gray')
