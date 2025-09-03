@@ -877,7 +877,7 @@ export async function applyVariantToScript(card, script, section, newText) {
         return shots.map(sh => ({
             ...sh,
             text_to_image_prompt: injectDna(sh?.text_to_image_prompt || '', sh?.visual_idea || ''),
-            image_to_video_prompt: (sh?.image_to_video_prompt || '').replace(/<\/?char-desc>/gi, '')
+            image_to_video_prompt: ((sh?.image_to_video_prompt || '').replace(/<\/?char-desc>/gi, '') + wardrobeLockSuffix()).trim()
         }));
     }
     // Show loading state
