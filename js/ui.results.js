@@ -754,6 +754,34 @@ export async function applyVariantToScript(card, script, section, newText) {
           .trim();
         return norm;
     }
+    function filterEssenceForShot(ess, visualIdea) {
+        let s = String(ess || '').trim();
+        const text = `${visualIdea||''}`.toLowerCase();
+        const negMoods = ['tired','exhausted','fatigue','drained','frustrated','annoyed','irritated','anxious','tense','sad','angry'];
+        const posMoods = ['happy','cheerful','confident','excited','joyful','relaxed','smiling'];
+        const visNeg = negMoods.some(w=>text.includes(w));
+        const visPos = posMoods.some(w=>text.includes(w));
+        const hasMood = visNeg || visPos;
+        if (hasMood) {
+            // remove vibe clause like "exuding ..." when shot already defines mood
+            s = s.replace(/\s*,?\s*exuding\s+[^\.,]+[\.,]?/i, '.');
+            // conditionally remove Notes: ... ONLY if it conflicts with mood in visual idea
+            const m = s.match(/\bNotes:\s*([^\.]*)\.?/i);
+            if (m) {
+                const notesText = (m[1]||'').toLowerCase();
+                const notesHasPos = posMoods.some(w=>notesText.includes(w));
+                const notesHasNeg = negMoods.some(w=>notesText.includes(w));
+                const conflict = (visNeg && notesHasPos) || (visPos && notesHasNeg);
+                if (conflict) {
+                    s = s.replace(/\s*,?\s*Notes:\s*[^\.,]+[\.,]?/i, '.');
+                }
+            }
+        }
+        // cleanup punctuation/spaces
+        s = s.replace(/\.(\s*\.)+/g, '.').replace(/\s{2,}/g,' ').replace(/\s*\.(?=\s*\.)/g,'').trim();
+        s = s.replace(/,\s*\./g, '.');
+        return s;
+    }
     function injectDna(text, visualIdea) {
         const core0 = stripIdentityBlocks(text);
         const intro = buildT2IIntro(visualIdea);
@@ -784,7 +812,7 @@ export async function applyVariantToScript(card, script, section, newText) {
                 const chunks = (Array.isArray(list) && list.length) ? list.map(e => e && e.essence).filter(Boolean) : (single ? [single] : []);
                 if (chunks.length) {
                     injected = injected.replace(/<\/?char-desc>[^]*?<\/char-desc>/gi, '').trim();
-                    const blocks = chunks.map(c => `<char-desc>${c}</char-desc>`).join(' ');
+                    const blocks = chunks.map(c => `<char-desc>${filterEssenceForShot(c, visualIdea||'')}</char-desc>`).join(' ');
                     injected = `${blocks} ${injected}`.trim();
                 }
             }
