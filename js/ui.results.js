@@ -786,6 +786,9 @@ export async function applyVariantToScript(card, script, section, newText) {
         const core0 = stripIdentityBlocks(text);
         const intro = buildT2IIntro(visualIdea);
         const core = intro ? `${intro}. ${core0}` : core0;
+        const mtRaw = (localStorage.getItem('model_target') || 'auto');
+        const mt = mtRaw ? mtRaw.toLowerCase() : 'auto';
+        const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'gemini' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
         const dna = buildDnaString();
         if (!dna) return core;
         // pick features (dynamic per visual idea)
@@ -812,16 +815,22 @@ export async function applyVariantToScript(card, script, section, newText) {
                 const chunks = (Array.isArray(list) && list.length) ? list.map(e => e && e.essence).filter(Boolean) : (single ? [single] : []);
                 if (chunks.length) {
                     injected = injected.replace(/<\/?char-desc>[^]*?<\/char-desc>/gi, '').trim();
-                    const blocks = chunks.map(c => `<char-desc>${filterEssenceForShot(c, visualIdea||'')}</char-desc>`).join(' ');
-                    injected = `${blocks} ${injected}`.trim();
+                    const identities = chunks.map(c => filterEssenceForShot(c, visualIdea||''));
+                    if (isBracketless) {
+                        const identityPrefix = identities.join(' ');
+                        injected = `${identityPrefix} ${injected}`.trim();
+                    } else {
+                        const blocks = identities.map(c => `<char-desc>${c}</char-desc>`).join(' ');
+                        injected = `${blocks} ${injected}`.trim();
+                    }
                 }
             }
         } catch(_) {}
         // model-specific adaptation: remove bracket ID block for bracketless engines and append natural-language suffix
         try {
-            const mt = (localStorage.getItem('model_target') || 'auto').toLowerCase();
-            const isBracketless = (mt === 'auto' || mt === 'imagen' || mt === 'gemini' || mt === 'flux' || mt === 'nano' || mt === 'nanobanana' || mt === 'nano banana');
-            if (isBracketless) {
+            const mt2 = (localStorage.getItem('model_target') || 'auto').toLowerCase();
+            const isBracketless2 = (mt2 === 'auto' || mt2 === 'imagen' || mt2 === 'gemini' || mt2 === 'flux' || mt2 === 'nano' || mt2 === 'nanobanana' || mt2 === 'nano banana');
+            if (isBracketless2) {
                 // Strip inline HEX and 'Colors: ...' from core to avoid redundancy with natural-language DNA suffix
                 let cleaned = injected
                   .replace(/\bColors:\s*[^.]+\.?/gi, '')
