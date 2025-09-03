@@ -754,6 +754,24 @@ export async function applyVariantToScript(card, script, section, newText) {
           .trim();
         return norm;
     }
+    function filterEssenceForShot(ess, visualIdea) {
+        let s = String(ess || '').trim();
+        const text = `${visualIdea||''}`.toLowerCase();
+        const negMoods = ['tired','exhausted','fatigue','drained','frustrated','annoyed','irritated','anxious','tense','sad','angry'];
+        const posMoods = ['happy','cheerful','confident','excited','joyful','relaxed','smiling'];
+        const hasMood = negMoods.some(w=>text.includes(w)) || posMoods.some(w=>text.includes(w));
+        if (hasMood) {
+            // remove vibe clause like "exuding ..."
+            s = s.replace(/\s*,?\s*exuding\s+[^\.,]+[\.,]?/i, '.');
+        }
+        // remove Notes: ... (often irrelevant per shot)
+        s = s.replace(/\s*,?\s*Notes:\s*[^\.,]+[\.,]?/i, '.');
+        // collapse multiple punctuation/spaces
+        s = s.replace(/\.(\s*\.)+/g, '.').replace(/\s{2,}/g,' ').replace(/\s*\.(?=\s*\.)/g,'').trim();
+        // fix stray commas before period
+        s = s.replace(/,\s*\./g, '.');
+        return s;
+    }
     function injectDna(text, visualIdea) {
         const core0 = stripIdentityBlocks(text);
         const intro = buildT2IIntro(visualIdea);
@@ -784,7 +802,7 @@ export async function applyVariantToScript(card, script, section, newText) {
                 const chunks = (Array.isArray(list) && list.length) ? list.map(e => e && e.essence).filter(Boolean) : (single ? [single] : []);
                 if (chunks.length) {
                     injected = injected.replace(/<\/?char-desc>[^]*?<\/char-desc>/gi, '').trim();
-                    const blocks = chunks.map(c => `<char-desc>${c}</char-desc>`).join(' ');
+                    const blocks = chunks.map(c => `<char-desc>${filterEssenceForShot(c, visualIdea||'')}</char-desc>`).join(' ');
                     injected = `${blocks} ${injected}`.trim();
                 }
             }
