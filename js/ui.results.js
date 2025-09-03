@@ -759,16 +759,26 @@ export async function applyVariantToScript(card, script, section, newText) {
         const text = `${visualIdea||''}`.toLowerCase();
         const negMoods = ['tired','exhausted','fatigue','drained','frustrated','annoyed','irritated','anxious','tense','sad','angry'];
         const posMoods = ['happy','cheerful','confident','excited','joyful','relaxed','smiling'];
-        const hasMood = negMoods.some(w=>text.includes(w)) || posMoods.some(w=>text.includes(w));
+        const visNeg = negMoods.some(w=>text.includes(w));
+        const visPos = posMoods.some(w=>text.includes(w));
+        const hasMood = visNeg || visPos;
         if (hasMood) {
-            // remove vibe clause like "exuding ..."
+            // remove vibe clause like "exuding ..." when shot already defines mood
             s = s.replace(/\s*,?\s*exuding\s+[^\.,]+[\.,]?/i, '.');
+            // conditionally remove Notes: ... ONLY if it conflicts with mood in visual idea
+            const m = s.match(/\bNotes:\s*([^\.]*)\.?/i);
+            if (m) {
+                const notesText = (m[1]||'').toLowerCase();
+                const notesHasPos = posMoods.some(w=>notesText.includes(w));
+                const notesHasNeg = negMoods.some(w=>notesText.includes(w));
+                const conflict = (visNeg && notesHasPos) || (visPos && notesHasNeg);
+                if (conflict) {
+                    s = s.replace(/\s*,?\s*Notes:\s*[^\.,]+[\.,]?/i, '.');
+                }
+            }
         }
-        // remove Notes: ... (often irrelevant per shot)
-        s = s.replace(/\s*,?\s*Notes:\s*[^\.,]+[\.,]?/i, '.');
-        // collapse multiple punctuation/spaces
+        // cleanup punctuation/spaces
         s = s.replace(/\.(\s*\.)+/g, '.').replace(/\s{2,}/g,' ').replace(/\s*\.(?=\s*\.)/g,'').trim();
-        // fix stray commas before period
         s = s.replace(/,\s*\./g, '.');
         return s;
     }
