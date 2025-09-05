@@ -29,15 +29,19 @@ export default async function handler(request, response){
   }
 
   try{
-    // NOTE: This is a placeholder route; replace with actual image-generation endpoint when available.
-    // For now we call the same generateContent with responseMimeType: "image/png" if supported by the model.
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${apiKey}`;
+    // Embed aspect hint naturally in the prompt to avoid unsupported generation_config fields
+    const aspectHint = (() => {
+      const a = String(aspect||'').trim();
+      if (a === '9:16') return 'portrait orientation (vertical 9:16)';
+      if (a === '4:5')  return 'portrait orientation (vertical 4:5)';
+      if (a === '16:9') return 'landscape orientation (wide 16:9)';
+      if (a === '1:1')  return 'square composition (1:1)';
+      return '';
+    })();
+    const promptWithHint = aspectHint ? `${prompt}\nComposition: ${aspectHint}.` : prompt;
     const payload = {
-      contents: [{ parts: [{ text: prompt }]}],
-      generationConfig: {
-        responseMimeType: 'image/png',
-        aspectRatio: aspect
-      }
+      contents: [{ parts: [{ text: promptWithHint }]}]
     };
     const r = await fetch(url,{ method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
     if(!r.ok){
