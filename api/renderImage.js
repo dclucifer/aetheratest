@@ -30,7 +30,7 @@ export default async function handler(request, response){
 
   try{
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${apiKey}`;
-    // Embed aspect hint naturally in the prompt to avoid unsupported generation_config fields
+    // Embed aspect hint in prompt text; API doesn't accept aspectRatio in generationConfig
     const aspectHint = (() => {
       const a = String(aspect||'').trim();
       if (a === '9:16') return 'portrait orientation (vertical 9:16)';
@@ -41,7 +41,7 @@ export default async function handler(request, response){
     })();
     const promptWithHint = aspectHint ? `${prompt}\nComposition: ${aspectHint}.` : prompt;
     const payload = {
-      contents: [{ parts: [{ text: promptWithHint }]}]
+      contents: [ { role: 'user', parts: [ { text: promptWithHint } ] } ]
     };
     const r = await fetch(url,{ method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
     if(!r.ok){
@@ -49,19 +49,18 @@ export default async function handler(request, response){
       try{ msg = await r.text(); }catch(_){ }
       return response.status(r.status).json({ error: msg||'Image model error' });
     }
-    const data = await r.arrayBuffer();
-    // Some deployments return JSON wrapper; try to detect
-    try{
-      const asJson = JSON.parse(new TextDecoder().decode(new Uint8Array(data)));
-      // expect base64 in candidates[0].content.parts[0].inline_data.data
-      const b64 = asJson?.candidates?.[0]?.content?.parts?.find(p=>p?.inline_data?.data)?.inline_data?.data || '';
-      if(!b64) return response.status(500).json({ error:'Empty image' });
-      return response.status(200).json({ imageBase64: b64 });
-    }catch(_){
-      // if raw binary png arrived, convert to base64
-      const b64 = Buffer.from(data).toString('base64');
-      return response.status(200).json({ imageBase64: b64 });
+    const result = await r.json();
+    const candidates = Array.isArray(result?.candidates) ? result.candidates : [];
+    let b64 = '';
+    for (const c of candidates) {
+      const parts = c?.content?.parts || [];
+      for (const p of parts) {
+        if (p?.inline_data?.data) { b64 = p.inline_data.data; break; }
+      }
+      if (b64) break;
     }
+    if (!b64) return response.status(500).json({ error: 'Empty image' });
+    return response.status(200).json({ imageBase64: b64 });
   }catch(e){
     return response.status(500).json({ error: e?.message || 'Render failed' });
   }
