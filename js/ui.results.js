@@ -1191,7 +1191,7 @@ export async function openScriptViewer(sourceCard, script){
               `<span class=\"prompt-t2i-display\">${safe(shot.text_to_image_prompt)}</span>`+
               `<button class=\"prompt-howto-btn flex-shrink-0\" data-type=\"t2i\" data-tooltip><div class=\"icon icon-sm icon-info text-gray-500 hover:text-white\"></div><span class=\"tooltip-hint\">${t('t2i_tooltip_models')||''}</span></button>`+
               `<button class=\"prompt-copy-btn flex-shrink-0\" data-prompt=\"${safe(shot.text_to_image_prompt).replace(/\\/g,'\\\\').replace(/\"/g,'&quot;')}\"><div class=\"icon icon-sm icon-copy text-gray-500 hover:text-white\"></div></button>`+
-              `<button class=\"generate-image-btn flex-shrink-0 px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white\" data-part=\"${partKey}\" data-shot-index=\"${i}\">${t('download_image')||'Generate Image'}</button>`+
+              `<button class=\"generate-image-btn flex-shrink-0 px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white\" data-part=\"${sectionKey}\" data-shot-index=\"${i}\">${t('download_image')||'Generate Image'}</button>`+
             `</div>`+
             `<div class=\"text-xs text-gray-400 mt-1 flex items-center gap-2\">`+
               `<strong>${t('i2v_prompt_label')||'Video Prompt'}:</strong>`+
