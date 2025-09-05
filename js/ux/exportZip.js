@@ -225,6 +225,7 @@ export async function exportImagesZipForScript(script){
   const root = zip.folder('aethera_images');
   const base = toSafeName(script.title || 'script');
   const sub  = root.folder(base);
+  const sleep = (ms)=> new Promise(r=>setTimeout(r, ms));
   try{
     await ensureGeminiImage();
     const allShots = [];
@@ -236,6 +237,8 @@ export async function exportImagesZipForScript(script){
       if(!prompt) continue;
       const blob = await renderImageFromPrompt(prompt, aspect);
       if(blob){ const fname = `${base}_${item.part}_shot${item.idx+1}.png`; sub.file(fname, blob); }
+      // Jeda 30 detik antar-render sesuai instruksi
+      await sleep(30000);
     }
   }catch(e){ console.warn('exportImagesZipForScript failed', e); }
   const blob = await zip.generateAsync({type:'blob'});
