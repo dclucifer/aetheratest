@@ -10,20 +10,46 @@ async function ensureGeminiImage(){
 }
 
 async function renderImageFromPrompt(prompt, aspect){
-  try{
-    const headers={ 'Content-Type':'application/json' };
-    const userApiKey=localStorage.getItem('direktiva_user_api_key');
-    if(userApiKey) headers['x-user-api-key']=userApiKey;
-    const r=await fetch('/api/renderImage',{ method:'POST', headers, body: JSON.stringify({ prompt, aspect: aspect||'9:16', model:'gemini-2.5-flash-image-preview' }) });
-    if(!r.ok){ throw new Error(await r.text()); }
-    const data=await r.json();
-    // expect data.imageBase64 (PNG)
-    const b64=(data && data.imageBase64) || '';
-    if(!b64) throw new Error('Empty image response');
-    const byteStr=atob(b64); const len=byteStr.length; const bytes=new Uint8Array(len);
-    for(let i=0;i<len;i++) bytes[i]=byteStr.charCodeAt(i);
-    return new Blob([bytes], { type:'image/png' });
-  }catch(e){ console.warn('renderImageFromPrompt failed', e); return null; }
+  const sleep = (ms)=> new Promise(r=>setTimeout(r, ms));
+  const headers={ 'Content-Type':'application/json' };
+  const userApiKey=localStorage.getItem('direktiva_user_api_key');
+  if(userApiKey) headers['x-user-api-key']=userApiKey;
+  const body = JSON.stringify({ prompt, aspect: aspect||'9:16', model:'gemini-2.5-flash-image-preview' });
+  for(let attempt=1; attempt<=3; attempt++){
+    try{
+      const r=await fetch('/api/renderImage',{ method:'POST', headers, body });
+      if(!r.ok){
+        const txt = await r.text().catch(()=> '');
+        // Try to parse nested JSON string
+        let code=null, retrySec=null;
+        try{
+          const j = JSON.parse(txt||'{}');
+          let err = j.error;
+          if (typeof err === 'string') { try{ err = JSON.parse(err); }catch(_){} }
+          code = err?.error?.code || err?.code || null;
+          const details = err?.error?.details || err?.details || [];
+          const retry = (details.find(d=>d['@type']?.includes('RetryInfo'))||{}).retryDelay;
+          if (typeof retry === 'string' && retry.endsWith('s')) retrySec = parseInt(retry.replace(/s$/,''),10);
+        }catch(_){ }
+        if (code===429 && attempt<3){
+          await sleep(((retrySec||60)*1000) + Math.floor(Math.random()*500));
+          continue;
+        }
+        console.warn('renderImageFromPrompt error response:', txt);
+        return null;
+      }
+      const data=await r.json();
+      const b64=(data && data.imageBase64) || '';
+      if(!b64) return null;
+      const byteStr=atob(b64); const len=byteStr.length; const bytes=new Uint8Array(len);
+      for(let i=0;i<len;i++) bytes[i]=byteStr.charCodeAt(i);
+      return new Blob([bytes], { type:'image/png' });
+    }catch(e){
+      if (attempt>=3) { console.warn('renderImageFromPrompt failed', e); return null; }
+      await sleep(1500);
+    }
+  }
+  return null;
 }
 
 async function ensureJSZip(){
@@ -163,6 +189,8 @@ export async function exportZipForScripts(scripts, includeThumbs){
           const fname = `${base}_${item.part}_shot${item.idx+1}.png`;
           sub.file(fname, blob);
         }
+        // throttle between requests to respect RPM limits
+        await new Promise(r=>setTimeout(r, 1200));
       }
     }catch(e){ console.warn('image render failed:', e); }
     // === end IMAGE RENDERS ===
