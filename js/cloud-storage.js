@@ -678,6 +678,27 @@ class CloudStorageService {
     }
 
     /**
+     * Upsert history entry (local -> Supabase)
+     */
+    async upsertHistory(entry){
+        try{
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session || !session.user) return false;
+            const payload = [{
+                user_id: session.user.id,
+                product_name: entry.productName || 'Untitled',
+                mode: entry.mode || 'single',
+                scripts: entry.scripts || [],
+            }];
+            const { error } = await supabaseClient
+                .from('user_history')
+                .insert(payload);
+            if (error) throw error;
+            return true;
+        }catch(e){ console.warn('upsertHistory failed:', e.message); return false; }
+    }
+
+    /**
      * Process pending offline operations
      */
     async processPendingOperations() {
