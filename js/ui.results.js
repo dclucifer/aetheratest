@@ -1191,6 +1191,7 @@ export async function openScriptViewer(sourceCard, script){
               `<span class=\"prompt-t2i-display\">${safe(shot.text_to_image_prompt)}</span>`+
               `<button class=\"prompt-howto-btn flex-shrink-0\" data-type=\"t2i\" data-tooltip><div class=\"icon icon-sm icon-info text-gray-500 hover:text-white\"></div><span class=\"tooltip-hint\">${t('t2i_tooltip_models')||''}</span></button>`+
               `<button class=\"prompt-copy-btn flex-shrink-0\" data-prompt=\"${safe(shot.text_to_image_prompt).replace(/\\/g,'\\\\').replace(/\"/g,'&quot;')}\"><div class=\"icon icon-sm icon-copy text-gray-500 hover:text-white\"></div></button>`+
+              `<button class=\"generate-image-btn flex-shrink-0 px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white\" data-part=\"${partKey}\" data-shot-index=\"${i}\">${t('download_image')||'Generate Image'}</button>`+
             `</div>`+
             `<div class=\"text-xs text-gray-400 mt-1 flex items-center gap-2\">`+
               `<strong>${t('i2v_prompt_label')||'Video Prompt'}:</strong>`+
@@ -1336,6 +1337,31 @@ export async function openScriptViewer(sourceCard, script){
       const raw = copyBtn.dataset.prompt || '';
       const cleaned = raw.replace(/<\/?char-desc>/gi, '');
       try { copyToClipboard(cleaned, copyBtn); } catch(_){ }
+      return;
+    }
+    const genImgBtn = e.target.closest('.generate-image-btn');
+    if (genImgBtn) {
+      try {
+        const shotIndex = parseInt(genImgBtn.dataset.shotIndex, 10);
+        const partEl = genImgBtn.closest('.p-3.rounded');
+        const promptSpan = partEl?.querySelector('.prompt-t2i-display');
+        const prompt = (promptSpan?.textContent || '').trim();
+        if (!prompt) return;
+        const headers={ 'Content-Type':'application/json' };
+        const userApiKey=localStorage.getItem('direktiva_user_api_key');
+        if(userApiKey) headers['x-user-api-key']=userApiKey;
+        const aspect = (script?.meta?.aspect)||'9:16';
+        genImgBtn.disabled = true;
+        const r=await fetch('/api/renderImage',{ method:'POST', headers, body: JSON.stringify({ prompt, aspect, model:'gemini-2.5-flash-image-preview' }) });
+        if(!r.ok){ console.warn('renderImage error', await r.text()); genImgBtn.disabled=false; return; }
+        const data=await r.json();
+        const b64=data?.imageBase64||'';
+        if(!b64){ genImgBtn.disabled=false; return; }
+        const a=document.createElement('a');
+        a.href = `data:image/png;base64,${b64}`;
+        a.download = `shot_${shotIndex+1}.png`;
+        a.click();
+      } catch(_){} finally { genImgBtn.disabled=false; }
       return;
     }
     const howtoBtn = e.target.closest('.prompt-howto-btn');

@@ -169,12 +169,14 @@ async function renderHistoryPage() {
 
     historyPanel.innerHTML = '';
     for (const entry of currentEntries) {
-        // Ambil satu script untuk dirender sebagai kartu
-        const script = (entry && Array.isArray(entry.scripts)) ? (entry.scripts[0] || null) : entry;
-        if (!script) continue;
         const createResultCard = await __getCreateResultCard();
-        const card = await createResultCard(script, 0);
-        historyPanel.appendChild(card);
+        const list = (entry && Array.isArray(entry.scripts)) ? entry.scripts : (entry ? [entry] : []);
+        let idx = 0;
+        for (const script of list) {
+            if (!script) continue;
+            const card = await createResultCard(script, idx++);
+            historyPanel.appendChild(card);
+        }
     }
 
     const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
