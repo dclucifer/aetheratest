@@ -2,6 +2,29 @@ import { t } from '../i18n.js';
 import { getScripts } from '../state.js';
 import { showNotification, languageState } from '../utils.js';
 import { appendVOToZip } from '../export.vo.js';
+import { showNotification as notify } from '../utils.js';
+
+async function ensureGeminiImage(){
+  // nothing to load client-side; we'll call our backend /api/renderImage
+  return true;
+}
+
+async function renderImageFromPrompt(prompt, aspect){
+  try{
+    const headers={ 'Content-Type':'application/json' };
+    const userApiKey=localStorage.getItem('direktiva_user_api_key');
+    if(userApiKey) headers['x-user-api-key']=userApiKey;
+    const r=await fetch('/api/renderImage',{ method:'POST', headers, body: JSON.stringify({ prompt, aspect: aspect||'9:16', model:'gemini-2.5-flash-image-preview' }) });
+    if(!r.ok){ throw new Error(await r.text()); }
+    const data=await r.json();
+    // expect data.imageBase64 (PNG)
+    const b64=(data && data.imageBase64) || '';
+    if(!b64) throw new Error('Empty image response');
+    const byteStr=atob(b64); const len=byteStr.length; const bytes=new Uint8Array(len);
+    for(let i=0;i<len;i++) bytes[i]=byteStr.charCodeAt(i);
+    return new Blob([bytes], { type:'image/png' });
+  }catch(e){ console.warn('renderImageFromPrompt failed', e); return null; }
+}
 
 async function ensureJSZip(){
   if (window.JSZip) return window.JSZip;
