@@ -18,7 +18,7 @@ export default async function handler(request, response){
     return response.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { prompt, aspect = '9:16', model = 'gemini-2.5-flash-image-preview' } = request.body || {};
+  const { prompt, aspect = '9:16', model = 'gemini-2.5-flash-preview-image' } = request.body || {};
   if(!prompt || typeof prompt!=='string'){
     return response.status(400).json({ error:'prompt is required' });
   }
@@ -41,7 +41,8 @@ export default async function handler(request, response){
     })();
     const promptWithHint = aspectHint ? `${prompt}\nComposition: ${aspectHint}.` : prompt;
     const payload = {
-      contents: [ { role: 'user', parts: [ { text: promptWithHint } ] } ]
+      contents: [ { role: 'user', parts: [ { text: promptWithHint } ] } ],
+      generationConfig: { response_mime_type: 'image/png' }
     };
     const r = await fetch(url,{ method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
     if(!r.ok){
