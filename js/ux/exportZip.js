@@ -2,6 +2,29 @@ import { t } from '../i18n.js';
 import { getScripts } from '../state.js';
 import { showNotification, languageState } from '../utils.js';
 import { appendVOToZip } from '../export.vo.js';
+import { showNotification as notify } from '../utils.js';
+
+async function ensureGeminiImage(){
+  // nothing to load client-side; we'll call our backend /api/renderImage
+  return true;
+}
+
+async function renderImageFromPrompt(prompt, aspect){
+  try{
+    const headers={ 'Content-Type':'application/json' };
+    const userApiKey=localStorage.getItem('direktiva_user_api_key');
+    if(userApiKey) headers['x-user-api-key']=userApiKey;
+    const r=await fetch('/api/renderImage',{ method:'POST', headers, body: JSON.stringify({ prompt, aspect: aspect||'9:16', model:'gemini-2.5-flash-image-preview' }) });
+    if(!r.ok){ throw new Error(await r.text()); }
+    const data=await r.json();
+    // expect data.imageBase64 (PNG)
+    const b64=(data && data.imageBase64) || '';
+    if(!b64) throw new Error('Empty image response');
+    const byteStr=atob(b64); const len=byteStr.length; const bytes=new Uint8Array(len);
+    for(let i=0;i<len;i++) bytes[i]=byteStr.charCodeAt(i);
+    return new Blob([bytes], { type:'image/png' });
+  }catch(e){ console.warn('renderImageFromPrompt failed', e); return null; }
+}
 
 async function ensureJSZip(){
   if (window.JSZip) return window.JSZip;
@@ -124,6 +147,25 @@ export async function exportZipForScripts(scripts, includeThumbs){
       console.warn('appendVOToZip failed:', e);
     }
     // === end VO export ===
+
+    // === IMAGE RENDERS per shot (Gemini 2.5 Flash Image Preview) ===
+    try{
+      await ensureGeminiImage();
+      const allShots=[];
+      const pushShots = (partName, part)=>{ if(part && Array.isArray(part.shots)) part.shots.forEach((sh,idx)=> allShots.push({ part:partName, idx, sh })); };
+      pushShots('hook', s.hook); pushShots('body', s.body); pushShots('cta', s.cta);
+      const aspect = (s?.meta?.aspect)||'9:16';
+      for(const item of allShots){
+        const prompt = String(item.sh?.text_to_image_prompt||'').trim();
+        if(!prompt) continue;
+        const blob = await renderImageFromPrompt(prompt, aspect);
+        if(blob){
+          const fname = `${base}_${item.part}_shot${item.idx+1}.png`;
+          sub.file(fname, blob);
+        }
+      }
+    }catch(e){ console.warn('image render failed:', e); }
+    // === end IMAGE RENDERS ===
   }
 
   const blob=await zip.generateAsync({type:'blob'});
