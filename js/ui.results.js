@@ -1352,15 +1352,27 @@ export async function openScriptViewer(sourceCard, script){
         if(userApiKey) headers['x-user-api-key']=userApiKey;
         const aspect = (script?.meta?.aspect)||'9:16';
         genImgBtn.disabled = true;
+        const originalHTML = genImgBtn.innerHTML;
+        genImgBtn.innerHTML = '<div class="icon icon-sm icon-spinner text-white"></div>';
         const r=await fetch('/api/renderImage',{ method:'POST', headers, body: JSON.stringify({ prompt, aspect, model:'gemini-2.5-flash-image-preview' }) });
         if(!r.ok){ console.warn('renderImage error', await r.text()); genImgBtn.disabled=false; return; }
         const data=await r.json();
         const b64=data?.imageBase64||'';
         if(!b64){ genImgBtn.disabled=false; return; }
-        const a=document.createElement('a');
-        a.href = `data:image/png;base64,${b64}`;
-        a.download = `shot_${shotIndex+1}.png`;
-        a.click();
+        // preview modal lightweight
+        const imgUrl = `data:image/png;base64,${b64}`;
+        const preview = document.createElement('div');
+        preview.style.position='fixed'; preview.style.inset='0'; preview.style.background='rgba(0,0,0,0.6)'; preview.style.zIndex='10000'; preview.style.display='flex'; preview.style.alignItems='center'; preview.style.justifyContent='center';
+        preview.innerHTML = `<div style="background:#111;border:1px solid #333;border-radius:8px;padding:8px;max-width:90vw;max-height:90vh;display:flex;flex-direction:column;gap:8px;">
+          <img src="${imgUrl}" style="max-width:80vw;max-height:70vh;object-fit:contain;border-radius:6px;"/>
+          <div style="display:flex;gap:8px;justify-content:flex-end;">
+            <button class="dl-btn" style="background:#2563eb;color:#fff;padding:6px 10px;border-radius:6px;">Download</button>
+            <button class="close-btn" style="background:#374151;color:#fff;padding:6px 10px;border-radius:6px;">Close</button>
+          </div>
+        </div>`;
+        document.body.appendChild(preview);
+        preview.querySelector('.close-btn')?.addEventListener('click',()=>{ try{ document.body.removeChild(preview);}catch(_){}});
+        preview.querySelector('.dl-btn')?.addEventListener('click',()=>{ const a=document.createElement('a'); a.href=imgUrl; a.download=`shot_${shotIndex+1}.png`; a.click(); });
       } catch(_){} finally { genImgBtn.disabled=false; }
       return;
     }
