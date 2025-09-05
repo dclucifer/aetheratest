@@ -147,6 +147,25 @@ export async function exportZipForScripts(scripts, includeThumbs){
       console.warn('appendVOToZip failed:', e);
     }
     // === end VO export ===
+
+    // === IMAGE RENDERS per shot (Gemini 2.5 Flash Image Preview) ===
+    try{
+      await ensureGeminiImage();
+      const allShots=[];
+      const pushShots = (partName, part)=>{ if(part && Array.isArray(part.shots)) part.shots.forEach((sh,idx)=> allShots.push({ part:partName, idx, sh })); };
+      pushShots('hook', s.hook); pushShots('body', s.body); pushShots('cta', s.cta);
+      const aspect = (s?.meta?.aspect)||'9:16';
+      for(const item of allShots){
+        const prompt = String(item.sh?.text_to_image_prompt||'').trim();
+        if(!prompt) continue;
+        const blob = await renderImageFromPrompt(prompt, aspect);
+        if(blob){
+          const fname = `${base}_${item.part}_shot${item.idx+1}.png`;
+          sub.file(fname, blob);
+        }
+      }
+    }catch(e){ console.warn('image render failed:', e); }
+    // === end IMAGE RENDERS ===
   }
 
   const blob=await zip.generateAsync({type:'blob'});
@@ -169,4 +188,32 @@ export function initResultsExportToolbar(){
     btn.__bound=true;
     btn.addEventListener('click', ()=> exportAllZip(!!chk?.checked));
   }
+}
+
+// Export only images for a single script (all shots)
+export async function exportImagesZipForScript(script){
+  const JSZip = await ensureJSZip();
+  const zip = new JSZip();
+  const root = zip.folder('aethera_images');
+  const base = toSafeName(script.title || 'script');
+  const sub  = root.folder(base);
+  try{
+    await ensureGeminiImage();
+    const allShots = [];
+    const pushShots=(partName, part)=>{ if(part && Array.isArray(part.shots)) part.shots.forEach((sh,idx)=> allShots.push({ part:partName, idx, sh })); };
+    pushShots('hook', script.hook); pushShots('body', script.body); pushShots('cta', script.cta);
+    const aspect = (script?.meta?.aspect)||'9:16';
+    for(const item of allShots){
+      const prompt = String(item.sh?.text_to_image_prompt||'').trim();
+      if(!prompt) continue;
+      const blob = await renderImageFromPrompt(prompt, aspect);
+      if(blob){ const fname = `${base}_${item.part}_shot${item.idx+1}.png`; sub.file(fname, blob); }
+    }
+  }catch(e){ console.warn('exportImagesZipForScript failed', e); }
+  const blob = await zip.generateAsync({type:'blob'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`aethera_images_${Date.now()}.zip`;
+  a.click(); URL.revokeObjectURL(a.href);
+  showNotification(t('zip_export_done') || 'ZIP exported.', 'success');
 }

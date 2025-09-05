@@ -1161,6 +1161,7 @@ export async function openScriptViewer(sourceCard, script){
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="capcut-srt">CapCut (SRT)</button>
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="capcut-csv">CapCut (CSV)</button>
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="zip-single">Export This (ZIP)</button>
+        <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="images-zip">Download Images (All Shots)</button>
         <div class="border-t border-gray-800 my-1"></div>
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-copy-gemini">🎙️ Copy VO — Gemini Text</button>
         <button class="overlay-export-item block w-full text-left px-3 py-2 text-xs hover:bg-gray-800" data-type="vo-copy-ssml">🔊 Copy VO — ElevenLabs SSML</button>
@@ -1276,6 +1277,9 @@ export async function openScriptViewer(sourceCard, script){
         } else if (type === 'zip-single') {
           const { exportZipForScripts } = await import('./ux/exportZip.js');
           await exportZipForScripts([script], false);
+        } else if (type === 'images-zip') {
+          const { exportImagesZipForScript } = await import('./ux/exportZip.js');
+          await exportImagesZipForScript(script);
         } else if (type === 'vo-copy-gemini' || type === 'vo-copy-ssml' || type === 'vo-download' || type === 'vo-prev-gemini' || type === 'vo-stop') {
           // siapkan state & input VO
           const platformMap = { tiktok:'tiktok_video', shopee:'shopee_video', instagram:'igreels', threads:'threads', shorts:'shorts' };
