@@ -63,6 +63,21 @@ export function saveToHistory(scripts, productName, mode) {
     localStorage.setItem('direktiva_history', JSON.stringify(history));
     // Set timestamp untuk tracking perubahan lokal untuk sinkronisasi
     localStorage.setItem('direktiva_history_last_modified', new Date().toISOString());
+
+    // Also attempt to persist to Supabase (soft-fail)
+    ;(async ()=>{
+      try{
+        const { cloudStorage } = await import('./cloud-storage.js');
+        if (cloudStorage && typeof cloudStorage.upsertHistory === 'function') {
+          await cloudStorage.upsertHistory({
+            productName: newEntry.productName,
+            mode: newEntry.mode,
+            scripts: newEntry.scripts,
+            created_at: new Date().toISOString()
+          });
+        }
+      }catch(e){ /* ignore */ }
+    })();
 }
 
 export async function loadHistory() {
