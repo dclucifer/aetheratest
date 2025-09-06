@@ -683,6 +683,22 @@ if (freedomSlider) {
 try{ import('./ux/exportZip.js').then(m=>m.initResultsExportToolbar && m.initResultsExportToolbar()); }catch(e){}
 try{ import('./ux/rank.js').then(m=>m.initRankAll && m.initRankAll()); }catch(e){}
 
+// Fallback listener: paksa buka viewer saat kartu diklik jika handler spesifik gagal
+document.addEventListener('click', async (e) => {
+  const card = e.target.closest('.result-card');
+  if (!card) return;
+  // Jangan override jika klik kontrol export/edit/copy
+  if (e.target.closest('.export-dropdown') || e.target.closest('.edit-btn') || e.target.closest('.copy-btn') || e.target.closest('.view-btn')) return;
+  try {
+    const data = JSON.parse(card.dataset.script||'null');
+    if (!data) return;
+    const mod = await import('./ui.results.js');
+    if (mod && typeof mod.openScriptViewer==='function') {
+      mod.openScriptViewer(card, data);
+    }
+  } catch(_){ }
+});
+
 // Sinkronisasi chip CTA -> <select id="cta-type">
 document.addEventListener('click', (e) => {
     const chip = e.target.closest('[data-cta-value]');
