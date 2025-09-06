@@ -687,7 +687,7 @@ class CloudStorageService {
             const payload = [{
                 user_id: session.user.id,
                 product_name: entry.productName || 'Untitled',
-                mode: entry.mode || 'single',
+                post_type: entry.mode || 'single',
                 scripts: entry.scripts || [],
             }];
             const { error } = await supabaseClient
