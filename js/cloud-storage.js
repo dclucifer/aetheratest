@@ -687,13 +687,13 @@ class CloudStorageService {
             const payload = [{
                 user_id: session.user.id,
                 product_name: entry.productName || 'Untitled',
-                mode: entry.mode || 'single',
+                post_type: entry.mode || 'single',
                 scripts: entry.scripts || [],
             }];
             const { error } = await supabaseClient
                 .from('user_history')
                 .insert(payload);
-            if (error) throw error;
+            if (error) { console.warn('Supabase insert user_history failed:', error.message||error); throw error; }
             return true;
         }catch(e){ console.warn('upsertHistory failed:', e.message); return false; }
     }
