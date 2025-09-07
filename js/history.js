@@ -63,7 +63,7 @@ export function saveToHistory(scripts, productName, mode) {
     localStorage.setItem('direktiva_history', JSON.stringify(history));
     // Set timestamp untuk tracking perubahan lokal untuk sinkronisasi
     localStorage.setItem('direktiva_history_last_modified', new Date().toISOString());
-    
+
     // Also attempt to persist to Supabase (soft-fail)
     ;(async ()=>{
       try{

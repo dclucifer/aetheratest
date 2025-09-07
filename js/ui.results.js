@@ -1125,6 +1125,8 @@ export async function openScriptViewer(sourceCard, script){
   const modal=document.getElementById('script-viewer-modal');
   const content=document.getElementById('script-viewer-content');
   if(!modal||!content) return;
+  // Buka overlay secepatnya agar terasa responsif
+  try { modal.classList.remove('opacity-0','pointer-events-none'); } catch(_){ }
   try {
     // Rehydrate script dari state agar perubahan terbaru (assets/varian) ikut tampil
     const byId = (getScripts && typeof getScripts === 'function') ? getScripts().find(s => s.id === script?.id) : null;
@@ -1373,7 +1375,7 @@ export async function openScriptViewer(sourceCard, script){
         document.body.appendChild(preview);
         preview.querySelector('.close-btn')?.addEventListener('click',()=>{ try{ document.body.removeChild(preview);}catch(_){}});
         preview.querySelector('.dl-btn')?.addEventListener('click',()=>{ const a=document.createElement('a'); a.href=imgUrl; a.download=`shot_${shotIndex+1}.png`; a.click(); });
-      } catch(_){} finally { genImgBtn.disabled=false; }
+      } catch(_){} finally { genImgBtn.disabled=false; try{ genImgBtn.innerHTML = 'Generate Image'; }catch(_){} }
       return;
     }
     const howtoBtn = e.target.closest('.prompt-howto-btn');
@@ -1397,7 +1399,7 @@ export async function openScriptViewer(sourceCard, script){
   try {
     if (script.slides) initSwiper('#script-viewer-content .carousel-swiper-container');
   } catch(_) {}
-  modal.classList.remove('opacity-0','pointer-events-none');
+  try { modal.classList.remove('opacity-0','pointer-events-none'); } catch(_){ }
   const closeBtn=document.getElementById('script-viewer-close');
   if(!modal.__bound){
     modal.__bound=true;

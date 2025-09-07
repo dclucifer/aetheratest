@@ -41,8 +41,7 @@ export default async function handler(request, response){
     })();
     const promptWithHint = aspectHint ? `${prompt}\nComposition: ${aspectHint}.` : prompt;
     const payload = {
-      contents: [ { role: 'user', parts: [ { text: promptWithHint } ] } ],
-      generationConfig: { response_mime_type: 'image/png' }
+      contents: [ { role: 'user', parts: [ { text: promptWithHint } ] } ]
     };
     const r = await fetch(url,{ method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
     if(!r.ok){
