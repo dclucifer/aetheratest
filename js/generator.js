@@ -92,35 +92,42 @@ export async function handleImageUpload(event) {
             modal.querySelector('.modal-content')?.classList.remove('scale-95');
 
             // LANGKAH BARU: Pilih mode Single atau Multi sebelum cropping
-            const chooser = document.createElement('div');
-            chooser.style.display = 'flex';
-            chooser.style.gap = '8px';
-            chooser.style.margin = '8px 0';
-            chooser.style.flexWrap = 'wrap';
-            const chooseText = document.createElement('div');
-            chooseText.className = 'text-xs text-gray-300';
-            chooseText.textContent = (languageState.current==='en')
-              ? 'Crop mode: choose Single product or Multi areas'
-              : 'Mode crop: pilih Satu produk atau Multi area';
-            const btnSingle = document.createElement('button');
-            btnSingle.type = 'button';
-            btnSingle.className = 'px-2 py-1 rounded bg-blue-600 text-white text-xs';
-            btnSingle.textContent = (languageState.current==='en') ? 'Single Crop' : 'Satu Produk';
-            const btnMulti = document.createElement('button');
-            btnMulti.type = 'button';
-            btnMulti.className = 'px-2 py-1 rounded bg-emerald-600 text-white text-xs';
-            btnMulti.textContent = (languageState.current==='en') ? 'Multi Crop' : 'Multi Crop';
-            chooser.append(chooseText, btnSingle, btnMulti);
+            // Mobile UX: default ke Single agar tombol segera berfungsi
+            const isMobileViewport = window.innerWidth < 768;
             const contentNode = modal.querySelector('.modal-content') || modal;
-            contentNode.insertBefore(chooser, contentNode.firstChild);
+            if (!isMobileViewport) {
+                const chooser = document.createElement('div');
+                chooser.style.display = 'flex';
+                chooser.style.gap = '8px';
+                chooser.style.margin = '8px 0';
+                chooser.style.flexWrap = 'wrap';
+                const chooseText = document.createElement('div');
+                chooseText.className = 'text-xs text-gray-300';
+                chooseText.textContent = (languageState.current==='en')
+                  ? 'Crop mode: choose Single product or Multi areas'
+                  : 'Mode crop: pilih Satu produk atau Multi area';
+                const btnSingle = document.createElement('button');
+                btnSingle.type = 'button';
+                btnSingle.className = 'px-2 py-1 rounded bg-blue-600 text-white text-xs';
+                btnSingle.textContent = (languageState.current==='en') ? 'Single Crop' : 'Satu Produk';
+                const btnMulti = document.createElement('button');
+                btnMulti.type = 'button';
+                btnMulti.className = 'px-2 py-1 rounded bg-emerald-600 text-white text-xs';
+                btnMulti.textContent = (languageState.current==='en') ? 'Multi Crop' : 'Multi Crop';
+                chooser.append(chooseText, btnSingle, btnMulti);
+                contentNode.insertBefore(chooser, contentNode.firstChild);
 
-            await new Promise((resolve) => {
-                const pick = (isMulti) => { multiMode = !!isMulti; btnSingle.removeEventListener('click', onSingle); btnMulti.removeEventListener('click', onMulti); chooser.remove(); resolve(); };
-                const onSingle = ()=> pick(false);
-                const onMulti = ()=> pick(true);
-                btnSingle.addEventListener('click', onSingle, { once:true });
-                btnMulti.addEventListener('click', onMulti, { once:true });
-            });
+                await new Promise((resolve) => {
+                    const pick = (isMulti) => { multiMode = !!isMulti; btnSingle.removeEventListener('click', onSingle); btnMulti.removeEventListener('click', onMulti); chooser.remove(); resolve(); };
+                    const onSingle = ()=> pick(false);
+                    const onMulti = ()=> pick(true);
+                    btnSingle.addEventListener('click', onSingle, { once:true });
+                    btnMulti.addEventListener('click', onMulti, { once:true });
+                });
+            } else {
+                // Default ke single-crop di mobile untuk menghindari langkah ekstra yang bisa membingungkan
+                multiMode = false;
+            }
 
             await new Promise((resolve) => setTimeout(resolve, 50));
             try { cropper?.destroy(); } catch(_) {}

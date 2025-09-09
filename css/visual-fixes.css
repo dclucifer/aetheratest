@@ -795,9 +795,27 @@ header {
   flex-direction: column !important;
   overflow-y: auto !important;
 }
+#image-cropper-modal .modal-content .sticky.bottom-0 {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 201 !important; /* above cropper overlay */
+  pointer-events: auto !important;
+}
 #image-cropper-modal img#cropper-target {
   max-height: 60vh;
   width: 100%;
   display: block;
+}
+#image-cropper-modal .cropper-container,
+#image-cropper-modal .cropper-wrap-box,
+#image-cropper-modal .cropper-canvas,
+#image-cropper-modal .cropper-drag-box,
+#image-cropper-modal .cropper-crop-box,
+#image-cropper-modal .cropper-modal {
+  touch-action: none; /* prevent scroll hijack while dragging */
+}
+#image-cropper-modal button#cropper-use-btn,
+#image-cropper-modal button#cropper-skip-btn {
+  -webkit-tap-highlight-color: transparent;
 }
 #image-cropper-modal { z-index: 200 !important; }
